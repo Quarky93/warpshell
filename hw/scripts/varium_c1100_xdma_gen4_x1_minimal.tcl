@@ -32,4 +32,5 @@ write_checkpoint -force xdma_gen4_x1_minimal_post_route.dcp
 
 puts "---- \[Writing Bitstream...\] ----------------------------------------------------"
 write_bitstream -force xdma_gen4_x1_minimal.bit
+write_debug_probes -force xdma_gen4_x1_minimal.ltx
 puts "--------------------------------------------------------------------------------"

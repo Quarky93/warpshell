@@ -124,15 +124,14 @@ set bCheckIPs 1
 if { $bCheckIPs == 1 } {
    set list_check_ips "\ 
 xilinx.com:ip:proc_sys_reset:5.0\
+xilinx.com:ip:util_vector_logic:2.0\
+xilinx.com:ip:cms_subsystem:4.0\
 xilinx.com:ip:smartconnect:1.0\
 xilinx.com:ip:axi_hbicap:1.0\
 xilinx.com:ip:hbm:1.0\
-xilinx.com:ip:util_vector_logic:2.0\
-xilinx.com:ip:axi_gpio:2.0\
-xilinx.com:ip:xlconcat:2.1\
+xilinx.com:ip:axi_intc:4.1\
 xilinx.com:ip:util_ds_buf:2.2\
 xilinx.com:ip:clk_wiz:6.0\
-xilinx.com:ip:system_management_wiz:1.3\
 xilinx.com:ip:xdma:4.1\
 "
 
@@ -197,21 +196,36 @@ proc create_root_design { parentCell } {
 
 
   # Create interface ports
-  set Vp_Vn [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_analog_io_rtl:1.0 Vp_Vn ]
-
   set pcie_clk [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 pcie_clk ]
 
   set pcie_mgt [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:pcie_7x_mgt_rtl:1.0 pcie_mgt ]
+
+  set satellite_uart [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:uart_rtl:1.0 satellite_uart ]
 
   set shell_clk [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 shell_clk ]
 
 
   # Create ports
-  set hbm_cattrip [ create_bd_port -dir O -from 7 -to 0 hbm_cattrip ]
   set pcie_rstn [ create_bd_port -dir I -type rst pcie_rstn ]
+  set satellite_gpio [ create_bd_port -dir I -from 3 -to 0 -type intr satellite_gpio ]
+  set_property -dict [ list \
+   CONFIG.PortWidth {4} \
+   CONFIG.SENSITIVITY {EDGE_RISING} \
+ ] $satellite_gpio
 
   # Create instance: apb_icap_reset, and set properties
   set apb_icap_reset [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 apb_icap_reset ]
+
+  # Create instance: cattrip_util, and set properties
+  set cattrip_util [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_vector_logic:2.0 cattrip_util ]
+  set_property -dict [ list \
+   CONFIG.C_OPERATION {or} \
+   CONFIG.C_SIZE {1} \
+   CONFIG.LOGO_FILE {data/sym_orgate.png} \
+ ] $cattrip_util
+
+  # Create instance: cms, and set properties
+  set cms [ create_bd_cell -type ip -vlnv xilinx.com:ip:cms_subsystem:4.0 cms ]
 
   # Create instance: dma_smartconnect, and set properties
   set dma_smartconnect [ create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 dma_smartconnect ]
@@ -306,24 +320,17 @@ proc create_root_design { parentCell } {
    CONFIG.USER_SAXI_30 {false} \
    CONFIG.USER_SAXI_31 {false} \
    CONFIG.USER_SWITCH_ENABLE_01 {TRUE} \
+   CONFIG.USER_XSDB_INTF_EN {TRUE} \
  ] $hbm
 
-  # Create instance: hbm_cattrip_util, and set properties
-  set hbm_cattrip_util [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_vector_logic:2.0 hbm_cattrip_util ]
-
-  # Create instance: misc_status, and set properties
-  set misc_status [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 misc_status ]
+  # Create instance: intc, and set properties
+  set intc [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_intc:4.1 intc ]
   set_property -dict [ list \
-   CONFIG.C_ALL_INPUTS {1} \
- ] $misc_status
-
-  # Create instance: misc_status_concat, and set properties
-  set misc_status_concat [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 misc_status_concat ]
-  set_property -dict [ list \
-   CONFIG.IN0_WIDTH {7} \
-   CONFIG.IN1_WIDTH {7} \
-   CONFIG.NUM_PORTS {2} \
- ] $misc_status_concat
+   CONFIG.C_HAS_FAST {0} \
+   CONFIG.C_IRQ_CONNECTION {1} \
+   CONFIG.C_PROCESSOR_CLK_FREQ_MHZ {250} \
+   CONFIG.C_S_AXI_ACLK_FREQ_MHZ {250} \
+ ] $intc
 
   # Create instance: pcie_clk_buf, and set properties
   set pcie_clk_buf [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.2 pcie_clk_buf ]
@@ -365,12 +372,6 @@ proc create_root_design { parentCell } {
    CONFIG.NUM_SI {1} \
  ] $shell_smartconnect
 
-  # Create instance: sys_mgmt_wiz, and set properties
-  set sys_mgmt_wiz [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_management_wiz:1.3 sys_mgmt_wiz ]
-  set_property -dict [ list \
-   CONFIG.DCLK_FREQUENCY {250} \
- ] $sys_mgmt_wiz
-
   # Create instance: xdma, and set properties
   set xdma [ create_bd_cell -type ip -vlnv xilinx.com:ip:xdma:4.1 xdma ]
   set_property -dict [ list \
@@ -399,39 +400,42 @@ proc create_root_design { parentCell } {
  ] $xdma
 
   # Create interface connections
-  connect_bd_intf_net -intf_net Vp_Vn_1 [get_bd_intf_ports Vp_Vn] [get_bd_intf_pins sys_mgmt_wiz/Vp_Vn]
+  connect_bd_intf_net -intf_net cms_satellite_uart [get_bd_intf_ports satellite_uart] [get_bd_intf_pins cms/satellite_uart]
   connect_bd_intf_net -intf_net dma_smartconnect_M00_AXI [get_bd_intf_pins dma_smartconnect/M00_AXI] [get_bd_intf_pins hbm/SAXI_00]
   connect_bd_intf_net -intf_net dma_smartconnect_M01_AXI [get_bd_intf_pins dma_smartconnect/M01_AXI] [get_bd_intf_pins hbicap/S_AXI]
   connect_bd_intf_net -intf_net pcie_clk_1 [get_bd_intf_ports pcie_clk] [get_bd_intf_pins pcie_clk_buf/CLK_IN_D]
   connect_bd_intf_net -intf_net shell_clk_1 [get_bd_intf_ports shell_clk] [get_bd_intf_pins shell_clk_buffer/CLK_IN_D]
-  connect_bd_intf_net -intf_net shell_smartconnect_M00_AXI [get_bd_intf_pins shell_smartconnect/M00_AXI] [get_bd_intf_pins sys_mgmt_wiz/S_AXI_LITE]
-  connect_bd_intf_net -intf_net shell_smartconnect_M01_AXI [get_bd_intf_pins misc_status/S_AXI] [get_bd_intf_pins shell_smartconnect/M01_AXI]
+  connect_bd_intf_net -intf_net shell_smartconnect_M00_AXI [get_bd_intf_pins cms/s_axi_ctrl] [get_bd_intf_pins shell_smartconnect/M00_AXI]
+  connect_bd_intf_net -intf_net shell_smartconnect_M01_AXI [get_bd_intf_pins intc/s_axi] [get_bd_intf_pins shell_smartconnect/M01_AXI]
   connect_bd_intf_net -intf_net shell_smartconnect_M02_AXI [get_bd_intf_pins hbicap/S_AXI_CTRL] [get_bd_intf_pins shell_smartconnect/M02_AXI]
   connect_bd_intf_net -intf_net xdma_M_AXI [get_bd_intf_pins dma_smartconnect/S00_AXI] [get_bd_intf_pins xdma/M_AXI]
   connect_bd_intf_net -intf_net xdma_M_AXI_LITE [get_bd_intf_pins shell_smartconnect/S00_AXI] [get_bd_intf_pins xdma/M_AXI_LITE]
   connect_bd_intf_net -intf_net xdma_pcie_mgt [get_bd_intf_ports pcie_mgt] [get_bd_intf_pins xdma/pcie_mgt]
 
   # Create port connections
-  connect_bd_net -net apb_icap_reset_peripheral_aresetn [get_bd_pins apb_icap_reset/peripheral_aresetn] [get_bd_pins hbm/APB_0_PRESET_N] [get_bd_pins hbm/APB_1_PRESET_N] [get_bd_pins shell_clk_wiz/resetn]
-  connect_bd_net -net hbm_DRAM_0_STAT_CATTRIP [get_bd_pins hbm/DRAM_0_STAT_CATTRIP] [get_bd_pins hbm_cattrip_util/Op1]
-  connect_bd_net -net hbm_DRAM_0_STAT_TEMP [get_bd_pins hbm/DRAM_0_STAT_TEMP] [get_bd_pins misc_status_concat/In0]
-  connect_bd_net -net hbm_DRAM_1_STAT_CATTRIP [get_bd_pins hbm/DRAM_1_STAT_CATTRIP] [get_bd_pins hbm_cattrip_util/Op2]
-  connect_bd_net -net hbm_DRAM_1_STAT_TEMP [get_bd_pins hbm/DRAM_1_STAT_TEMP] [get_bd_pins misc_status_concat/In1]
-  connect_bd_net -net hbm_cattrip_util_Res [get_bd_ports hbm_cattrip] [get_bd_pins hbm_cattrip_util/Res]
-  connect_bd_net -net misc_status_concat_dout [get_bd_pins misc_status/gpio_io_i] [get_bd_pins misc_status_concat/dout]
+  connect_bd_net -net apb_icap_reset_peripheral_aresetn [get_bd_pins apb_icap_reset/peripheral_aresetn] [get_bd_pins hbm/APB_0_PRESET_N] [get_bd_pins hbm/APB_1_PRESET_N]
+  connect_bd_net -net cattrip_util_Res [get_bd_pins cattrip_util/Res] [get_bd_pins cms/interrupt_hbm_cattrip]
+  connect_bd_net -net cms_interrupt_host [get_bd_pins cms/interrupt_host] [get_bd_pins intc/intr]
+  connect_bd_net -net hbm_DRAM_0_STAT_CATTRIP [get_bd_pins cattrip_util/Op1] [get_bd_pins hbm/DRAM_0_STAT_CATTRIP]
+  connect_bd_net -net hbm_DRAM_0_STAT_TEMP [get_bd_pins cms/hbm_temp_1] [get_bd_pins hbm/DRAM_0_STAT_TEMP]
+  connect_bd_net -net hbm_DRAM_1_STAT_CATTRIP [get_bd_pins cattrip_util/Op2] [get_bd_pins hbm/DRAM_1_STAT_CATTRIP]
+  connect_bd_net -net hbm_DRAM_1_STAT_TEMP [get_bd_pins cms/hbm_temp_2] [get_bd_pins hbm/DRAM_1_STAT_TEMP]
+  connect_bd_net -net intc_irq [get_bd_pins intc/irq] [get_bd_pins xdma/usr_irq_req]
   connect_bd_net -net pcie_clk_buf_IBUF_DS_ODIV2 [get_bd_pins pcie_clk_buf/IBUF_DS_ODIV2] [get_bd_pins xdma/sys_clk]
   connect_bd_net -net pcie_clk_buf_IBUF_OUT [get_bd_pins pcie_clk_buf/IBUF_OUT] [get_bd_pins xdma/sys_clk_gt]
-  connect_bd_net -net pcie_rstn_1 [get_bd_ports pcie_rstn] [get_bd_pins apb_icap_reset/ext_reset_in] [get_bd_pins xdma/sys_rst_n]
+  connect_bd_net -net pcie_rstn_1 [get_bd_ports pcie_rstn] [get_bd_pins apb_icap_reset/ext_reset_in] [get_bd_pins shell_clk_wiz/resetn] [get_bd_pins xdma/sys_rst_n]
+  connect_bd_net -net satellite_gpio_0_1 [get_bd_ports satellite_gpio] [get_bd_pins cms/satellite_gpio]
   connect_bd_net -net shell_clk_buffer_IBUF_OUT [get_bd_pins hbm/HBM_REF_CLK_0] [get_bd_pins hbm/HBM_REF_CLK_1] [get_bd_pins shell_clk_buffer/IBUF_OUT] [get_bd_pins shell_clk_wiz/clk_in1]
   connect_bd_net -net shell_clk_wiz_apb_clk [get_bd_pins apb_icap_reset/slowest_sync_clk] [get_bd_pins hbm/APB_0_PCLK] [get_bd_pins hbm/APB_1_PCLK] [get_bd_pins shell_clk_wiz/apb_clk]
   connect_bd_net -net shell_clk_wiz_icap_clk [get_bd_pins hbicap/icap_clk] [get_bd_pins shell_clk_wiz/icap_clk]
   connect_bd_net -net shell_clk_wiz_locked [get_bd_pins apb_icap_reset/dcm_locked] [get_bd_pins shell_clk_wiz/locked]
-  connect_bd_net -net xdma_axi_aclk [get_bd_pins dma_smartconnect/aclk] [get_bd_pins hbicap/s_axi_aclk] [get_bd_pins hbicap/s_axi_mm_aclk] [get_bd_pins hbm/AXI_00_ACLK] [get_bd_pins misc_status/s_axi_aclk] [get_bd_pins shell_smartconnect/aclk] [get_bd_pins sys_mgmt_wiz/s_axi_aclk] [get_bd_pins xdma/axi_aclk]
-  connect_bd_net -net xdma_axi_aresetn [get_bd_pins dma_smartconnect/aresetn] [get_bd_pins hbicap/s_axi_aresetn] [get_bd_pins hbicap/s_axi_mm_aresetn] [get_bd_pins hbm/AXI_00_ARESET_N] [get_bd_pins misc_status/s_axi_aresetn] [get_bd_pins shell_smartconnect/aresetn] [get_bd_pins sys_mgmt_wiz/s_axi_aresetn] [get_bd_pins xdma/axi_aresetn]
+  connect_bd_net -net xdma_axi_aclk [get_bd_pins cms/aclk_ctrl] [get_bd_pins dma_smartconnect/aclk] [get_bd_pins hbicap/s_axi_aclk] [get_bd_pins hbicap/s_axi_mm_aclk] [get_bd_pins hbm/AXI_00_ACLK] [get_bd_pins intc/s_axi_aclk] [get_bd_pins shell_smartconnect/aclk] [get_bd_pins xdma/axi_aclk]
+  connect_bd_net -net xdma_axi_aresetn [get_bd_pins cms/aresetn_ctrl] [get_bd_pins dma_smartconnect/aresetn] [get_bd_pins hbicap/s_axi_aresetn] [get_bd_pins hbicap/s_axi_mm_aresetn] [get_bd_pins hbm/AXI_00_ARESET_N] [get_bd_pins intc/s_axi_aresetn] [get_bd_pins shell_smartconnect/aresetn] [get_bd_pins xdma/axi_aresetn]
 
   # Create address segments
+  assign_bd_address -offset 0x00000000 -range 0x00040000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs cms/s_axi_ctrl/Mem0] -force
   assign_bd_address -offset 0x1000000000000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces xdma/M_AXI] [get_bd_addr_segs hbicap/S_AXI/Mem0] -force
-  assign_bd_address -offset 0x00020000 -range 0x00010000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs hbicap/S_AXI_CTRL/Reg0] -force
+  assign_bd_address -offset 0x00100000 -range 0x00010000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs hbicap/S_AXI_CTRL/Reg0] -force
   assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces xdma/M_AXI] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM00] -force
   assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces xdma/M_AXI] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM01] -force
   assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces xdma/M_AXI] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM02] -force
@@ -464,8 +468,7 @@ proc create_root_design { parentCell } {
   assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces xdma/M_AXI] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM29] -force
   assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces xdma/M_AXI] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM30] -force
   assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces xdma/M_AXI] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM31] -force
-  assign_bd_address -offset 0x00010000 -range 0x00010000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs misc_status/S_AXI/Reg] -force
-  assign_bd_address -offset 0x00000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs sys_mgmt_wiz/S_AXI_LITE/Reg] -force
+  assign_bd_address -offset 0x00040000 -range 0x00010000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs intc/S_AXI/Reg] -force
 
 
   # Restore current instance
