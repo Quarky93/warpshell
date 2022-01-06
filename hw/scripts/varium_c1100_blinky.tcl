@@ -6,9 +6,6 @@ read_verilog [ glob ../hw/src/varium_c1100/blinky/*.v ]
 puts "---- \[Running Synthesis...\] ----------------------------------------------------"
 synth_design -top blinky
 
-puts "---- \[Post Synthesis Utilization\] ----------------------------------------------"
-report_utilization
-
 puts "---- \[Running Pre-Placement Optimization...\] -----------------------------------"
 opt_design
 
@@ -18,20 +15,17 @@ place_design
 puts "---- \[Running Post-Placement Physical Optimization...\] -------------------------"
 phys_opt_design
 
-puts "---- \[Post Placement Utilization\] ----------------------------------------------"
-report_utilization
-
 puts "---- \[Running Routing...\] ------------------------------------------------------"
 route_design
 
 puts "---- \[Post Route Utilization\] --------------------------------------------------"
-report_utilization
+report_utilization -file blinky_post_route_utilization.rpt
 
 puts "---- \[Post Route Timing\] -------------------------------------------------------"
-report_timing_summary
+report_timing_summary -file blinky_post_route_timing.rpt
 
 puts "---- \[Writing Design Checkpoint...\] --------------------------------------------"
-write_checkpoint -force blinky_routed.dcp
+write_checkpoint -force blinky_post_route.dcp
 
 puts "---- \[Writing Bitstream...\] ----------------------------------------------------"
 write_bitstream -force blinky.bit
