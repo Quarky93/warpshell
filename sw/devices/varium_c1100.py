@@ -30,7 +30,7 @@ class VariumC1100():
 
     # -- Sensors --------------------------------------------------------------
     def get_sysmgt_adc(self, offset):
-        data = self.axil_read(self.sysmgt_baseaddr + offset, 4)
+        data = self.axil_read(self.sys_mgmt_baseaddr + offset, 4)
         [x] = struct.unpack('H', data[0:2])
         return x >> 6
     
