@@ -78,4 +78,22 @@ class VariumC1100():
         data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02BC, 4)
         [temp_inst] = struct.unpack("I", data)
         return (temp_inst, temp_avg, temp_max)
+    
+    def get_pcie_12v_power(self):
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02D8, 4)
+        [power_max] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02DC, 4)
+        [power_avg] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02E0, 4)
+        [power_inst] = struct.unpack("I", data)
+        return (power_inst, power_avg, power_max)
+    
+    def get_pcie_3v3_power(self):
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02E4, 4)
+        [power_max] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02E8, 4)
+        [power_avg] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02EC, 4)
+        [power_inst] = struct.unpack("I", data)
+        return (power_inst, power_avg, power_max)
     # -------------------------------------------------------------------------
