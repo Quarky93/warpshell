@@ -15,6 +15,8 @@ class VariumC1100():
         # High Bandwidth ICAP
         self.hbicap_base_addr = 0x0002_0000
 
+        self.initialize_cms()
+
     # -- Shell Bus ------------------------------------------------------------
     def axil_read(self, addr, size):
         return os.pread(self.axil, size, addr)
@@ -32,6 +34,9 @@ class VariumC1100():
     # -------------------------------------------------------------------------
 
     # -- CMS ------------------------------------------------------------------
+    def initialize_cms(self):
+        self.axil_write(self.cms_baseaddr + 0x020000, (1).to_bytes(4, 'little'))
+    
     def get_register_map_id(self):
         data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0000, 4)
         [x] = struct.unpack("I", data)
