@@ -34,6 +34,9 @@ class VariumC1100():
         [x] = struct.unpack('H', data[0:2])
         return x >> 6
     
+    def get_sysmgt_voltage(self, offset):
+        return self.get_sysmgt_adc(offset) * 3.0 / 1024.0
+    
     def get_core_temp(self):
         return self.get_sysmgt_adc(0x400) * 507.6 / 1024.0 - 279.43
 
