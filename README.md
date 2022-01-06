@@ -52,4 +52,7 @@ Same as blinky, find the relevant script in:
 warpshell/hw/scripts
 ```
 
+We must also build and install the [XDMA drivers](https://github.com/Xilinx/dma_ip_drivers):
+Follow the instructions [here](https://github.com/Xilinx/dma_ip_drivers/tree/master/XDMA/linux-kernel).
+
 *Currently all shell versions are in active development and is not generally usable.*
