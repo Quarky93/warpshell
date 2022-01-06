@@ -4,7 +4,7 @@ You must unload the XRT drivers before programming the device, otherwise, your s
 may hang.
 ```sh
 # blacklist kernel modules
-sudo sh -c "echo $'blacklist xclmgmt\nblacklist xocl' > /etc/modprobe.d/blacklist-xrt.conf"
+sudo sh -c "echo 'blacklist xclmgmt\nblacklist xocl' > /etc/modprobe.d/blacklist-xrt.conf"
 # remove currently loaded modules
 sudo modprobe -r xclmgmt xocl
 ```
