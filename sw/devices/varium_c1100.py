@@ -42,8 +42,7 @@ class VariumC1100():
 
     def get_vccint(self):
         voltage = self.get_sysmgt_voltage(0x404)
-        current = self.get_sysmgt_adc(0x454) * 10.0 / 1024.0
-        return (voltage, current)
+        return (voltage, None)
     
     def get_vccaux(self):
         voltage = self.get_sysmgt_voltage(0x408)
@@ -51,8 +50,7 @@ class VariumC1100():
     
     def get_vccbrm(self):
         voltage = self.get_sysmgt_voltage(0x418)
-        current = self.get_sysmgt_adc(0x474) * 1.60 / 1024.0
-        return (voltage, current)
+        return (voltage, None)
     
     def get_hbm_temp(self):
         data = self.axil_read(self.gpio_baseaddr, 4)
