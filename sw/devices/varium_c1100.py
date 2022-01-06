@@ -33,7 +33,7 @@ class VariumC1100():
 
     # -- Sensors --------------------------------------------------------------
     def get_fpga_temp(self):
-        data = self.axi_read(self.cms_baseaddr + 0x028000 + 0x0100, 4)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0100, 4)
         [x] = struct.unpack("I", data)
         return x
     # -------------------------------------------------------------------------
