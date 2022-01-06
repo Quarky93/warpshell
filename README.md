@@ -16,9 +16,9 @@ sudo rm /etc/modprobe.d/blacklist-xrt.conf
 Then power cycle the computer. (power off, wait 5 seconds, power on)
 
 ## Board Support
-| board        | blinky | xdma_gen3_x1_minimal | xdma_gen3_x4_minimal |
+| board        | blinky | xdma_gen4_x1_minimal | xdma_gen4_x4_minimal |
 |--------------|--------|----------------------|----------------------|
-| Varium C1100 | &#9989;|                      |                      |
+| Varium C1100 | &#9989;| &#9989;              |                      |
 
 ## Blinky Build Instructions (Linux)
 
@@ -39,3 +39,17 @@ Build blinky.
 ```sh
 vivado -mode batch -source ../hw/scripts/varium_c1100_blinky.tcl
 ```
+
+A bitstream file is generated:
+```
+blinky.bit
+```
+Program the device using Vivado hardware manager.
+
+## Shell Build Instructions
+Same as blinky, find the relevant script in:
+```sh
+warpshell/hw/scripts
+```
+
+*Currently all shell versions are in active development and is not generally usable.*
