@@ -36,14 +36,13 @@ class VariumC1100():
     # -- CMS ------------------------------------------------------------------
     def initialize_cms(self):
         self.axil_write(self.cms_baseaddr + 0x020000, (1).to_bytes(4, 'little'))
-    
-    def get_register_map_id(self):
-        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0000, 4)
-        [x] = struct.unpack("I", data)
-        return x
 
     def get_fpga_temp(self):
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x00F8, 4)
+        [temp_max] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x00FC, 4)
+        [temp_avg] = struct.unpack("I", data)
         data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0100, 4)
-        [x] = struct.unpack("I", data)
-        return x
+        [temp_inst] = struct.unpack("I", data)
+        return (temp_inst, temp_avg, temp_max)
     # -------------------------------------------------------------------------
