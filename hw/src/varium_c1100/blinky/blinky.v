@@ -1,7 +1,7 @@
 module blinky (
     input SYSCLK2_N,
     input SYSCLK2_P,
-    output QSFP28_0_ACTIVITY_LED,
+    output QSFP28_0_ACTIVITY_LED
 );
 wire sysclk2;
 reg [28:0] counter;
