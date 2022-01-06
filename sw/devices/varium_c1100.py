@@ -31,7 +31,12 @@ class VariumC1100():
         return os.pwrite(self.h2c, data, addr)
     # -------------------------------------------------------------------------
 
-    # -- Sensors --------------------------------------------------------------
+    # -- CMS ------------------------------------------------------------------
+    def get_register_map_id(self):
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0000, 4)
+        [x] = struct.unpack("I", data)
+        return x
+
     def get_fpga_temp(self):
         data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0100, 4)
         [x] = struct.unpack("I", data)
