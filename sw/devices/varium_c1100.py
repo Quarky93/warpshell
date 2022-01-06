@@ -39,12 +39,12 @@ class VariumC1100():
         self.axil_write(self.cms_baseaddr + 0x020000, (1).to_bytes(4, 'little'))
 
     def get_cms_control_reg(self):
-        data = self.axil_read(self.cms_baseaddr + 0x020000 + 0x0018, 4)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0018, 4)
         [x] = struct.unpack("I", data)
         return x
     
     def set_cms_control_reg(self, data):
-        data = self.axil_write(self.cms_baseaddr + 0x020000 + 0x0018, data)
+        data = self.axil_write(self.cms_baseaddr + 0x028000 + 0x0018, data)
 
     def enable_hbm_temp_monitoring(self):
         ctrl_reg = self.get_cms_control_reg()
