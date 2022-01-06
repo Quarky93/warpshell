@@ -45,4 +45,24 @@ class VariumC1100():
         data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0100, 4)
         [temp_inst] = struct.unpack("I", data)
         return (temp_inst, temp_avg, temp_max)
+    
+    def get_hbm0_temp(self):
+        # CMS calls this HBM_TEMP1
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0260, 4)
+        [temp_max] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0264, 4)
+        [temp_avg] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0268, 4)
+        [temp_inst] = struct.unpack("I", data)
+        return (temp_inst, temp_avg, temp_max)
+    
+    def get_hbm1_temp(self):
+        # CMS calls this HBM_TEMP2
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02B4, 4)
+        [temp_max] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02B8, 4)
+        [temp_avg] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02BC, 4)
+        [temp_inst] = struct.unpack("I", data)
+        return (temp_inst, temp_avg, temp_max)
     # -------------------------------------------------------------------------
