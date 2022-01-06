@@ -79,30 +79,21 @@ class VariumC1100():
         [temp_inst] = struct.unpack("I", data)
         return (temp_inst, temp_avg, temp_max)
     
-    def get_pcie_12v_power(self):
-        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02D8, 4)
-        [power_max] = struct.unpack("I", data)
-        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02DC, 4)
-        [power_avg] = struct.unpack("I", data)
-        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02E0, 4)
-        [power_inst] = struct.unpack("I", data)
-        return (power_inst, power_avg, power_max)
+    def get_vccint_voltagte(self):
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x00E0, 4)
+        [voltage_max] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x00E4, 4)
+        [voltage_avg] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x00E8, 4)
+        [voltage_inst] = struct.unpack("I", data)
+        return (voltage_inst, voltage_avg, voltage_max)
     
-    def get_pcie_3v3_power(self):
-        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02E4, 4)
-        [power_max] = struct.unpack("I", data)
-        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02E8, 4)
-        [power_avg] = struct.unpack("I", data)
-        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02EC, 4)
-        [power_inst] = struct.unpack("I", data)
-        return (power_inst, power_avg, power_max)
-    
-    def get_vccint_power(self):
-        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0374, 4)
-        [power_max] = struct.unpack("I", data)
-        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0378, 4)
-        [power_avg] = struct.unpack("I", data)
-        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x037C, 4)
-        [power_inst] = struct.unpack("I", data)
-        return (power_inst, power_avg, power_max)
+    def get_vccint_current(self):
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x00EC, 4)
+        [current_max] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x00F0, 4)
+        [current_avg] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x00F4, 4)
+        [current_inst] = struct.unpack("I", data)
+        return (current_inst, current_avg, current_max)
     # -------------------------------------------------------------------------
