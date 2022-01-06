@@ -16,6 +16,7 @@ class VariumC1100():
         self.hbicap_base_addr = 0x0002_0000
 
         self.initialize_cms()
+        self.enable_hbm_temp_monitoring()
 
     # -- Shell Bus ------------------------------------------------------------
     def axil_read(self, addr, size):
@@ -36,6 +37,18 @@ class VariumC1100():
     # -- CMS ------------------------------------------------------------------
     def initialize_cms(self):
         self.axil_write(self.cms_baseaddr + 0x020000, (1).to_bytes(4, 'little'))
+
+    def get_cms_control_reg(self):
+        data = self.axil_read(self.cms_baseaddr + 0x020000 + 0x0018, 4)
+        [x] = struct.unpack("I", data)
+        return x
+    
+    def set_cms_control_reg(self, data):
+        data = self.axil_write(self.cms_baseaddr + 0x020000 + 0x0018, data)
+
+    def enable_hbm_temp_monitoring(self):
+        ctrl_reg = self.get_cms_control_reg()
+        self.set_cms_control_reg(ctrl_reg | 1 << 27)
 
     def get_fpga_temp(self):
         data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x00F8, 4)
