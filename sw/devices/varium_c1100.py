@@ -48,7 +48,7 @@ class VariumC1100():
 
     def enable_hbm_temp_monitoring(self):
         ctrl_reg = self.get_cms_control_reg()
-        self.set_cms_control_reg(ctrl_reg | 1 << 27)
+        self.set_cms_control_reg((ctrl_reg | 1 << 27).to_bytes(4, 'little'))
 
     def get_fpga_temp(self):
         data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x00F8, 4)
