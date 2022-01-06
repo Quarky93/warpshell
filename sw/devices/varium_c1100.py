@@ -53,7 +53,7 @@ class VariumC1100():
         return (voltage, None)
     
     def get_hbm_temp(self):
-        data = self.axil_read(self.gpio_baseaddr, 4)
+        data = self.axil_read(self.misc_status_baseaddr, 4)
         [x] = struct.unpack('H', data[0:2])
         return (x >> 7, x & 0x7f)
     # -------------------------------------------------------------------------
