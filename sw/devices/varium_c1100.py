@@ -96,4 +96,13 @@ class VariumC1100():
         data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x02EC, 4)
         [power_inst] = struct.unpack("I", data)
         return (power_inst, power_avg, power_max)
+    
+    def get_vccint_power(self):
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0374, 4)
+        [power_max] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0378, 4)
+        [power_avg] = struct.unpack("I", data)
+        data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x037C, 4)
+        [power_inst] = struct.unpack("I", data)
+        return (power_inst, power_avg, power_max)
     # -------------------------------------------------------------------------

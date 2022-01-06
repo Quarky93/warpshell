@@ -13,3 +13,4 @@ print("hbm1 temp (inst, avg, max): " + str(dev.get_hbm1_temp()))
 
 print("pcie 12v power (inst, avg, max): " + str(dev.get_pcie_12v_power()))
 print("pcie 3.3v power (inst, avg, max): " + str(dev.get_pcie_3v3_power()))
+print("vccint power (inst, avg, max): " + str(dev.get_vccint_power()))
