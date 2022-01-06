@@ -10,3 +10,6 @@ sleep(1)
 print("fpga temp (inst, avg, max): " + str(dev.get_fpga_temp()))
 print("hbm0 temp (inst, avg, max): " + str(dev.get_hbm0_temp()))
 print("hbm1 temp (inst, avg, max): " + str(dev.get_hbm1_temp()))
+
+print("vccint voltage (inst, avg, max): " + str(dev.get_vccint_voltagte()))
+print("vccint current (inst, avg, max): " + str(dev.get_vccint_current()))
