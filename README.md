@@ -61,6 +61,6 @@ Follow the instructions [here](https://github.com/Xilinx/dma_ip_drivers/tree/mas
 Generate a Vivado project:
 ```sh
 cd build
-vivado -mode batch -source ../hw/scripts/varium_c1100_xdma_gen4_x1_minimal_custom.tcl
+vivado -mode batch -source ../hw/scripts/varium_c1100_xdma_gen4_x1_custom.tcl
 ```
 A project will be generated in the build directory, open this with Vivado.
