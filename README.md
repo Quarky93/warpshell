@@ -56,3 +56,11 @@ We must also build and install the [XDMA drivers](https://github.com/Xilinx/dma_
 Follow the instructions [here](https://github.com/Xilinx/dma_ip_drivers/tree/master/XDMA/linux-kernel).
 
 *Currently all shell versions are in active development and is not generally usable.*
+
+## Customize the Shell
+Generate a Vivado project:
+```sh
+cd build
+vivado -mode batch -source ../hw/scripts/varium_c1100_xdma_gen4_x1_minimal_custom.tcl
+```
+A project will be generated in the build directory, open this with Vivado.
