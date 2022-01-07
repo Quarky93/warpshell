@@ -1,5 +1,6 @@
 import os
 import struct
+from time import sleep
 
 class VariumC1100():
     def __init__(self, id):
@@ -13,7 +14,7 @@ class VariumC1100():
         # Interrupt Controller
         self.intc_baseaddr = 0x0001_0000
         # High Bandwidth ICAP
-        self.hbicap_base_addr = 0x0002_0000
+        self.hbicap_base_addr = 0x0010_0000
 
         self.initialize_cms()
         self.enable_hbm_temp_monitoring()
@@ -37,6 +38,7 @@ class VariumC1100():
     # -- CMS ------------------------------------------------------------------
     def initialize_cms(self):
         self.axil_write(self.cms_baseaddr + 0x020000, (1).to_bytes(4, 'little'))
+        sleep(0.2)
 
     def get_cms_control_reg(self):
         data = self.axil_read(self.cms_baseaddr + 0x028000 + 0x0018, 4)
