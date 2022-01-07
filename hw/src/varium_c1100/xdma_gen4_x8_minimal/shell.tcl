@@ -375,14 +375,14 @@ proc create_root_design { parentCell } {
   # Create instance: xdma, and set properties
   set xdma [ create_bd_cell -type ip -vlnv xilinx.com:ip:xdma:4.1 xdma ]
   set_property -dict [ list \
-   CONFIG.PF0_DEVICE_ID_mqdma {9038} \
-   CONFIG.PF0_SRIOV_VF_DEVICE_ID {A038} \
-   CONFIG.PF1_SRIOV_VF_DEVICE_ID {A138} \
-   CONFIG.PF2_DEVICE_ID_mqdma {9238} \
-   CONFIG.PF2_SRIOV_VF_DEVICE_ID {A238} \
-   CONFIG.PF3_DEVICE_ID_mqdma {9338} \
-   CONFIG.PF3_SRIOV_VF_DEVICE_ID {A338} \
-   CONFIG.axi_data_width {256_bit} \
+   CONFIG.PF0_DEVICE_ID_mqdma {9048} \
+   CONFIG.PF0_SRIOV_VF_DEVICE_ID {A048} \
+   CONFIG.PF1_SRIOV_VF_DEVICE_ID {A148} \
+   CONFIG.PF2_DEVICE_ID_mqdma {9248} \
+   CONFIG.PF2_SRIOV_VF_DEVICE_ID {A248} \
+   CONFIG.PF3_DEVICE_ID_mqdma {9348} \
+   CONFIG.PF3_SRIOV_VF_DEVICE_ID {A348} \
+   CONFIG.axi_data_width {512_bit} \
    CONFIG.axilite_master_en {true} \
    CONFIG.axilite_master_size {64} \
    CONFIG.axisten_freq {250} \
@@ -393,13 +393,15 @@ proc create_root_design { parentCell } {
    CONFIG.pf0_class_code {120000} \
    CONFIG.pf0_class_code_base {12} \
    CONFIG.pf0_class_code_interface {00} \
-   CONFIG.pf0_device_id {9038} \
-   CONFIG.pf0_msix_cap_pba_bir {BAR_1} \
-   CONFIG.pf0_msix_cap_table_bir {BAR_1} \
+   CONFIG.pf0_device_id {9048} \
+   CONFIG.pf0_msix_cap_pba_bir {BAR_3:2} \
+   CONFIG.pf0_msix_cap_table_bir {BAR_3:2} \
    CONFIG.pf0_sub_class_interface_menu {Unknown} \
-   CONFIG.pl_link_cap_max_link_speed {8.0_GT/s} \
+   CONFIG.pl_link_cap_max_link_speed {16.0_GT/s} \
    CONFIG.pl_link_cap_max_link_width {X8} \
-   CONFIG.plltype {QPLL1} \
+   CONFIG.plltype {QPLL0} \
+   CONFIG.xdma_pcie_64bit_en {true} \
+   CONFIG.xdma_pcie_prefetchable {true} \
  ] $xdma
 
   # Create interface connections

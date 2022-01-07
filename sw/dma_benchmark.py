@@ -19,6 +19,7 @@ throughput = size / time
 print(str(time) + " s")
 print(str(throughput / 1024 / 1024) + " MB/s")
 
+data = bytearray(size)
 print("Reading...")
 t_start = perf_counter()
 data = dev.axi_read(hbm_base_addr, size)
