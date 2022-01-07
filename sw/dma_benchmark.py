@@ -1,14 +1,14 @@
-import os
+import random
 from time import perf_counter
 from devices.varium_c1100 import VariumC1100
 
 dev = VariumC1100(0)
 
 hbm_base_addr = 0x0000_0000_0000_0000
-size = 8 * 1024 * 1024 * 1024
+size = 2 * 1024 * 1024 * 1024
 
 print("Generate Random Payload...")
-payload = os.urandom(size)
+payload = bytearray(random.getrandbits(8) for _ in range(size))
 
 print("Writing 8GB...")
 t_start = perf_counter()
@@ -31,4 +31,3 @@ if data == payload:
     print("Memory Integrity Check Passed!")
 else:
     print("Memory Integrity Check Failed!")
-
