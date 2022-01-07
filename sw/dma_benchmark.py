@@ -1,16 +1,16 @@
-import random
+import os
 from time import perf_counter
 from devices.varium_c1100 import VariumC1100
 
 dev = VariumC1100(0)
 
 hbm_base_addr = 0x0000_0000_0000_0000
-size = 2 * 1024 * 1024 * 1024
+size = 1 * 1024 * 1024 * 1024
 
 print("Generate Random Payload...")
-payload = bytearray(random.getrandbits(8) for _ in range(size))
+payload = os.urandom(size)
 
-print("Writing 8GB...")
+print("Writing 1GB...")
 t_start = perf_counter()
 dev.axi_write(hbm_base_addr, payload)
 t_end = perf_counter()
