@@ -1,8 +1,10 @@
 create_project -in_memory -part xcu55n-fsvh2892-2l-e
 
-read_xdc [ glob ../hw/src/varium_c1100/xdma_gen4_x1_minimal/*.xdc ]
+set script_dir [ file dirname [ file normalize [ info script ] ] ]
 
-source ../hw/src/varium_c1100/xdma_gen4_x1_minimal/shell.tcl
+read_xdc [ glob $script_dir/../src/varium_c1100/xdma_gen4_x1_minimal/*.xdc ]
+
+source $script_dir/../src/varium_c1100/xdma_gen4_x1_minimal/shell.tcl
 make_wrapper -top -import -files [get_files shell.bd]
 generate_target all [get_files shell.bd]
 
