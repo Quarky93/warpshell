@@ -1,14 +1,16 @@
 use std::fs::File;
-use std::io::SeekFrom;
+use std::io::{Read, Seek, SeekFrom, Write};
 
 pub enum Error {
+    ShellSeekFailed,
     ShellReadFailed,
     ShellWriteFailed,
+    DmaSeekFailed,
     DmaReadFailed,
     DmaWriteFailed,
 }
 
-pub type Result<T> = Result<T, Error>;
+pub type Result<T> = std::result::Result<T, Error>;
 
 pub struct XdmaDevice {
     id: u32,
@@ -24,36 +26,42 @@ pub struct XdmaDevice {
 }
 
 pub trait XdmaAccess {
-    fn shell_read(&self, buf: &mut [u8], offset: u64) -> Result<()>;
-    fn shell_write(&self, buf: &[u8], offset: u64) -> Result<()>;
-    fn dma_read(&self, buf: &mut [u8], offset: u64) -> Result<()>;
-    fn dma_write(&self, buf: &[u8], offset: u64) -> Result<()>;
+    fn shell_read(&mut self, buf: &mut [u8], offset: u64) -> Result<()>;
+    fn shell_write(&mut self, buf: &[u8], offset: u64) -> Result<()>;
+    fn dma_read(&mut self, buf: &mut [u8], offset: u64) -> Result<()>;
+    fn dma_write(&mut self, buf: &[u8], offset: u64) -> Result<()>;
 }
 
 impl XdmaAccess for XdmaDevice {
-    fn shell_read(&self, buf: &mut [u8], offset: u64) -> Result<()> {
-        self.user.seek(SeekFrom::Start(offset));
+    fn shell_read(&mut self, buf: &mut [u8], offset: u64) -> Result<()> {
         self.user
-            .read_exact(&mut buf)
+            .seek(SeekFrom::Start(offset))
+            .map_err(|_| Error::ShellSeekFailed)?;
+        self.user
+            .read_exact(buf)
             .map_err(|_| Error::ShellReadFailed)
     }
 
-    fn shell_write(&self, buf: &[u8], offset: u64) -> Result<()> {
-        self.user.seek(SeekFrom::Start(offset));
+    fn shell_write(&mut self, buf: &[u8], offset: u64) -> Result<()> {
+        self.user
+            .seek(SeekFrom::Start(offset))
+            .map_err(|_| Error::ShellSeekFailed)?;
         self.user
             .write_all(buf)
             .map_err(|_| Error::ShellWriteFailed)
     }
 
-    fn dma_read(&self, buf: &mut [u8], offset: u64) -> Result<()> {
-        self.user.seek(SeekFrom::Start(offset));
+    fn dma_read(&mut self, buf: &mut [u8], offset: u64) -> Result<()> {
         self.user
-            .read_exact(&mut buf)
-            .map_err(|_| Error::DmaReadFailed)
+            .seek(SeekFrom::Start(offset))
+            .map_err(|_| Error::DmaSeekFailed)?;
+        self.user.read_exact(buf).map_err(|_| Error::DmaReadFailed)
     }
 
-    fn dma_write(&self, buf: &[u8], offset: u64) -> Result<()> {
-        self.user.seek(SeekFrom::Start(offset));
-        self.user.write_all(buf).map_err(|_| Error::UserWriteFailed)
+    fn dma_write(&mut self, buf: &[u8], offset: u64) -> Result<()> {
+        self.user
+            .seek(SeekFrom::Start(offset))
+            .map_err(|_| Error::DmaSeekFailed)?;
+        self.user.write_all(buf).map_err(|_| Error::DmaWriteFailed)
     }
 }
