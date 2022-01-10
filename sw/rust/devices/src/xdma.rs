@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom, Write};
 
+#[derive(Debug)]
 pub enum Error {
     ShellSeekFailed,
     ShellReadFailed,
@@ -13,16 +14,16 @@ pub enum Error {
 pub type Result<T> = std::result::Result<T, Error>;
 
 pub struct XdmaDevice {
-    id: u32,
-    user: File,
-    host_to_card: File,
-    card_to_host: File,
+    pub id: u32,
+    pub user: File,
+    pub host_to_card: File,
+    pub card_to_host: File,
     /// Card Management Solution subsystem
-    cms_baseaddr: u32,
+    pub cms_base_addr: u32,
     /// Interrupt Controller
-    intc_baseaddr: u32,
+    pub intc_base_addr: u32,
     /// High Bandwidth Internal Configuration Access Port
-    hbicap_baseaddr: u32,
+    pub hbicap_base_addr: u32,
 }
 
 pub trait XdmaAccess {
