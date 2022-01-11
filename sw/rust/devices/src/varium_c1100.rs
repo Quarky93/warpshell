@@ -1,6 +1,9 @@
 use crate::xdma::XdmaDevice;
 use std::fs::File;
 
+pub const HBM_BASE_ADDR: u64 = 0;
+pub const HBM_SIZE: u64 = 8 * 1024 * 1024 * 1024;
+
 pub struct VariumC1100 {
     pub device: XdmaDevice,
 }

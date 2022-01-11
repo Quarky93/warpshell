@@ -1,14 +1,14 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use packed_simd_2::Simd;
 use std::time::Duration;
-use warp_devices::varium_c1100::*;
-use warp_devices::xdma::XdmaOps;
+use warp_devices::varium_c1100::{VariumC1100, HBM_BASE_ADDR};
+use warp_devices::xdma::{DmaBuffer, XdmaOps};
 
 const PAYLOAD_LEN: usize = 1 * 1024 * 1024 * 1024;
 const CHUNK_LEN: usize = 64;
-const HBM_BASE_ADDR: u64 = 0;
 
-fn fill_random(buf: &mut AlignedBytes) {
+fn random_payload() -> DmaBuffer {
+    let mut buf: DmaBuffer = DmaBuffer(Vec::with_capacity(PAYLOAD_LEN));
     let mut chunk: [u8; CHUNK_LEN] = [0; CHUNK_LEN];
     for _ in 0..PAYLOAD_LEN / CHUNK_LEN {
         // Fill a chunk of bytes with random data.
@@ -17,39 +17,53 @@ fn fill_random(buf: &mut AlignedBytes) {
         // Append the chunk to the payload.
         buf.0.extend_from_slice(&chunk)
     }
+    buf
 }
-
-#[repr(align(4096))]
-struct AlignedBytes(pub Vec<u8>);
 
 fn write(c: &mut Criterion) {
     let mut varium = VariumC1100::new().expect("cannot construct device");
-    let mut buf: AlignedBytes = AlignedBytes(Vec::with_capacity(PAYLOAD_LEN));
-    fill_random(&mut buf);
-
-    c.bench_function(&format!("write {} bytes", buf.0.len()), |b| {
-        b.iter(|| {
-            varium
-                .device
-                .dma_write(buf.0.as_slice(), HBM_BASE_ADDR)
-                .expect("write failed")
-        })
-    });
+    let buf = random_payload();
+    let bench_name = format!("write {} bytes", buf.0.len());
+    let target_time = Duration::from_secs(12);
+    let mut group = c.benchmark_group(&format!(
+        "{} with target time {:?}",
+        bench_name, target_time
+    ));
+    group.measurement_time(target_time);
+    group.sample_size(50);
+    group.bench_function(&bench_name, |b| b.iter(|| write_payload(&mut varium, &buf)));
+    group.finish();
 }
 
 fn read(c: &mut Criterion) {
     let varium = VariumC1100::new().expect("cannot construct device");
-    let mut buf: AlignedBytes = AlignedBytes(Vec::with_capacity(PAYLOAD_LEN));
-    fill_random(&mut buf);
+    let mut buf = random_payload();
+    let bench_name = format!("read {} bytes", buf.0.len());
+    let target_time = Duration::from_secs(12);
+    let mut group = c.benchmark_group(&format!(
+        "{} with target time {:?}",
+        bench_name, target_time
+    ));
+    group.measurement_time(target_time);
+    group.sample_size(50);
+    group.bench_function(&bench_name, |b| b.iter(|| read_payload(&varium, &mut buf)));
+    group.finish();
+}
 
-    c.bench_function(&format!("read {} bytes", buf.0.len()), |b| {
-        b.iter(|| {
-            varium
-                .device
-                .dma_read(buf.0.as_mut_slice(), HBM_BASE_ADDR)
-                .expect("read failed")
-        })
-    });
+#[inline]
+fn write_payload(varium: &mut VariumC1100, buf: &DmaBuffer) {
+    varium
+        .device
+        .dma_write(buf, HBM_BASE_ADDR)
+        .expect("write failed");
+}
+
+#[inline]
+fn read_payload(varium: &VariumC1100, buf: &mut DmaBuffer) {
+    varium
+        .device
+        .dma_read(buf, HBM_BASE_ADDR)
+        .expect("read failed");
 }
 
 criterion_group!(benches, write, read);
