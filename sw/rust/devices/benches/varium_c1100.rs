@@ -10,7 +10,7 @@ const HBM_BASE_ADDR: u64 = 0;
 struct AlignedBytes(pub Vec<u8>);
 
 fn write(c: &mut Criterion) {
-    let mut varium = VariumC1100::new();
+    let mut varium = VariumC1100::new().expect("cannot construct device");
     let mut buf: AlignedBytes = AlignedBytes(Vec::with_capacity(BENCH_PAYLOAD_LEN));
 
     for _ in 0..BENCH_PAYLOAD_LEN {
@@ -30,7 +30,7 @@ fn write(c: &mut Criterion) {
 }
 
 fn read(c: &mut Criterion) {
-    let mut varium = VariumC1100::new();
+    let mut varium = VariumC1100::new().expect("cannot construct device");
     let mut buf: AlignedBytes = AlignedBytes(Vec::with_capacity(BENCH_PAYLOAD_LEN));
 
     c.bench_function("read", |b| {

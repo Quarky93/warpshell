@@ -13,10 +13,14 @@ pub enum Error {
 pub type Result<T> = std::result::Result<T, Error>;
 
 pub struct XdmaDevice {
+    /// Device ID
     pub id: u32,
-    pub user: String,
-    pub host_to_card: String,
-    pub card_to_host: String,
+    /// User character device
+    pub user_cdev: File,
+    /// Host to card character device
+    pub h2c_cdev: File,
+    /// Card to host character device
+    pub c2h_cdev: File,
     /// Card Management Solution subsystem
     pub cms_base_addr: u32,
     /// Interrupt Controller
@@ -27,34 +31,34 @@ pub struct XdmaDevice {
 
 pub trait XdmaOps {
     fn shell_read(&self, buf: &mut [u8], offset: u64) -> Result<()>;
-    fn shell_write(&self, buf: &[u8], offset: u64) -> Result<()>;
+    fn shell_write(&mut self, buf: &[u8], offset: u64) -> Result<()>;
     fn dma_read(&self, buf: &mut [u8], offset: u64) -> Result<()>;
-    fn dma_write(&self, buf: &[u8], offset: u64) -> Result<()>;
+    fn dma_write(&mut self, buf: &[u8], offset: u64) -> Result<()>;
 }
 
 impl XdmaOps for XdmaDevice {
     fn shell_read(&self, buf: &mut [u8], offset: u64) -> Result<()> {
-        let file = File::open(&self.user).map_err(Error::CannotOpenFile)?;
-        file.read_exact_at(buf, offset)
+        self.user_cdev
+            .read_exact_at(buf, offset)
             .map_err(|_| Error::ShellReadFailed)
     }
 
-    fn shell_write(&self, buf: &[u8], offset: u64) -> Result<()> {
-        let file = File::open(&self.user).map_err(Error::CannotOpenFile)?;
-        file.write_all_at(buf, offset)
+    fn shell_write(&mut self, buf: &[u8], offset: u64) -> Result<()> {
+        self.user_cdev
+            .write_all_at(buf, offset)
             .map_err(|_| Error::ShellWriteFailed)
     }
 
     fn dma_read(&self, buf: &mut [u8], offset: u64) -> Result<()> {
-        let file = File::open(&self.card_to_host).map_err(Error::CannotOpenFile)?;
-        file.read_exact_at(buf, offset)
+        self.c2h_cdev
+            .read_exact_at(buf, offset)
             .map_err(|_| Error::DmaReadFailed)
     }
 
-    fn dma_write(&self, buf: &[u8], offset: u64) -> Result<()> {
-        let file = File::open(&self.host_to_card).map_err(Error::CannotOpenFile)?;
-        file.write_all_at(buf, offset)
-            .map_err(|e| Error::DmaWriteFailed)
+    fn dma_write(&mut self, buf: &[u8], offset: u64) -> Result<()> {
+        self.h2c_cdev
+            .write_all_at(buf, offset)
+            .map_err(|_| Error::DmaWriteFailed)
     }
 }
 
@@ -63,7 +67,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn write_all() {
+    fn file_write_all_at() {
         let n: u64 = rand::random();
         let f = File::create(format!("/tmp/xdma-test-{:x}", n)).expect("cannot create file");
         let buf = vec![b'A', b'B', b'C'];
