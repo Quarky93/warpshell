@@ -1,19 +1,19 @@
 use std::fs::File;
+use std::io::Error as IoError;
 use std::os::unix::fs::FileExt;
 
 /// Memory alignment for optimal performance of DMA reads and writes.
 pub const DMA_ALIGNMENT: u64 = 4096;
 
+pub type Result<T> = std::result::Result<T, Error>;
+
 #[derive(Debug)]
 pub enum Error {
-    CannotOpenFile(std::io::Error),
-    ShellReadFailed,
-    ShellWriteFailed,
-    DmaReadFailed,
-    DmaWriteFailed,
+    ShellReadFailed(IoError),
+    ShellWriteFailed(IoError),
+    DmaReadFailed(IoError),
+    DmaWriteFailed(IoError),
 }
-
-pub type Result<T> = std::result::Result<T, Error>;
 
 #[repr(align(4096))]
 pub struct DmaBuffer(pub Vec<u8>);
@@ -27,8 +27,6 @@ pub struct XdmaDevice {
     pub h2c_cdev: File,
     /// Card to host character device
     pub c2h_cdev: File,
-    /// Card Management Solution subsystem
-    pub cms_base_addr: u32,
     /// Interrupt Controller
     pub intc_base_addr: u32,
     /// High Bandwidth Internal Configuration Access Port
@@ -46,25 +44,25 @@ impl XdmaOps for XdmaDevice {
     fn shell_read(&self, buf: &mut [u8], offset: u64) -> Result<()> {
         self.user_cdev
             .read_exact_at(buf, offset)
-            .map_err(|_| Error::ShellReadFailed)
+            .map_err(Error::ShellReadFailed)
     }
 
     fn shell_write(&mut self, buf: &[u8], offset: u64) -> Result<()> {
         self.user_cdev
             .write_all_at(buf, offset)
-            .map_err(|_| Error::ShellWriteFailed)
+            .map_err(Error::ShellWriteFailed)
     }
 
     fn dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<()> {
         self.c2h_cdev
             .read_exact_at(buf.0.as_mut_slice(), offset)
-            .map_err(|_| Error::DmaReadFailed)
+            .map_err(Error::DmaReadFailed)
     }
 
     fn dma_write(&mut self, buf: &DmaBuffer, offset: u64) -> Result<()> {
         self.h2c_cdev
             .write_all_at(buf.0.as_slice(), offset)
-            .map_err(|_| Error::DmaWriteFailed)
+            .map_err(Error::DmaWriteFailed)
     }
 }
 

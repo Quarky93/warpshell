@@ -1,6 +1,7 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use packed_simd_2::Simd;
 use std::time::Duration;
+use warp_devices::cms::{CardMgmtSys, CmsReg};
 use warp_devices::varium_c1100::{VariumC1100, HBM_BASE_ADDR};
 use warp_devices::xdma::{DmaBuffer, XdmaOps};
 
@@ -52,19 +53,21 @@ fn read(c: &mut Criterion) {
 
 #[inline]
 fn write_payload(varium: &mut VariumC1100, buf: &DmaBuffer) {
-    varium
-        .device
-        .dma_write(buf, HBM_BASE_ADDR)
-        .expect("write failed");
+    varium.dma_write(buf, HBM_BASE_ADDR).expect("write failed");
 }
 
 #[inline]
 fn read_payload(varium: &VariumC1100, buf: &mut DmaBuffer) {
-    varium
-        .device
-        .dma_read(buf, HBM_BASE_ADDR)
-        .expect("read failed");
+    varium.dma_read(buf, HBM_BASE_ADDR).expect("read failed");
 }
 
-criterion_group!(benches, write, read);
+fn get_fpga_temp_inst(c: &mut Criterion) {
+    let mut varium = VariumC1100::new().expect("cannot construct device");
+    varium.init_cms().expect("cannot initialise CMS");
+    c.bench_function("get instant FPGA temperature", |b| {
+        b.iter(|| varium.get_cms_reg(CmsReg::FpgaTempInst))
+    });
+}
+
+criterion_group!(benches, write, read, get_fpga_temp_inst);
 criterion_main!(benches);
