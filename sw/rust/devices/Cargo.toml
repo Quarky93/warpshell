@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+enum-iterator = "0.7"
+enum-iterator-derive = "0.7"
 
 [dev-dependencies]
 criterion = "0.3"
@@ -13,3 +15,6 @@ rand = { version = "0.8.4", features = ["simd_support"] }
 [[bench]]
 name = "varium_c1100"
 harness = false
+
+[[example]]
+name = "cms_regs"

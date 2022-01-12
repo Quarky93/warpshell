@@ -35,3 +35,8 @@ also contains the user who is running the benchmarks.
 - `cargo install cargo-criterion` to install the Cargo Criterion subcommand
 
 - `cargo criterion --output-format verbose` to build and run benchmarks
+
+
+## Examples
+
+- `cargo run --example cms_regs` to read CMS register values

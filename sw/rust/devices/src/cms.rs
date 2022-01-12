@@ -1,4 +1,5 @@
 use crate::xdma::{Error as XdmaError, XdmaOps};
+use enum_iterator_derive::IntoEnumIterator;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -8,6 +9,7 @@ pub enum Error {
 }
 
 /// CMS register offsets
+#[derive(Copy, Clone, Debug, IntoEnumIterator, PartialEq)]
 pub enum CmsReg {
     Init = 0x2_0000,
     Control = 0x2_8018,
