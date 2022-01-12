@@ -7,7 +7,8 @@ edition = "2021"
 
 [dev-dependencies]
 criterion = "0.3"
-rand = "0.8"
+packed_simd_2 = "0.3.5"
+rand = { version = "0.8.4", features = ["simd_support"] }
 
 [[bench]]
 name = "varium_c1100"

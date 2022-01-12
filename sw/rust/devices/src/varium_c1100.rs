@@ -1,6 +1,9 @@
 use crate::xdma::XdmaDevice;
 use std::fs::File;
 
+pub const HBM_BASE_ADDR: u64 = 0;
+pub const HBM_SIZE: u64 = 8 * 1024 * 1024 * 1024;
+
 pub struct VariumC1100 {
     pub device: XdmaDevice,
 }
@@ -9,7 +12,7 @@ impl VariumC1100 {
     pub fn new() -> Result<Self, std::io::Error> {
         // For some reason `File::open` doesn't return a valid descriptor.
         let user_cdev = File::open("/dev/xdma0_user")?;
-        let h2c_cdev = File::open("/dev/xdma0_h2c_0")?;
+        let h2c_cdev = File::create("/dev/xdma0_h2c_0")?;
         let c2h_cdev = File::open("/dev/xdma0_c2h_0")?;
         Ok(Self {
             device: XdmaDevice {
