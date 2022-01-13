@@ -18,3 +18,6 @@ harness = false
 
 [[example]]
 name = "cms_regs"
+
+[[example]]
+name = "sc_reboot"
