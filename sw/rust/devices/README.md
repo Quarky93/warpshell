@@ -14,15 +14,10 @@ Currently it is required to change character device permissions from the ones se
 the XDMA kernel driver. The host-to-card devices should be write-only. The card-to-host devices
 should be read-only.
 
-```sh
-sudo chmod 220 /dev/xdma0_h2c_0
-sudo chmod 440 /dev/xdma0_c2h_0
-```
-
-etc.
-
 To run benchmarks without `sudo`, all XDMA character devices should be assigned to a group which
 also contains the user who is running the benchmarks.
+
+There is a handy [script](../..scripts/set-xdma-perms.sh) for that.
 
 
 ## Test
