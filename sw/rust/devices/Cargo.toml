@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 enum-iterator = "0.7"
 enum-iterator-derive = "0.7"
+num_enum = "0.5.6"
 
 [dev-dependencies]
 criterion = "0.3"
