@@ -1,7 +1,7 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use packed_simd_2::Simd;
 use std::time::Duration;
-use warp_devices::cms::{CardMgmtSys, CmsReg};
+use warp_devices::cms::{CardMgmtOps, CardMgmtSys, CmsReg};
 use warp_devices::varium_c1100::{VariumC1100, HBM_BASE_ADDR};
 use warp_devices::xdma::{DmaBuffer, XdmaOps};
 
@@ -64,6 +64,9 @@ fn read_payload(varium: &VariumC1100, buf: &mut DmaBuffer) {
 fn get_fpga_temp_inst(c: &mut Criterion) {
     let mut varium = VariumC1100::new().expect("cannot construct device");
     varium.init_cms().expect("cannot initialise CMS");
+    varium
+        .expect_ready_host_status(1000)
+        .expect("CMS is not ready");
     c.bench_function("get instant FPGA temperature", |b| {
         b.iter(|| varium.get_cms_reg(CmsReg::FpgaTempInst))
     });

@@ -9,6 +9,7 @@ enum-iterator-derive = "0.7"
 
 [dev-dependencies]
 criterion = "0.3"
+itertools = "0.10"
 packed_simd_2 = "0.3.5"
 rand = { version = "0.8.4", features = ["simd_support"] }
 
@@ -20,4 +21,4 @@ harness = false
 name = "cms_regs"
 
 [[example]]
-name = "sc_reboot"
+name = "card_info"

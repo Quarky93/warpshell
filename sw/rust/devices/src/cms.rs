@@ -11,7 +11,7 @@ pub enum Error {
     XdmaFailed(XdmaError),
     HostStatusNotReady,
     MailboxNotAvailable,
-    CmsRegMaskNotCleared,
+    CmsRegMaskNotAsExpected,
     HostMsgError(u32),
 }
 
@@ -137,13 +137,22 @@ pub enum ControlRegBits {
     HbmTempMonitorEnable = 1 << 27,
 }
 
+#[repr(u32)]
+pub enum MailboxMsgOpcodes {
+    // Only applicable after flashing new SC firmware; TODO. This is called CMC_OP_MSP432_JUMP in
+    // "CMS SC Upgrade" UG. Calling it by itself is a bad idea.
+    //
+    // ScFwReboot = 3,
+    CardInfo = 4,
+}
+
 /// Card Management Solution subsystem
 pub trait CardMgmtSys {
     /// Reads the value at a raw CMS address
-    fn get_cms_addr(&self, reg: u64) -> Result<u32>;
+    fn get_cms_addr(&self, addr: u64) -> Result<u32>;
 
     /// Writes the value at a raw CMS address
-    fn set_cms_addr(&mut self, reg: u64, value: u32) -> Result<()>;
+    fn set_cms_addr(&mut self, addr: u64, value: u32) -> Result<()>;
 
     /// Reads the value in a given CMS register
     fn get_cms_reg(&self, reg: CmsReg) -> Result<u32> {
@@ -166,13 +175,46 @@ pub trait CardMgmtSys {
     }
 
     /// Polls a given `mask` in a given CMS register `reg` continuously at least `n` times until the
-    /// mask clears.
-    fn poll_cms_reg_clear(&self, reg: CmsReg, mask: u32, n: usize) -> Result<()> {
+    /// mask is equal to the expected value.
+    fn poll_cms_reg_mask(&self, reg: CmsReg, mask: u32, expected: u32, n: usize) -> Result<()> {
         iter::repeat(self.get_cms_reg(reg).ok())
             .take(n)
-            .position(|ready| ready.map(|ready| ready & mask) == Some(0))
+            .position(|ready| ready.map(|ready| ready & mask) == Some(expected))
             .map(|_| ())
-            .ok_or(Error::CmsRegMaskNotCleared)
+            .ok_or(Error::CmsRegMaskNotAsExpected)
+    }
+
+    /// Polls a given `mask` in a given CMS register `reg` continuously at least `n` times until the
+    /// mask is equal to the expected value, sleeping for `duration` in between tries. Returns the
+    /// number of elapsed tries.
+    fn poll_cms_reg_mask_sleep(
+        &self,
+        reg: CmsReg,
+        mask: u32,
+        expected: u32,
+        n: usize,
+        duration: Duration,
+    ) -> Result<usize> {
+        iter::repeat({
+            thread::sleep(duration);
+            self.get_cms_reg(reg).ok()
+        })
+        .take(n)
+        .position(|ready| ready.map(|ready| ready & mask) == Some(expected))
+        .map(|pos| pos + 1)
+        .ok_or(Error::CmsRegMaskNotAsExpected)
+    }
+
+    /// Polls a given `mask` in a given CMS register `reg` continuously at least `n` times until the
+    /// mask clears.
+    fn poll_cms_reg_clear(&self, reg: CmsReg, mask: u32, n: usize) -> Result<()> {
+        self.poll_cms_reg_mask(reg, mask, mask, n)
+    }
+
+    /// Polls a given `mask` in a given CMS register `reg` continuously at least `n` times until the
+    /// mask is set.
+    fn poll_cms_reg_set(&self, reg: CmsReg, mask: u32, n: usize) -> Result<()> {
+        self.poll_cms_reg_mask(reg, mask, 0, n)
     }
 }
 
@@ -187,16 +229,20 @@ pub trait CardMgmtOps {
 
     // Waits roughly `us` microseconds to allow readings to be populated while polling the status
     // register every 1µs. Returns the elapsed microseconds.
-    fn expect_ready_host_status(&self, ms: usize) -> Result<usize>;
+    fn expect_ready_host_status(&self, us: usize) -> Result<usize>;
 
     /// Enables HBM temperature monitoring
     fn enable_hbm_temp_monitoring(&mut self) -> Result<()>;
 
-    /// Gets the mailbox offset from the base address.
+    /// Gets the mailbox offset from the base address
     fn get_mailbox_offset(&self) -> Result<u64>;
 
-    /// Issues a reboot of the satellite controller
-    fn sc_fw_reboot(&mut self) -> Result<()>;
+    // /// Issues a reboot of the satellite controller
+    // fn sc_fw_reboot(&mut self) -> Result<()>;
+
+    /// Gets the card information
+    // TODO: parse the info vector
+    fn get_card_info(&mut self) -> Result<Vec<u8>>;
 }
 
 impl<T> CardMgmtOps for T
@@ -208,14 +254,8 @@ where
     }
 
     fn expect_ready_host_status(&self, us: usize) -> Result<usize> {
-        iter::repeat({
-            thread::sleep(Duration::from_micros(1));
-            self.get_cms_reg(CmsReg::HostStatus).ok()
-        })
-        .take(us)
-        .position(|ready| ready.map(|ready| ready & 1) == Some(1))
-        .map(|us| us + 1)
-        .ok_or(Error::HostStatusNotReady)
+        self.poll_cms_reg_mask_sleep(CmsReg::HostStatus, 1, 1, us, Duration::from_micros(1))
+            .map_err(|_| Error::HostStatusNotReady)
     }
 
     fn enable_hbm_temp_monitoring(&mut self) -> Result<()> {
@@ -232,18 +272,40 @@ where
         Ok(0x2_8000u64 + v as u64)
     }
 
-    fn sc_fw_reboot(&mut self) -> Result<()> {
+    // fn sc_fw_reboot(&mut self) -> Result<()> {
+    //     let mbox_offset = self.get_mailbox_offset()?;
+    //     self.set_cms_addr(mbox_offset, (MailboxMsgOpcodes::ScFwReboot as u32) << 24)?;
+    //     self.set_cms_addr(mbox_offset + 4, 0x00000201)?;
+    //     let control = self.get_cms_control_reg()?;
+    //     self.set_cms_control_reg(control | ControlRegBits::MailboxStatus as u32)?;
+    //     let error = self.get_cms_reg(CmsReg::HostMsgError)?;
+    //     if error != 0 {
+    //         Err(Error::HostMsgError(error))
+    //     } else {
+    //         Ok(())
+    //     }
+    // }
+
+    fn get_card_info(&mut self) -> Result<Vec<u8>> {
         let mbox_offset = self.get_mailbox_offset()?;
-        self.set_cms_addr(mbox_offset, 0x03000000)?;
-        self.set_cms_addr(mbox_offset + 4, 0x00000201)?;
+        self.set_cms_addr(mbox_offset, (MailboxMsgOpcodes::CardInfo as u32) << 24)?;
         let control = self.get_cms_control_reg()?;
         self.set_cms_control_reg(control | ControlRegBits::MailboxStatus as u32)?;
+        self.poll_cms_reg_clear(CmsReg::Control, ControlRegBits::MailboxStatus as u32, 100)?;
+
         let error = self.get_cms_reg(CmsReg::HostMsgError)?;
         if error != 0 {
-            Err(Error::HostMsgError(error))
-        } else {
-            Ok(())
+            return Err(Error::HostMsgError(error));
         }
+
+        let len = self.get_cms_addr(mbox_offset)? & 0xfff;
+        let mut info = Vec::with_capacity(len as usize);
+        for i in 0..len {
+            let w = self.get_cms_addr(mbox_offset + 4 + i as u64)?;
+            let bytes = w.to_le_bytes();
+            info.extend_from_slice(&bytes);
+        }
+        Ok(info)
     }
 }
 
@@ -251,16 +313,16 @@ impl<T> CardMgmtSys for T
 where
     T: XdmaOps + CardMgmtSysParam,
 {
-    fn get_cms_addr(&self, reg: u64) -> Result<u32> {
+    fn get_cms_addr(&self, addr: u64) -> Result<u32> {
         let mut data = [0u8; 4];
-        self.shell_read(&mut data, T::BASE_ADDR + reg)
+        self.shell_read(&mut data, T::BASE_ADDR + addr)
             .map_err(Error::XdmaFailed)?;
         Ok(u32::from_le_bytes(data))
     }
 
-    fn set_cms_addr(&mut self, reg: u64, value: u32) -> Result<()> {
+    fn set_cms_addr(&mut self, addr: u64, value: u32) -> Result<()> {
         let data = value.to_le_bytes();
-        self.shell_write(&data, T::BASE_ADDR + reg)
+        self.shell_write(&data, T::BASE_ADDR + addr)
             .map_err(Error::XdmaFailed)
     }
 }
