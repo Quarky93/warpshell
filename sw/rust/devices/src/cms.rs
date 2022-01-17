@@ -300,10 +300,12 @@ where
 
         let len = self.get_cms_addr(mbox_offset)? & 0xfff;
         let mut info = Vec::with_capacity(len as usize);
-        for i in 0..len {
-            let w = self.get_cms_addr(mbox_offset + 4 + i as u64)?;
+        let mut i = 4;
+        while i < len + 4 {
+            let w = self.get_cms_addr(mbox_offset + i as u64)?;
             let bytes = w.to_le_bytes();
             info.extend_from_slice(&bytes);
+            i += 4;
         }
         Ok(info)
     }
