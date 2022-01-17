@@ -150,7 +150,7 @@ pub enum MailboxMsgOpcode {
     CardInfo = 4,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
 #[repr(u8)]
 pub enum CardInfoKey {
     SerialNumber = 0x21,
@@ -174,7 +174,7 @@ pub enum CardInfoKey {
 pub type OldMacAddress = [u8; 16];
 pub type MacAddress = [u8; 6];
 
-#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
 #[repr(u8)]
 pub enum TotalPowerAvail {
     Power75W,
@@ -183,7 +183,7 @@ pub enum TotalPowerAvail {
     Power300W,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
 #[repr(u8)]
 pub enum ConfigMode {
     SlaveSerialX1,
@@ -201,7 +201,7 @@ pub enum ConfigMode {
     MasterSelectMapX16,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
 #[repr(u8)]
 pub enum CageType {
     Qsfp,
@@ -209,7 +209,7 @@ pub enum CageType {
     Sfp,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum CardInfoItem {
     SerialNumber(Vec<u8>),
     MacAddress0(OldMacAddress),
@@ -453,7 +453,34 @@ impl TryFrom<&[u8]> for CardInfoItem {
     }
 }
 
-pub type CardInfo = BTreeSet<CardInfoItem>;
+pub struct CardInfo(pub BTreeSet<CardInfoItem>);
+
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub enum CardInfoParseError {
+    CardInfoItem(CardInfoItemParseError),
+}
+
+impl From<CardInfoItemParseError> for CardInfoParseError {
+    fn from(e: CardInfoItemParseError) -> Self {
+        Self::CardInfoItem(e)
+    }
+}
+
+impl TryFrom<&[u8]> for CardInfo {
+    type Error = CardInfoParseError;
+
+    fn try_from(input: &[u8]) -> std::result::Result<Self, Self::Error> {
+        let mut set = BTreeSet::new();
+        let mut parsed_len = 0;
+        while parsed_len + 2 < input.len() {
+            let item_len = input[parsed_len + 1];
+            let item = CardInfoItem::try_from(&input[parsed_len..item_len as usize + 2])?;
+            set.insert(item);
+            parsed_len += item_len as usize;
+        }
+        Ok(Self(set))
+    }
+}
 
 /// Card Management Solution subsystem
 pub trait CardMgmtSys {
