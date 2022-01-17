@@ -278,7 +278,7 @@ impl TryFrom<&[u8]> for CardInfoItem {
                     return Err(CardInfoItemParseError::IncorrectLength);
                 }
                 let mut v = vec![];
-                for _ in 0..len {
+                for _ in 0..len - 1 {
                     v.push(*next()?);
                 }
                 if *next()? != 0 {
@@ -287,11 +287,11 @@ impl TryFrom<&[u8]> for CardInfoItem {
                 Ok(Self::SerialNumber(v))
             }
             CardInfoKey::MacAddress0 => {
-                if len != 16 {
+                if len != 18 {
                     return Err(CardInfoItemParseError::IncorrectLength);
                 }
                 let mut v = vec![];
-                for _ in 0..len {
+                for _ in 0..len - 1 {
                     v.push(*next()?);
                 }
                 if *next()? != 0 {
@@ -303,11 +303,11 @@ impl TryFrom<&[u8]> for CardInfoItem {
                 Ok(Self::MacAddress0(old_mac))
             }
             CardInfoKey::MacAddress1 => {
-                if len != 16 {
+                if len != 18 {
                     return Err(CardInfoItemParseError::IncorrectLength);
                 }
                 let mut v = vec![];
-                for _ in 0..len {
+                for _ in 0..len - 1 {
                     v.push(*next()?);
                 }
                 if *next()? != 0 {
@@ -319,11 +319,11 @@ impl TryFrom<&[u8]> for CardInfoItem {
                 Ok(Self::MacAddress1(old_mac))
             }
             CardInfoKey::MacAddress2 => {
-                if len != 16 {
+                if len != 18 {
                     return Err(CardInfoItemParseError::IncorrectLength);
                 }
                 let mut v = vec![];
-                for _ in 0..len {
+                for _ in 0..len - 1 {
                     v.push(*next()?);
                 }
                 if *next()? != 0 {
@@ -335,11 +335,11 @@ impl TryFrom<&[u8]> for CardInfoItem {
                 Ok(Self::MacAddress2(old_mac))
             }
             CardInfoKey::MacAddress3 => {
-                if len != 16 {
+                if len != 18 {
                     return Err(CardInfoItemParseError::IncorrectLength);
                 }
                 let mut v = vec![];
-                for _ in 0..len {
+                for _ in 0..len - 1 {
                     v.push(*next()?);
                 }
                 if *next()? != 0 {
@@ -355,7 +355,7 @@ impl TryFrom<&[u8]> for CardInfoItem {
                     return Err(CardInfoItemParseError::IncorrectLength);
                 }
                 let mut v = vec![];
-                for _ in 0..len {
+                for _ in 0..len - 1 {
                     v.push(*next()?);
                 }
                 if *next()? != 0 {
@@ -368,7 +368,7 @@ impl TryFrom<&[u8]> for CardInfoItem {
                     return Err(CardInfoItemParseError::IncorrectLength);
                 }
                 let mut v = vec![];
-                for _ in 0..len {
+                for _ in 0..len - 1 {
                     v.push(*next()?);
                 }
                 if *next()? != 0 {
@@ -381,7 +381,7 @@ impl TryFrom<&[u8]> for CardInfoItem {
                     return Err(CardInfoItemParseError::IncorrectLength);
                 }
                 let mut v = vec![];
-                for _ in 0..len {
+                for _ in 0..len - 1 {
                     v.push(*next()?);
                 }
                 if *next()? != 0 {
