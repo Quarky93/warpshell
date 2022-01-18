@@ -460,6 +460,7 @@ pub struct CardInfo(pub BTreeSet<CardInfoItem>);
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum CardInfoParseError {
     CardInfoItem(CardInfoItemParseError),
+    ItemLengthOutOfBounds,
 }
 
 impl From<CardInfoItemParseError> for CardInfoParseError {
@@ -477,8 +478,15 @@ impl TryFrom<&[u8]> for CardInfo {
         while parsed_len + 2 < input.len() {
             let item_len = input[parsed_len + 1];
             let to_parse_len = item_len as usize + 2;
-            debug!("parsed_len {}, item_len {}", parsed_len, item_len);
-            let item = CardInfoItem::try_from(&input[parsed_len..parsed_len + to_parse_len])?;
+            let next_item_pos = parsed_len + to_parse_len;
+            debug!(
+                "parsed_len {}, item_len {}, next_item_pos {}",
+                parsed_len, item_len, next_item_pos
+            );
+            if next_item_pos - 1 > input.len() {
+                return Err(CardInfoParseError::ItemLengthOutOfBounds);
+            }
+            let item = CardInfoItem::try_from(&input[parsed_len..next_item_pos])?;
             set.insert(item);
             parsed_len += to_parse_len;
         }
@@ -674,7 +682,7 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
-    use test_env_log::test;
+    use test_log::test;
 
     #[test]
     fn parse_pg348_example_card_info() {
@@ -703,5 +711,36 @@ mod test {
             CardInfo::try_from(card_info_bytes.as_slice()).expect("cannot parse card info bytes");
         debug!("{:?}", card_info);
         assert_eq!(card_info, expected_card_info);
+    }
+
+    #[test]
+    fn card_info_sernum_zero_length() {
+        let card_info_bytes: Vec<u8> = vec![0x21, 0x00, 0x31, 0x32, 0x33, 0x00];
+        assert_eq!(
+            CardInfo::try_from(card_info_bytes.as_slice()),
+            Err(CardInfoParseError::CardInfoItem(
+                CardInfoItemParseError::IncorrectLength
+            ))
+        );
+    }
+
+    #[test]
+    fn card_info_sernum_length_out_of_bounds() {
+        let card_info_bytes: Vec<u8> = vec![0x21, 0xff, 0x31, 0x32, 0x33, 0x00];
+        assert_eq!(
+            CardInfo::try_from(card_info_bytes.as_slice()),
+            Err(CardInfoParseError::ItemLengthOutOfBounds)
+        );
+    }
+
+    #[test]
+    fn card_info_sernum_non_null_terminator() {
+        let card_info_bytes: Vec<u8> = vec![0x21, 0x04, 0x31, 0x32, 0x33, 0xff];
+        assert_eq!(
+            CardInfo::try_from(card_info_bytes.as_slice()),
+            Err(CardInfoParseError::CardInfoItem(
+                CardInfoItemParseError::NonNullTerminator
+            ))
+        );
     }
 }
