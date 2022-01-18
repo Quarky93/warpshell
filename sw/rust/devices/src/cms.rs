@@ -707,10 +707,10 @@ mod test {
             .into_iter()
             .collect(),
         );
-        let card_info =
-            CardInfo::try_from(card_info_bytes.as_slice()).expect("cannot parse card info bytes");
-        debug!("{:?}", card_info);
-        assert_eq!(card_info, expected_card_info);
+        assert_eq!(
+            CardInfo::try_from(card_info_bytes.as_slice()),
+            Ok(expected_card_info)
+        );
     }
 
     #[test]
