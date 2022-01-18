@@ -1,5 +1,6 @@
 use crate::xdma::{Error as XdmaError, XdmaOps};
 use enum_iterator_derive::IntoEnumIterator;
+use log::debug;
 use num_enum::TryFromPrimitive;
 use num_enum::TryFromPrimitiveError;
 use std::collections::BTreeSet;
@@ -475,9 +476,11 @@ impl TryFrom<&[u8]> for CardInfo {
         let mut parsed_len = 0;
         while parsed_len + 2 < input.len() {
             let item_len = input[parsed_len + 1];
-            let item = CardInfoItem::try_from(&input[parsed_len..item_len as usize + 2])?;
+            let to_parse_len = item_len as usize + 2;
+            debug!("parsed_len {}, item_len {}", parsed_len, item_len);
+            let item = CardInfoItem::try_from(&input[parsed_len..parsed_len + to_parse_len])?;
             set.insert(item);
-            parsed_len += item_len as usize;
+            parsed_len += to_parse_len;
         }
         Ok(Self(set))
     }
@@ -671,18 +674,34 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
+    use test_env_log::test;
 
     #[test]
     fn parse_pg348_example_card_info() {
         let card_info_bytes: Vec<u8> = vec![
-            0x4c, 0x41, 0x0d, 0x27, 0x20, 0x4f, 0x45, 0x56, 0x20, 0x30, 0x35, 0x55, 0x26, 0x00,
-            0x51, 0x50, 0x21, 0x00, 0x31, 0x02, 0x31, 0x30, 0x35, 0x0d, 0x31, 0x31, 0x31, 0x32,
-            0x50, 0x53, 0x43, 0x39, 0x08, 0x4b, 0x00, 0x4d, 0x0a, 0x00, 0x00, 0x04, 0xd8, 0x0f,
-            0x05, 0x35, 0x2b, 0x50, 0x01, 0x2a, 0x01, 0x29, 0x07, 0x01, 0x35, 0x04, 0x28, 0x00,
-            0x00, 0x30, 0x2e,
+            0x27, 0x0d, 0x41, 0x4c, 0x56, 0x45, 0x4f, 0x20, 0x55, 0x35, 0x30, 0x20, 0x50, 0x51,
+            0x00, 0x26, 0x02, 0x31, 0x00, 0x21, 0x0d, 0x35, 0x30, 0x31, 0x32, 0x31, 0x31, 0x31,
+            0x39, 0x43, 0x53, 0x50, 0x4d, 0x00, 0x4b, 0x08, 0x04, 0x00, 0x00, 0x0a, 0x35, 0x05,
+            0x0f, 0xd8, 0x2a, 0x01, 0x50, 0x2b, 0x01, 0x07, 0x29, 0x01, 0x00, 0x28, 0x04, 0x35,
+            0x2e, 0x30, 0x00,
         ];
+        let expected_card_info = CardInfo(
+            vec![
+                CardInfoItem::SerialNumber(b"50121119CSPM".to_vec()),
+                CardInfoItem::CardRev(b"1".to_vec()),
+                CardInfoItem::CardName(b"ALVEO U50 PQ".to_vec()),
+                CardInfoItem::SatelliteVersion(b"5.0".to_vec()),
+                CardInfoItem::TotalPowerAvail(TotalPowerAvail::Power75W),
+                CardInfoItem::FanPresence(b'P'),
+                CardInfoItem::ConfigMode(ConfigMode::MasterSpiX4),
+                CardInfoItem::NewMacScheme(4, [0x00, 0x0a, 0x35, 0x05, 0x0f, 0xd8]),
+            ]
+            .into_iter()
+            .collect(),
+        );
         let card_info =
             CardInfo::try_from(card_info_bytes.as_slice()).expect("cannot parse card info bytes");
-        println!("{:?}", card_info);
+        debug!("{:?}", card_info);
+        assert_eq!(card_info, expected_card_info);
     }
 }

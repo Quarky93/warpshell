@@ -24,6 +24,8 @@ There is a handy [script](../..scripts/set-xdma-perms.sh) for that.
 
 - `cargo test` to build and run unit tests
 
+- `RUST_LOG=debug cargo test -- --nocapture` to show debug logs in all tests
+
 
 ## Benchmark
 
