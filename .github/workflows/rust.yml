@@ -13,7 +13,7 @@ defaults:
     working-directory: sw/rust
 
 jobs:
-  check:
+  check-build-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,15 +27,6 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install latest nightly
-        uses: actions-rs/toolchain@v1
-          with: toolchain: nightly
-          override: true
       - name: Run cargo build
         uses: actions-rs/cargo@v1
         with:
