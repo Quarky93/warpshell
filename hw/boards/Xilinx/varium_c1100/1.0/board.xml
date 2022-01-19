@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+
+<board schema_version="2.2" vendor="xilinx.com" name="c1100" display_name="Varium C1100 Blockchain Accelerator Card" url="https://www.xilinx.com/products/accelerators/varium/c1100.html" preset_file="preset.xml" supports_ced="false">
+    <images>
+        <image name="c1100_board.jpeg" display_name="C1100 BOARD" sub_type="board">
+            <description>C1100 Board File Image</description>
+        </image>
+    </images>
+    <compatible_board_revisions>
+        <revision id="0">Rev 1.0</revision>
+    </compatible_board_revisions>
+    <file_version>1.0</file_version>
+    <description>Varium C1100 Blockchain Accelerator Card</description>
+
+    <parameters>
+        <parameter name="heat_sink_type" value="medium" value_type="string"/>
+        <parameter name="heat_sink_temperature" value_type="range" value_min="20.0" value_max="30.0"/>
+    </parameters>
+    <jumpers>
+    </jumpers>
+
+    <components>
+        <component name="part0" display_name="Varium C1100 Blockchain Accelerator Card" type="fpga" part_name="xcu55n-fsvh2892-2L-e" pin_map_file="part0_pins.xml" vendor="xilinx" spec_url="https://www.xilinx.com/products/accelerators/varium/c1100.html">
+            <description>Varium C1100 Blockchain Accelerator Card</description>
+            <interfaces>
+
+                <interface mode="slave" name="pcie_refclk_0" type="xilinx.com:interface:diff_clock_rtl:1.0" of_component="pcie_refclk_0">
+                    <parameters>
+                        <parameter name="frequency" value="100000000"/>
+                    </parameters>
+                    <port_maps>
+                        <port_map logical_port="CLK_P" physical_port="pcie_refclk_0_p" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="pcie_refclk_0_p"/>
+                            </pin_maps>
+                        </port_map>
+                        <port_map logical_port="CLK_N" physical_port="pcie_refclk_0_n" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="pcie_refclk_0_n"/>
+                            </pin_maps>
+                        </port_map>
+                    </port_maps>
+                </interface>
+
+                <interface mode="slave" name="pcie_refclk_1" type="xilinx.com:interface:diff_clock_rtl:1.0" of_component="pcie_refclk_1">
+                    <parameters>
+                        <parameter name="frequency" value="100000000"/>
+                    </parameters>
+                    <port_maps>
+                        <port_map logical_port="CLK_P" physical_port="pcie_refclk_1_p" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="pcie_refclk_1_p"/>
+                            </pin_maps>
+                        </port_map>
+                        <port_map logical_port="CLK_N" physical_port="pcie_refclk_1_n" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="pcie_refclk_1_n"/>
+                            </pin_maps>
+                        </port_map>
+                    </port_maps>
+                </interface>
+
+                <interface mode="slave" name="pcie_sysclk_0" type="xilinx.com:interface:diff_clock_rtl:1.0" of_component="pcie_sysclk_0">
+                    <parameters>
+                        <parameter name="frequency" value="100000000"/>
+                    </parameters>
+                    <port_maps>
+                        <port_map logical_port="CLK_P" physical_port="pcie_sysclk_0_p" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="pcie_sysclk_0_p"/>
+                            </pin_maps>
+                        </port_map>
+                        <port_map logical_port="CLK_N" physical_port="pcie_sysclk_0_n" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="pcie_sysclk_0_n"/>
+                            </pin_maps>
+                        </port_map>
+                    </port_maps>
+                </interface>
+
+                <interface mode="slave" name="pcie_sysclk_1" type="xilinx.com:interface:diff_clock_rtl:1.0" of_component="pcie_sysclk_1">
+                    <parameters>
+                        <parameter name="frequency" value="100000000"/>
+                    </parameters>
+                    <port_maps>
+                        <port_map logical_port="CLK_P" physical_port="pcie_sysclk_1_p" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="pcie_sysclk_1_p"/>
+                            </pin_maps>
+                        </port_map>
+                        <port_map logical_port="CLK_N" physical_port="pcie_sysclk_1_n" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="pcie_sysclk_1_n"/>
+                            </pin_maps>
+                        </port_map>
+                    </port_maps>
+                </interface>
+
+                <interface mode="slave" name="sysclk_0" type="xilinx.com:interface:diff_clock_rtl:1.0" of_component="sysclk_0">
+                    <parameters>
+                        <parameter name="frequency" value="100000000"/>
+                    </parameters>
+                    <port_maps>
+                        <port_map logical_port="CLK_P" physical_port="sysclk_0_p" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="sysclk_0_p"/>
+                            </pin_maps>
+                        </port_map>
+                        <port_map logical_port="CLK_N" physical_port="sysclk_0_n" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="sysclk_0_n"/>
+                            </pin_maps>
+                        </port_map>
+                    </port_maps>
+                </interface>
+
+                <interface mode="slave" name="sysclk_1" type="xilinx.com:interface:diff_clock_rtl:1.0" of_component="sysclk_1">
+                    <parameters>
+                        <parameter name="frequency" value="100000000"/>
+                    </parameters>
+                    <port_maps>
+                        <port_map logical_port="CLK_P" physical_port="sysclk_1_p" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="sysclk_1_p"/>
+                            </pin_maps>
+                        </port_map>
+                        <port_map logical_port="CLK_N" physical_port="sysclk_1_n" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="sysclk_1_n"/>
+                            </pin_maps>
+                        </port_map>
+                    </port_maps>
+                </interface>
+
+                <interface mode="slave" name="qsfp28_clk_0" type="xilinx.com:interface:diff_clock_rtl:1.0" of_component="qsfp28_clk_0">
+                    <parameters>
+                        <parameter name="frequency" value="161132813"/>
+                    </parameters>
+                    <port_maps>
+                        <port_map logical_port="CLK_P" physical_port="qsfp28_clk_0_p" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="qsfp28_clk_0_p"/>
+                            </pin_maps>
+                        </port_map>
+                        <port_map logical_port="CLK_N" physical_port="qsfp28_clk_0_n" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="qsfp28_clk_0_n"/>
+                            </pin_maps>
+                        </port_map>
+                    </port_maps>
+                </interface>
+
+                <interface mode="slave" name="qsfp28_clk_1" type="xilinx.com:interface:diff_clock_rtl:1.0" of_component="qsfp28_clk_1">
+                    <parameters>
+                        <parameter name="frequency" value="161132813"/>
+                    </parameters>
+                    <port_maps>
+                        <port_map logical_port="CLK_P" physical_port="qsfp28_clk_1_p" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="qsfp28_clk_1_p"/>
+                            </pin_maps>
+                        </port_map>
+                        <port_map logical_port="CLK_N" physical_port="qsfp28_clk_1_n" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="qsfp28_clk_1_n"/>
+                            </pin_maps>
+                        </port_map>
+                    </port_maps>
+                </interface>
+
+                <interface mode="slave" name="rstn" type="xilinx.com:signal:reset_rtl:1.0" of_component="rstn">
+                    <parameters>
+                        <parameter name="rst_polarity" value="0"/>
+                    </parameters>
+                    <port_maps>
+                        <port_map logical_port="RESET" physical_port="rstn" dir="in">
+                            <pin_maps>
+                                <pin_map port_index="0" component_pin="rstn"/>
+                            </pin_maps>
+                        </port_map>
+                    </port_maps>
+                </interface>
+
+            </interfaces>
+        </component>
+    </components>
+</board>
