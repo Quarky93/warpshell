@@ -222,7 +222,7 @@
                 <!-- END SATELLITE CONTROLLER INTERFACES -->
 
                 <!-- PCIE INTERFACES -->
-                <interface mode="slave" name="pcie_perst" type="xilinx.com:signal:reset_rtl:1.0" of_component="pcie_perst">
+                <interface mode="slave" name="pcie_perst" type="xilinx.com:signal:reset_rtl:1.0" of_component="pcie">
                     <parameters>
                         <parameter name="rst_polarity" value="0"/>
                     </parameters>
@@ -263,64 +263,52 @@
             </interfaces>
         </component>
 
-        <component name="pcie_refclk_0" type="chip" sub_type="clock" major_group="Clocks">
+        <component name="pcie_refclk_0" display_name="pcie_refclk_0" type="chip" sub_type="mgt_clock" major_group="Clock Sources">
             <description>Reference clock from edge connector for PCIe lanes 0-7.</description>
         </component>
 
-        <component name="pcie_refclk_1" type="chip" sub_type="clock" major_group="Clocks">
+        <component name="pcie_refclk_1" display_name="pcie_refclk_1" type="chip" sub_type="mgt_clock" major_group="Clock Sources">
             <description>Reference clock from edge connector for PCIe lanes 8-15.</description>
         </component>
 
-        <component name="pcie_sysclk_0" type="chip" sub_type="clock" major_group="Clocks">
+        <component name="pcie_sysclk_0" display_name="pcie_sysclk_0" type="chip" sub_type="system_clock" major_group="Clock Sources">
             <description>System clock derived from pcie_refclk_0.</description>
         </component>
 
-        <component name="pcie_sysclk_1" type="chip" sub_type="clock" major_group="Clocks">
+        <component name="pcie_sysclk_1" display_name="pcie_sysclk_1" type="chip" sub_type="system_clock" major_group="Clock Sources">
             <description>System clock derived from pcie_refclk_1.</description>
         </component>
 
-        <component name="sysclk_0" type="chip" sub_type="clock" major_group="Clocks">
+        <component name="sysclk_0" display_name="sysclk_0" type="chip" sub_type="system_clock" major_group="Clock Sources">
             <description>Onboard system clock for SLR0.</description>
         </component>
 
-        <component name="sysclk_1" type="chip" sub_type="clock" major_group="Clocks">
+        <component name="sysclk_1" display_name="sysclk_1" type="chip" sub_type="system_clock" major_group="Clock Sources">
             <description>Onboard system clock for SLR1.</description>
         </component>
 
-        <component name="qsfp_clk_0" type="chip" sub_type="clock" major_group="Clocks">
-            <description>Clock for QSFP28 0.</description>
-        </component>
-
-        <component name="qsfp_clk_1" type="chip" sub_type="clock" major_group="Clocks">
-            <description>Clock for QSFP28 1.</description>
-        </component>
-
-        <component name="uart_0" type="chip" sub_type="uart" major_group="UARTs">
+        <component name="uart_0" display_name="uart_0" type="chip" sub_type="uart" major_group="Miscellaneous">
             <description>UART 0 - accessible over FTDI from micro-usb port.</description>
         </component>
 
-        <component name="uart_1" type="chip" sub_type="uart" major_group="UARTs">
+        <component name="uart_1" display_name="uart_1" type="chip" sub_type="uart" major_group="Miscellaneous">
             <description>UART 1 - accessible over FTDI from micro-usb port.</description>
         </component>
 
-        <component name="uart_2" type="chip" sub_type="uart" major_group="UARTs">
+        <component name="uart_2" display_name="uart_2" type="chip" sub_type="uart" major_group="Miscellaneous">
             <description>UART 2 - accessible only over Alveo maintenance port.</description>
         </component>
 
-        <component name="satellite_controller" type="chip" sub_type="system_management" major_group="System Management">
+        <component name="satellite_controller" display_name="satellite_controller" type="chip" sub_type="chip" major_group="Miscellaneous">
             <component_modes>
                 <component_mode name="cms" display_name="Card Management Subsystem">
                     <interfaces>
-                        <interface name="sc_hbm_cattrip"/>
+                        <interface name="sc_hbm_cattrip" optional="true"/>
                         <interface name="sc_uart"/>
                         <interface name="sc_gpio"/>
                     </interfaces>
                 </component_mode>
             </component_modes>
-        </component>
-
-        <component name="pcie_perst" type="chip" sub_type="reset" major_group="Resets">
-            <description>Reset from the PCIe edge connector.</description>
         </component>
 
         <component name="pcie" type="chip" sub_type="pcie" major_group="PCIe">
@@ -368,8 +356,8 @@
             <connection_map name="sysclk_1" c1_st_index="10" c1_end_index="11" c2_st_index="0" c2_end_index="1"/>
         </connection>
 
-        <connection name="pcie_mgt" component1="part0" component2="pcie">
+        <!-- <connection name="pcie_mgt" component1="part0" component2="pcie">
             <connection_map name="pcie_mgt" c1_st_index="70" c1_end_index="133" c2_st_index="0" c2_end_index="63"/>
-        </connection>
+        </connection> -->
     </connections>
 </board>
