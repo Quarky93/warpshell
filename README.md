@@ -64,3 +64,14 @@ cd build
 vivado -mode batch -source ../hw/scripts/varium_c1100_xdma_gen4_x1_custom.tcl
 ```
 A project will be generated in the build directory, open this with Vivado.
+
+
+## Documentation
+
+There is an online [book](https://quarky93.github.io/warpshell) with the sources in
+[book/](./book/). To compile the book from source, install `mdbook` (having installed
+[Rust](https://www.rust-lang.org/tools/install))
+
+- `cargo install mdbook`
+
+and run `mdbook serve` in [book/](./book/). Then go to `http://[::1]:3000` in the browser.
