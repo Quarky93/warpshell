@@ -8,7 +8,7 @@ defaults:
     working-directory: book
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-20.04
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
