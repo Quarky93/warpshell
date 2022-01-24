@@ -1,5 +1,10 @@
 use crate::xdma::{Error as XdmaError, XdmaOps};
 use enum_iterator_derive::IntoEnumIterator;
+use log::debug;
+use num_enum::TryFromPrimitive;
+use num_enum::TryFromPrimitiveError;
+use std::collections::BTreeSet;
+use std::convert::TryFrom;
 use std::iter;
 use std::thread;
 use std::time::Duration;
@@ -13,6 +18,13 @@ pub enum Error {
     MailboxNotAvailable,
     CmsRegMaskNotAsExpected,
     HostMsgError(u32),
+    CardInfoParseError(CardInfoParseError),
+}
+
+impl From<CardInfoParseError> for Error {
+    fn from(e: CardInfoParseError) -> Self {
+        Self::CardInfoParseError(e)
+    }
 }
 
 /// CMS register offsets
@@ -128,7 +140,7 @@ pub enum CmsReg {
 }
 
 #[repr(u32)]
-pub enum ControlRegBits {
+pub enum ControlRegBit {
     MaxAgvValuesReset = 1,
     ErrorRegReset = 1 << 1,
     MailboxStatus = 1 << 5,
@@ -138,12 +150,355 @@ pub enum ControlRegBits {
 }
 
 #[repr(u32)]
-pub enum MailboxMsgOpcodes {
+pub enum MailboxMsgOpcode {
     // Only applicable after flashing new SC firmware; TODO. This is called CMC_OP_MSP432_JUMP in
     // "CMS SC Upgrade" UG. Calling it by itself is a bad idea.
     //
     // ScFwReboot = 3,
     CardInfo = 4,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
+#[repr(u8)]
+pub enum CardInfoKey {
+    SerialNumber = 0x21,
+    MacAddress0 = 0x22,
+    MacAddress1 = 0x23,
+    MacAddress2 = 0x24,
+    MacAddress3 = 0x25,
+    CardRev = 0x26,
+    CardName = 0x27,
+    SatelliteVersion = 0x28,
+    TotalPowerAvail = 0x29,
+    FanPresence = 0x2a,
+    ConfigMode = 0x2b,
+    NewMacScheme = 0x4b,
+    CageType0 = 0x50,
+    CageType1 = 0x51,
+    CageType2 = 0x52,
+    CageType3 = 0x53,
+}
+
+pub type OldMacAddress = [u8; 16];
+pub type MacAddress = [u8; 6];
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
+#[repr(u8)]
+pub enum TotalPowerAvail {
+    Power75W,
+    Power150W,
+    Power225W,
+    Power300W,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
+#[repr(u8)]
+pub enum ConfigMode {
+    SlaveSerialX1,
+    SlaveSelectMapX8,
+    SlaveMapX16,
+    SlaveSelectMapX32,
+    JtagBoudaryScanX1,
+    MasterSpiX1,
+    MasterSpiX2,
+    MasterSpiX4,
+    MasterSpiX8,
+    MasterSpiX16,
+    MasterSerialX1,
+    MasterSelectMapX8,
+    MasterSelectMapX16,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
+#[repr(u8)]
+pub enum CageType {
+    Qsfp,
+    Dsfp,
+    Sfp,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum CardInfoItem {
+    SerialNumber(Vec<u8>),
+    MacAddress0(OldMacAddress),
+    MacAddress1(OldMacAddress),
+    MacAddress2(OldMacAddress),
+    MacAddress3(OldMacAddress),
+    CardRev(Vec<u8>),
+    CardName(Vec<u8>),
+    SatelliteVersion(Vec<u8>),
+    TotalPowerAvail(TotalPowerAvail),
+    FanPresence(u8),
+    ConfigMode(ConfigMode),
+    NewMacScheme(u8, MacAddress),
+    CageType0(CageType),
+    CageType1(CageType),
+    CageType2(CageType),
+    CageType3(CageType),
+}
+
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub enum CardInfoItemParseError {
+    IncompleteInput,
+    IncorrectLength,
+    NonNullTerminator,
+    CardInfoKey(TryFromPrimitiveError<CardInfoKey>),
+    TotalPowerAvail(TryFromPrimitiveError<TotalPowerAvail>),
+    ConfigMode(TryFromPrimitiveError<ConfigMode>),
+    CageType(TryFromPrimitiveError<CageType>),
+}
+
+impl From<TryFromPrimitiveError<CardInfoKey>> for CardInfoItemParseError {
+    fn from(e: TryFromPrimitiveError<CardInfoKey>) -> Self {
+        Self::CardInfoKey(e)
+    }
+}
+
+impl From<TryFromPrimitiveError<TotalPowerAvail>> for CardInfoItemParseError {
+    fn from(e: TryFromPrimitiveError<TotalPowerAvail>) -> Self {
+        Self::TotalPowerAvail(e)
+    }
+}
+
+impl From<TryFromPrimitiveError<ConfigMode>> for CardInfoItemParseError {
+    fn from(e: TryFromPrimitiveError<ConfigMode>) -> Self {
+        Self::ConfigMode(e)
+    }
+}
+
+impl From<TryFromPrimitiveError<CageType>> for CardInfoItemParseError {
+    fn from(e: TryFromPrimitiveError<CageType>) -> Self {
+        Self::CageType(e)
+    }
+}
+
+impl TryFrom<&[u8]> for CardInfoItem {
+    type Error = CardInfoItemParseError;
+
+    fn try_from(input: &[u8]) -> std::result::Result<Self, Self::Error> {
+        let mut iter = input.iter();
+        let mut next = || iter.next().ok_or(CardInfoItemParseError::IncompleteInput);
+        let key = CardInfoKey::try_from(*next()?)?;
+        let len = *next()? as usize;
+        match key {
+            CardInfoKey::SerialNumber => {
+                if len == 0 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                let mut v = vec![];
+                for _ in 0..len - 1 {
+                    v.push(*next()?);
+                }
+                if *next()? != 0 {
+                    return Err(CardInfoItemParseError::NonNullTerminator);
+                }
+                Ok(Self::SerialNumber(v))
+            }
+            CardInfoKey::MacAddress0 => {
+                if len != 18 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                let mut v = vec![];
+                for _ in 0..len - 1 {
+                    v.push(*next()?);
+                }
+                if *next()? != 0 {
+                    return Err(CardInfoItemParseError::NonNullTerminator);
+                }
+                let old_mac = v
+                    .try_into()
+                    .map_err(|_| CardInfoItemParseError::IncorrectLength)?;
+                Ok(Self::MacAddress0(old_mac))
+            }
+            CardInfoKey::MacAddress1 => {
+                if len != 18 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                let mut v = vec![];
+                for _ in 0..len - 1 {
+                    v.push(*next()?);
+                }
+                if *next()? != 0 {
+                    return Err(CardInfoItemParseError::NonNullTerminator);
+                }
+                let old_mac = v
+                    .try_into()
+                    .map_err(|_| CardInfoItemParseError::IncorrectLength)?;
+                Ok(Self::MacAddress1(old_mac))
+            }
+            CardInfoKey::MacAddress2 => {
+                if len != 18 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                let mut v = vec![];
+                for _ in 0..len - 1 {
+                    v.push(*next()?);
+                }
+                if *next()? != 0 {
+                    return Err(CardInfoItemParseError::NonNullTerminator);
+                }
+                let old_mac = v
+                    .try_into()
+                    .map_err(|_| CardInfoItemParseError::IncorrectLength)?;
+                Ok(Self::MacAddress2(old_mac))
+            }
+            CardInfoKey::MacAddress3 => {
+                if len != 18 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                let mut v = vec![];
+                for _ in 0..len - 1 {
+                    v.push(*next()?);
+                }
+                if *next()? != 0 {
+                    return Err(CardInfoItemParseError::NonNullTerminator);
+                }
+                let old_mac = v
+                    .try_into()
+                    .map_err(|_| CardInfoItemParseError::IncorrectLength)?;
+                Ok(Self::MacAddress3(old_mac))
+            }
+            CardInfoKey::CardRev => {
+                if len == 0 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                let mut v = vec![];
+                for _ in 0..len - 1 {
+                    v.push(*next()?);
+                }
+                if *next()? != 0 {
+                    return Err(CardInfoItemParseError::NonNullTerminator);
+                }
+                Ok(Self::CardRev(v))
+            }
+            CardInfoKey::CardName => {
+                if len == 0 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                let mut v = vec![];
+                for _ in 0..len - 1 {
+                    v.push(*next()?);
+                }
+                if *next()? != 0 {
+                    return Err(CardInfoItemParseError::NonNullTerminator);
+                }
+                Ok(Self::CardName(v))
+            }
+            CardInfoKey::SatelliteVersion => {
+                if len == 0 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                let mut v = vec![];
+                for _ in 0..len - 1 {
+                    v.push(*next()?);
+                }
+                if *next()? != 0 {
+                    return Err(CardInfoItemParseError::NonNullTerminator);
+                }
+                Ok(Self::SatelliteVersion(v))
+            }
+            CardInfoKey::TotalPowerAvail => {
+                if len != 1 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                Ok(Self::TotalPowerAvail(TotalPowerAvail::try_from_primitive(
+                    *next()?,
+                )?))
+            }
+            CardInfoKey::FanPresence => {
+                if len != 1 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                Ok(Self::FanPresence(*next()?))
+            }
+            CardInfoKey::ConfigMode => {
+                if len != 1 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                Ok(Self::ConfigMode(ConfigMode::try_from_primitive(*next()?)?))
+            }
+            CardInfoKey::NewMacScheme => {
+                if len != 8 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                let num_addresses = *next()?;
+                // Skip the reserved byte.
+                next()?;
+                let mut v = vec![];
+                for _ in 0..6 {
+                    v.push(*next()?);
+                }
+                let mac = v
+                    .try_into()
+                    .map_err(|_| CardInfoItemParseError::IncorrectLength)?;
+                Ok(Self::NewMacScheme(num_addresses, mac))
+            }
+            CardInfoKey::CageType0 => {
+                if len != 1 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                Ok(Self::CageType0(CageType::try_from_primitive(*next()?)?))
+            }
+            CardInfoKey::CageType1 => {
+                if len != 1 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                Ok(Self::CageType1(CageType::try_from_primitive(*next()?)?))
+            }
+            CardInfoKey::CageType2 => {
+                if len != 1 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                Ok(Self::CageType2(CageType::try_from_primitive(*next()?)?))
+            }
+            CardInfoKey::CageType3 => {
+                if len != 1 {
+                    return Err(CardInfoItemParseError::IncorrectLength);
+                }
+                Ok(Self::CageType3(CageType::try_from_primitive(*next()?)?))
+            }
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct CardInfo(pub BTreeSet<CardInfoItem>);
+
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub enum CardInfoParseError {
+    CardInfoItem(CardInfoItemParseError),
+    ItemLengthOutOfBounds,
+}
+
+impl From<CardInfoItemParseError> for CardInfoParseError {
+    fn from(e: CardInfoItemParseError) -> Self {
+        Self::CardInfoItem(e)
+    }
+}
+
+impl TryFrom<&[u8]> for CardInfo {
+    type Error = CardInfoParseError;
+
+    fn try_from(input: &[u8]) -> std::result::Result<Self, Self::Error> {
+        let mut set = BTreeSet::new();
+        let mut parsed_len = 0;
+        while parsed_len + 2 < input.len() {
+            let item_len = input[parsed_len + 1];
+            let to_parse_len = item_len as usize + 2;
+            let next_item_pos = parsed_len + to_parse_len;
+            debug!(
+                "parsed_len {}, item_len {}, next_item_pos {}",
+                parsed_len, item_len, next_item_pos
+            );
+            if next_item_pos - 1 > input.len() {
+                return Err(CardInfoParseError::ItemLengthOutOfBounds);
+            }
+            let item = CardInfoItem::try_from(&input[parsed_len..next_item_pos])?;
+            set.insert(item);
+            parsed_len += to_parse_len;
+        }
+        Ok(Self(set))
+    }
 }
 
 /// Card Management Solution subsystem
@@ -177,7 +532,7 @@ pub trait CardMgmtSys {
     /// Polls a given `mask` in a given CMS register `reg` continuously at least `n` times until the
     /// mask is equal to the expected value.
     fn poll_cms_reg_mask(&self, reg: CmsReg, mask: u32, expected: u32, n: usize) -> Result<()> {
-        iter::repeat(self.get_cms_reg(reg).ok())
+        iter::repeat_with(|| self.get_cms_reg(reg).ok())
             .take(n)
             .position(|ready| ready.map(|ready| ready & mask) == Some(expected))
             .map(|_| ())
@@ -195,7 +550,7 @@ pub trait CardMgmtSys {
         n: usize,
         duration: Duration,
     ) -> Result<usize> {
-        iter::repeat({
+        iter::repeat_with(|| {
             thread::sleep(duration);
             self.get_cms_reg(reg).ok()
         })
@@ -208,13 +563,13 @@ pub trait CardMgmtSys {
     /// Polls a given `mask` in a given CMS register `reg` continuously at least `n` times until the
     /// mask clears.
     fn poll_cms_reg_clear(&self, reg: CmsReg, mask: u32, n: usize) -> Result<()> {
-        self.poll_cms_reg_mask(reg, mask, mask, n)
+        self.poll_cms_reg_mask(reg, mask, 0, n)
     }
 
     /// Polls a given `mask` in a given CMS register `reg` continuously at least `n` times until the
     /// mask is set.
     fn poll_cms_reg_set(&self, reg: CmsReg, mask: u32, n: usize) -> Result<()> {
-        self.poll_cms_reg_mask(reg, mask, 0, n)
+        self.poll_cms_reg_mask(reg, mask, mask, n)
     }
 }
 
@@ -241,7 +596,7 @@ pub trait CardMgmtOps {
     // fn sc_fw_reboot(&mut self) -> Result<()>;
 
     /// Gets the card information
-    fn get_card_info(&mut self) -> Result<Vec<u8>>;
+    fn get_card_info(&mut self) -> Result<CardInfo>;
 }
 
 impl<T> CardMgmtOps for T
@@ -259,12 +614,12 @@ where
 
     fn enable_hbm_temp_monitoring(&mut self) -> Result<()> {
         let v = self.get_cms_control_reg()?;
-        self.set_cms_control_reg(v | ControlRegBits::HbmTempMonitorEnable as u32)
+        self.set_cms_control_reg(v | ControlRegBit::HbmTempMonitorEnable as u32)
     }
 
     fn get_mailbox_offset(&self) -> Result<u64> {
         let control = self.get_cms_control_reg()?;
-        if 0 != control & ControlRegBits::MailboxStatus as u32 {
+        if 0 != control & ControlRegBit::MailboxStatus as u32 {
             return Err(Error::MailboxNotAvailable);
         }
         let v = self.get_cms_reg(CmsReg::HostMsgOffset)?;
@@ -273,10 +628,10 @@ where
 
     // fn sc_fw_reboot(&mut self) -> Result<()> {
     //     let mbox_offset = self.get_mailbox_offset()?;
-    //     self.set_cms_addr(mbox_offset, (MailboxMsgOpcodes::ScFwReboot as u32) << 24)?;
+    //     self.set_cms_addr(mbox_offset, (MailboxMsgOpcode::ScFwReboot as u32) << 24)?;
     //     self.set_cms_addr(mbox_offset + 4, 0x00000201)?;
     //     let control = self.get_cms_control_reg()?;
-    //     self.set_cms_control_reg(control | ControlRegBits::MailboxStatus as u32)?;
+    //     self.set_cms_control_reg(control | ControlRegBit::MailboxStatus as u32)?;
     //     let error = self.get_cms_reg(CmsReg::HostMsgError)?;
     //     if error != 0 {
     //         Err(Error::HostMsgError(error))
@@ -285,12 +640,20 @@ where
     //     }
     // }
 
-    fn get_card_info(&mut self) -> Result<Vec<u8>> {
+    fn get_card_info(&mut self) -> Result<CardInfo> {
         let mbox_offset = self.get_mailbox_offset()?;
-        self.set_cms_addr(mbox_offset, (MailboxMsgOpcodes::CardInfo as u32) << 24)?;
+        debug!("mbox_offset 0x{:x}", mbox_offset);
+        self.set_cms_addr(mbox_offset, (MailboxMsgOpcode::CardInfo as u32) << 24)?;
         let control = self.get_cms_control_reg()?;
-        self.set_cms_control_reg(control | ControlRegBits::MailboxStatus as u32)?;
-        self.poll_cms_reg_clear(CmsReg::Control, ControlRegBits::MailboxStatus as u32, 100)?;
+        self.set_cms_control_reg(control | ControlRegBit::MailboxStatus as u32)?;
+        // Wait for at most 1s.
+        self.poll_cms_reg_mask_sleep(
+            CmsReg::Control,
+            ControlRegBit::MailboxStatus as u32,
+            0,
+            100,
+            Duration::from_millis(10),
+        )?;
 
         let error = self.get_cms_reg(CmsReg::HostMsgError)?;
         if error != 0 {
@@ -298,15 +661,18 @@ where
         }
 
         let len = self.get_cms_addr(mbox_offset)? & 0xfff;
-        let mut info = Vec::with_capacity(len as usize);
-        let mut i = 4;
-        while i < len + 4 {
-            let w = self.get_cms_addr(mbox_offset + i as u64)?;
+        let mut info_bytes = Vec::with_capacity(len as usize);
+        let mut data_offset = 4;
+        let mut remaining = len as isize;
+        while remaining > 0 {
+            let w = self.get_cms_addr(mbox_offset + data_offset as u64)?;
             let bytes = w.to_le_bytes();
-            info.extend_from_slice(&bytes);
-            i += 4;
+            let num_bytes = remaining.min(4) as usize;
+            info_bytes.extend_from_slice(&bytes[..num_bytes]);
+            data_offset += 4;
+            remaining -= 4;
         }
-        Ok(info)
+        Ok(CardInfo::try_from(info_bytes.as_slice())?)
     }
 }
 
@@ -325,5 +691,71 @@ where
         let data = value.to_le_bytes();
         self.shell_write(&data, T::BASE_ADDR + addr)
             .map_err(Error::XdmaFailed)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use test_log::test;
+
+    #[test]
+    fn parse_pg348_example_card_info() {
+        let card_info_bytes: Vec<u8> = vec![
+            0x27, 0x0d, 0x41, 0x4c, 0x56, 0x45, 0x4f, 0x20, 0x55, 0x35, 0x30, 0x20, 0x50, 0x51,
+            0x00, 0x26, 0x02, 0x31, 0x00, 0x21, 0x0d, 0x35, 0x30, 0x31, 0x32, 0x31, 0x31, 0x31,
+            0x39, 0x43, 0x53, 0x50, 0x4d, 0x00, 0x4b, 0x08, 0x04, 0x00, 0x00, 0x0a, 0x35, 0x05,
+            0x0f, 0xd8, 0x2a, 0x01, 0x50, 0x2b, 0x01, 0x07, 0x29, 0x01, 0x00, 0x28, 0x04, 0x35,
+            0x2e, 0x30, 0x00,
+        ];
+        let expected_card_info = CardInfo(
+            vec![
+                CardInfoItem::SerialNumber(b"50121119CSPM".to_vec()),
+                CardInfoItem::CardRev(b"1".to_vec()),
+                CardInfoItem::CardName(b"ALVEO U50 PQ".to_vec()),
+                CardInfoItem::SatelliteVersion(b"5.0".to_vec()),
+                CardInfoItem::TotalPowerAvail(TotalPowerAvail::Power75W),
+                CardInfoItem::FanPresence(b'P'),
+                CardInfoItem::ConfigMode(ConfigMode::MasterSpiX4),
+                CardInfoItem::NewMacScheme(4, [0x00, 0x0a, 0x35, 0x05, 0x0f, 0xd8]),
+            ]
+            .into_iter()
+            .collect(),
+        );
+        assert_eq!(
+            CardInfo::try_from(card_info_bytes.as_slice()),
+            Ok(expected_card_info)
+        );
+    }
+
+    #[test]
+    fn card_info_sernum_zero_length() {
+        let card_info_bytes: Vec<u8> = vec![0x21, 0x00, 0x31, 0x32, 0x33, 0x00];
+        assert_eq!(
+            CardInfo::try_from(card_info_bytes.as_slice()),
+            Err(CardInfoParseError::CardInfoItem(
+                CardInfoItemParseError::IncorrectLength
+            ))
+        );
+    }
+
+    #[test]
+    fn card_info_sernum_length_out_of_bounds() {
+        let card_info_bytes: Vec<u8> = vec![0x21, 0xff, 0x31, 0x32, 0x33, 0x00];
+        assert_eq!(
+            CardInfo::try_from(card_info_bytes.as_slice()),
+            Err(CardInfoParseError::ItemLengthOutOfBounds)
+        );
+    }
+
+    #[test]
+    fn card_info_sernum_non_null_terminator() {
+        let card_info_bytes: Vec<u8> = vec![0x21, 0x04, 0x31, 0x32, 0x33, 0xff];
+        assert_eq!(
+            CardInfo::try_from(card_info_bytes.as_slice()),
+            Err(CardInfoParseError::CardInfoItem(
+                CardInfoItemParseError::NonNullTerminator
+            ))
+        );
     }
 }
