@@ -12,9 +12,11 @@ fn main() {
     let mut varium = VariumC1100::new().expect("cannot construct device");
     varium.init_cms().expect("cannot initialise CMS");
 
-    // Expect to wait up to at least 1ms.
+    // sleep(Duration::from_millis(100));
+
+    // Expect to wait up to at least 1s.
     match varium.expect_ready_host_status(1000) {
-        Ok(us) => println!("CMS became ready after {}µs", us),
+        Ok(ms) => println!("CMS became ready after {}ms", ms),
         Err(e) => {
             println!("CMS is not ready: {:?}", e);
             std::process::exit(1);
@@ -26,7 +28,7 @@ fn main() {
         .expect("cannot enable HBM temp monitor");
 
     // Wait 1ms to allow readings to be populated.
-    sleep(Duration::from_millis(1));
+    sleep(Duration::from_millis(100));
 
     for reg in CmsReg::into_enum_iter() {
         println!(

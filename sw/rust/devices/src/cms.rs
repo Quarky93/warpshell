@@ -227,9 +227,9 @@ pub trait CardMgmtOps {
     /// Initialises the Card Management System
     fn init_cms(&mut self) -> Result<()>;
 
-    // Waits roughly `us` microseconds to allow readings to be populated while polling the status
-    // register every 1µs. Returns the elapsed microseconds.
-    fn expect_ready_host_status(&self, us: usize) -> Result<usize>;
+    // Waits roughly `ms` milliseconds to allow readings to be populated while polling the status
+    // register every 1ms. Returns the elapsed milliseconds.
+    fn expect_ready_host_status(&self, ms: usize) -> Result<usize>;
 
     /// Enables HBM temperature monitoring
     fn enable_hbm_temp_monitoring(&mut self) -> Result<()>;
@@ -241,7 +241,6 @@ pub trait CardMgmtOps {
     // fn sc_fw_reboot(&mut self) -> Result<()>;
 
     /// Gets the card information
-    // TODO: parse the info vector
     fn get_card_info(&mut self) -> Result<Vec<u8>>;
 }
 
@@ -253,8 +252,8 @@ where
         self.set_cms_reg(CmsReg::MicroblazeResetN, 1)
     }
 
-    fn expect_ready_host_status(&self, us: usize) -> Result<usize> {
-        self.poll_cms_reg_mask_sleep(CmsReg::HostStatus, 1, 1, us, Duration::from_micros(1))
+    fn expect_ready_host_status(&self, ms: usize) -> Result<usize> {
+        self.poll_cms_reg_mask_sleep(CmsReg::HostStatus, 1, 1, ms, Duration::from_millis(1))
             .map_err(|_| Error::HostStatusNotReady)
     }
 
