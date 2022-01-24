@@ -18,6 +18,13 @@ pub enum Error {
     MailboxNotAvailable,
     CmsRegMaskNotAsExpected,
     HostMsgError(u32),
+    CardInfoParseError(CardInfoParseError),
+}
+
+impl From<CardInfoParseError> for Error {
+    fn from(e: CardInfoParseError) -> Self {
+        Self::CardInfoParseError(e)
+    }
 }
 
 /// CMS register offsets
@@ -525,7 +532,7 @@ pub trait CardMgmtSys {
     /// Polls a given `mask` in a given CMS register `reg` continuously at least `n` times until the
     /// mask is equal to the expected value.
     fn poll_cms_reg_mask(&self, reg: CmsReg, mask: u32, expected: u32, n: usize) -> Result<()> {
-        iter::repeat(self.get_cms_reg(reg).ok())
+        iter::repeat_with(|| self.get_cms_reg(reg).ok())
             .take(n)
             .position(|ready| ready.map(|ready| ready & mask) == Some(expected))
             .map(|_| ())
@@ -543,7 +550,7 @@ pub trait CardMgmtSys {
         n: usize,
         duration: Duration,
     ) -> Result<usize> {
-        iter::repeat({
+        iter::repeat_with(|| {
             thread::sleep(duration);
             self.get_cms_reg(reg).ok()
         })
@@ -556,13 +563,13 @@ pub trait CardMgmtSys {
     /// Polls a given `mask` in a given CMS register `reg` continuously at least `n` times until the
     /// mask clears.
     fn poll_cms_reg_clear(&self, reg: CmsReg, mask: u32, n: usize) -> Result<()> {
-        self.poll_cms_reg_mask(reg, mask, mask, n)
+        self.poll_cms_reg_mask(reg, mask, 0, n)
     }
 
     /// Polls a given `mask` in a given CMS register `reg` continuously at least `n` times until the
     /// mask is set.
     fn poll_cms_reg_set(&self, reg: CmsReg, mask: u32, n: usize) -> Result<()> {
-        self.poll_cms_reg_mask(reg, mask, 0, n)
+        self.poll_cms_reg_mask(reg, mask, mask, n)
     }
 }
 
@@ -589,7 +596,7 @@ pub trait CardMgmtOps {
     // fn sc_fw_reboot(&mut self) -> Result<()>;
 
     /// Gets the card information
-    fn get_card_info(&mut self) -> Result<Vec<u8>>;
+    fn get_card_info(&mut self) -> Result<CardInfo>;
 }
 
 impl<T> CardMgmtOps for T
@@ -633,12 +640,20 @@ where
     //     }
     // }
 
-    fn get_card_info(&mut self) -> Result<Vec<u8>> {
+    fn get_card_info(&mut self) -> Result<CardInfo> {
         let mbox_offset = self.get_mailbox_offset()?;
+        debug!("mbox_offset 0x{:x}", mbox_offset);
         self.set_cms_addr(mbox_offset, (MailboxMsgOpcode::CardInfo as u32) << 24)?;
         let control = self.get_cms_control_reg()?;
         self.set_cms_control_reg(control | ControlRegBit::MailboxStatus as u32)?;
-        self.poll_cms_reg_clear(CmsReg::Control, ControlRegBit::MailboxStatus as u32, 100)?;
+        // Wait for at most 1s.
+        self.poll_cms_reg_mask_sleep(
+            CmsReg::Control,
+            ControlRegBit::MailboxStatus as u32,
+            0,
+            100,
+            Duration::from_millis(10),
+        )?;
 
         let error = self.get_cms_reg(CmsReg::HostMsgError)?;
         if error != 0 {
@@ -646,18 +661,18 @@ where
         }
 
         let len = self.get_cms_addr(mbox_offset)? & 0xfff;
-        let mut info = Vec::with_capacity(len as usize);
+        let mut info_bytes = Vec::with_capacity(len as usize);
         let mut data_offset = 4;
         let mut remaining = len as isize;
         while remaining > 0 {
             let w = self.get_cms_addr(mbox_offset + data_offset as u64)?;
             let bytes = w.to_le_bytes();
             let num_bytes = remaining.min(4) as usize;
-            info.extend_from_slice(&bytes[..num_bytes]);
+            info_bytes.extend_from_slice(&bytes[..num_bytes]);
             data_offset += 4;
             remaining -= 4;
         }
-        Ok(info)
+        Ok(CardInfo::try_from(info_bytes.as_slice())?)
     }
 }
 
