@@ -2,9 +2,9 @@
 
 module uart (input  SYSCLK2_N,
              input  SYSCLK2_P,
-             output QSFP28_0_ACTIVITY_LED,
              input  FPGA_UART0_RXD,
-             output FPGA_UART0_TXD);
+             output FPGA_UART0_TXD,
+             output QSFP28_0_ACTIVITY_LED);
 
     localparam CLK_HZ       = 100000000;
     localparam BIT_RATE     = 115200;
@@ -30,12 +30,6 @@ module uart (input  SYSCLK2_N,
                            .I(SYSCLK2_P),
                            .IB(SYSCLK2_N));
 
-    // always @(posedge sysclk2) begin
-    //     if (uart_rx_valid)
-    //         // Echo received data back to the sender
-    //         uart_tx_data <= uart_rx_data;
-    // end
-
     uart_rx #(.BIT_RATE(BIT_RATE),
               .PAYLOAD_BITS(PAYLOAD_BITS),
               .CLK_HZ(CLK_HZ))
@@ -53,7 +47,7 @@ module uart (input  SYSCLK2_N,
     inst_uart_tx (.clk(sysclk2),
                   .resetn(resetn),
                   .uart_txd(FPGA_UART0_TXD),
-                  .uart_tx_en(1'b1),
+                  .uart_tx_en(uart_tx_en),
                   .uart_tx_busy(uart_tx_busy),
                   .uart_tx_data(uart_tx_data));
 
