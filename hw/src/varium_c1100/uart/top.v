@@ -19,7 +19,6 @@ module uart (input  SYSCLK2_N,
     wire                    uart_tx_en;
     wire [PAYLOAD_BITS-1:0] uart_tx_data;
 
-    // TODO: route this out or make it constant.
     assign resetn       = 1'b1;
     assign uart_tx_data = uart_rx_data;
     assign uart_tx_en   = uart_rx_valid;
