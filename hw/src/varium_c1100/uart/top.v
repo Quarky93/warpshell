@@ -17,7 +17,7 @@ module uart (input  SYSCLK2_N,
     wire                    uart_rx_break;
     wire                    uart_tx_busy;
     wire                    uart_tx_en;
-    reg  [PAYLOAD_BITS-1:0] uart_tx_data;
+    wire [PAYLOAD_BITS-1:0] uart_tx_data;
 
     // TODO: route this out or make it constant.
     assign resetn       = 1'b1;
@@ -30,11 +30,11 @@ module uart (input  SYSCLK2_N,
                            .I(SYSCLK2_P),
                            .IB(SYSCLK2_N));
 
-    always @(posedge sysclk2) begin
-        if (uart_rx_valid)
-            // Echo received data back to the sender
-            uart_tx_data <= uart_rx_data;
-    end
+    // always @(posedge sysclk2) begin
+    //     if (uart_rx_valid)
+    //         // Echo received data back to the sender
+    //         uart_tx_data <= uart_rx_data;
+    // end
 
     uart_rx #(.BIT_RATE(BIT_RATE),
               .PAYLOAD_BITS(PAYLOAD_BITS),
