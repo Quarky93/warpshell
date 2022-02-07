@@ -27,14 +27,6 @@ pub struct XdmaDevice {
     pub h2c_cdev: File,
     /// Card to host character device
     pub c2h_cdev: File,
-    /// Interrupt Controller
-    //
-    // TODO: create an INTC parameter trait and move it there as a trait const.
-    pub intc_base_addr: u32,
-    /// High Bandwidth Internal Configuration Access Port
-    //
-    // TODO: create an HBICAP parameter trait and move it there as a trait const.
-    pub hbicap_base_addr: u32,
 }
 
 pub trait XdmaOps {

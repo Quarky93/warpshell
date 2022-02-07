@@ -1,5 +1,7 @@
 use crate::{
     cms::CardMgmtSysParam,
+    hbicap::HbicapParam,
+    intc::InterruptControllerParam,
     xdma::{DmaBuffer, Result as XdmaResult, XdmaDevice, XdmaOps},
 };
 use std::fs::{File, OpenOptions};
@@ -13,6 +15,14 @@ pub struct VariumC1100 {
 
 impl CardMgmtSysParam for VariumC1100 {
     const BASE_ADDR: u64 = 0;
+}
+
+impl InterruptControllerParam for VariumC1100 {
+    const BASE_ADDR: u64 = 0x4_0000;
+}
+
+impl HbicapParam for VariumC1100 {
+    const BASE_ADDR: u64 = 0x10_0000;
 }
 
 impl XdmaOps for VariumC1100 {
@@ -52,8 +62,6 @@ impl VariumC1100 {
                 user_cdev,
                 h2c_cdev,
                 c2h_cdev,
-                intc_base_addr: 0x1_0000,
-                hbicap_base_addr: 0x10_0000,
             },
         })
     }
