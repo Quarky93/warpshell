@@ -26,3 +26,6 @@ name = "cms_regs"
 
 [[example]]
 name = "card_info"
+
+[[example]]
+name = "dev_core"

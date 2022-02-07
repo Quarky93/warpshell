@@ -1,5 +1,6 @@
 use crate::{
     cms::CardMgmtSysParam,
+    dev_core::DevCoreParam,
     hbicap::HbicapParam,
     intc::InterruptControllerParam,
     xdma::{DmaBuffer, Result as XdmaResult, XdmaDevice, XdmaOps},
@@ -19,6 +20,10 @@ impl CardMgmtSysParam for VariumC1100 {
 
 impl InterruptControllerParam for VariumC1100 {
     const BASE_ADDR: u64 = 0x4_0000;
+}
+
+impl DevCoreParam for VariumC1100 {
+    const BASE_ADDR: u64 = 0x5_0000;
 }
 
 impl HbicapParam for VariumC1100 {
