@@ -2,8 +2,8 @@ extern crate warp_devices;
 
 use enum_iterator::IntoEnumIterator;
 use log::{error, info};
+use std::thread::sleep;
 use std::time::Duration;
-use std::{error, thread::sleep};
 use warp_devices::{
     cms::{CardMgmtOps, CardMgmtSys, CmsReg},
     varium_c1100::VariumC1100,
