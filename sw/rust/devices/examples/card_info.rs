@@ -1,6 +1,5 @@
 extern crate warp_devices;
 
-use itertools::Itertools;
 use log::{error, info};
 use warp_devices::{cms::CardMgmtOps, varium_c1100::VariumC1100};
 

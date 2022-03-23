@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::io::Error as IoError;
+use std::mem;
 use std::os::unix::fs::FileExt;
 
 /// Memory alignment for optimal performance of DMA reads and writes.
@@ -15,8 +16,48 @@ pub enum Error {
     DmaWriteFailed(IoError),
 }
 
-#[repr(align(4096))]
-pub struct DmaBuffer(pub Vec<u8>);
+#[repr(C, align(4096))]
+struct Align4K([u8; 4096]);
+
+/// DMA-engine aligned buffer. Non-reallocatable since reallocations do not preserve alignment. The
+/// size has to be known before creation.
+pub struct DmaBuffer(Vec<u8>);
+
+impl DmaBuffer {
+    pub fn new(n_bytes: usize) -> Self {
+        Self(unsafe { aligned_vec(n_bytes) })
+    }
+
+    pub fn as_slice(&self) -> &[u8] {
+        self.0.as_slice()
+    }
+
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        self.0.as_mut_slice()
+    }
+
+    pub fn get_mut(&mut self) -> &mut Vec<u8> {
+        &mut self.0
+    }
+}
+
+unsafe fn aligned_vec(n_bytes: usize) -> Vec<u8> {
+    let n_units = (n_bytes / mem::size_of::<Align4K>()) + 1;
+
+    let mut aligned: Vec<Align4K> = Vec::with_capacity(n_units);
+
+    let ptr = aligned.as_mut_ptr();
+    let len_units = aligned.len();
+    let cap_units = aligned.capacity();
+
+    mem::forget(aligned);
+
+    Vec::from_raw_parts(
+        ptr as *mut u8,
+        len_units * mem::size_of::<Align4K>(),
+        cap_units * mem::size_of::<Align4K>(),
+    )
+}
 
 pub struct XdmaDevice {
     /// Device ID
@@ -59,13 +100,13 @@ impl XdmaOps for XdmaDevice {
 
     fn dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<()> {
         self.c2h_cdev
-            .read_exact_at(buf.0.as_mut_slice(), offset)
+            .read_exact_at(buf.as_mut_slice(), offset)
             .map_err(Error::DmaReadFailed)
     }
 
     fn dma_write(&mut self, buf: &DmaBuffer, offset: u64) -> Result<()> {
         self.h2c_cdev
-            .write_all_at(buf.0.as_slice(), offset)
+            .write_all_at(buf.as_slice(), offset)
             .map_err(Error::DmaWriteFailed)
     }
 }
@@ -73,6 +114,22 @@ impl XdmaOps for XdmaDevice {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn dma_buffer_alignment() {
+        const BUF_LEN: usize = 42;
+
+        let mut buf = DmaBuffer::new(BUF_LEN);
+        buf.get_mut().extend_from_slice(&vec![0u8; BUF_LEN]);
+
+        let ptr = buf.as_mut_slice().as_mut_ptr();
+        let len = buf.get_mut().len();
+        let cap = buf.get_mut().capacity();
+
+        assert_eq!(ptr as u64 % DMA_ALIGNMENT, 0);
+        assert_eq!(len, BUF_LEN);
+        assert_eq!(cap, DMA_ALIGNMENT as usize);
+    }
 
     #[test]
     fn file_write_all_at() {

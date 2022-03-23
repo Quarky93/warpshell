@@ -9,14 +9,14 @@ const PAYLOAD_LEN: usize = 1 * 1024 * 1024 * 1024;
 const CHUNK_LEN: usize = 64;
 
 fn random_payload() -> DmaBuffer {
-    let mut buf: DmaBuffer = DmaBuffer(Vec::with_capacity(PAYLOAD_LEN));
+    let mut buf: DmaBuffer = DmaBuffer::new(PAYLOAD_LEN);
     let mut chunk: [u8; CHUNK_LEN] = [0; CHUNK_LEN];
     for _ in 0..PAYLOAD_LEN / CHUNK_LEN {
         // Fill a chunk of bytes with random data.
         let simd_chunk: Simd<[u8; CHUNK_LEN]> = rand::random();
         simd_chunk.write_to_slice_unaligned(&mut chunk);
-        // Append the chunk to the payload.
-        buf.0.extend_from_slice(&chunk)
+        // Copy the chunk into the payload.
+        buf.extend_from_slice(&chunk)
     }
     buf
 }
