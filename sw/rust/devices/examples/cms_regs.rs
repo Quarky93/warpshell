@@ -12,7 +12,7 @@ use warp_devices::{
 fn main() {
     env_logger::init();
 
-    let mut varium = VariumC1100::new().expect("cannot construct device");
+    let varium = VariumC1100::new().expect("cannot construct device");
     varium.init_cms().expect("cannot initialise CMS");
 
     // sleep(Duration::from_millis(100));

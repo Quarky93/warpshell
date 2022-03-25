@@ -80,9 +80,9 @@ pub struct XdmaDevice {
 
 pub trait XdmaOps {
     fn shell_read(&self, buf: &mut [u8], offset: u64) -> Result<()>;
-    fn shell_write(&mut self, buf: &[u8], offset: u64) -> Result<()>;
+    fn shell_write(&self, buf: &[u8], offset: u64) -> Result<()>;
     fn dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<()>;
-    fn dma_write(&mut self, buf: &DmaBuffer, offset: u64) -> Result<()>;
+    fn dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<()>;
 }
 
 impl XdmaOps for XdmaDevice {
@@ -92,7 +92,7 @@ impl XdmaOps for XdmaDevice {
             .map_err(Error::ShellReadFailed)
     }
 
-    fn shell_write(&mut self, buf: &[u8], offset: u64) -> Result<()> {
+    fn shell_write(&self, buf: &[u8], offset: u64) -> Result<()> {
         self.user_cdev
             .write_all_at(buf, offset)
             .map_err(Error::ShellWriteFailed)
@@ -104,7 +104,7 @@ impl XdmaOps for XdmaDevice {
             .map_err(Error::DmaReadFailed)
     }
 
-    fn dma_write(&mut self, buf: &DmaBuffer, offset: u64) -> Result<()> {
+    fn dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<()> {
         self.h2c_cdev
             .write_all_at(buf.as_slice(), offset)
             .map_err(Error::DmaWriteFailed)

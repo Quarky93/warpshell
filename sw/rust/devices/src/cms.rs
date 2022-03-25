@@ -507,7 +507,7 @@ pub trait CardMgmtSys {
     fn get_cms_addr(&self, addr: u64) -> Result<u32>;
 
     /// Writes the value at a raw CMS address
-    fn set_cms_addr(&mut self, addr: u64, value: u32) -> Result<()>;
+    fn set_cms_addr(&self, addr: u64, value: u32) -> Result<()>;
 
     /// Reads the value in a given CMS register
     fn get_cms_reg(&self, reg: CmsReg) -> Result<u32> {
@@ -515,7 +515,7 @@ pub trait CardMgmtSys {
     }
 
     /// Writes the value in a given CMS register
-    fn set_cms_reg(&mut self, reg: CmsReg, value: u32) -> Result<()> {
+    fn set_cms_reg(&self, reg: CmsReg, value: u32) -> Result<()> {
         self.set_cms_addr(reg as u64, value)
     }
 
@@ -525,7 +525,7 @@ pub trait CardMgmtSys {
     }
 
     /// Writes the value in the CMS control register
-    fn set_cms_control_reg(&mut self, value: u32) -> Result<()> {
+    fn set_cms_control_reg(&self, value: u32) -> Result<()> {
         self.set_cms_reg(CmsReg::Control, value)
     }
 
@@ -580,14 +580,14 @@ pub trait CardMgmtSysParam {
 
 pub trait CardMgmtOps {
     /// Initialises the Card Management System
-    fn init_cms(&mut self) -> Result<()>;
+    fn init_cms(&self) -> Result<()>;
 
     // Waits roughly `ms` milliseconds to allow readings to be populated while polling the status
     // register every 1ms. Returns the elapsed milliseconds.
     fn expect_ready_host_status(&self, ms: usize) -> Result<usize>;
 
     /// Enables HBM temperature monitoring
-    fn enable_hbm_temp_monitoring(&mut self) -> Result<()>;
+    fn enable_hbm_temp_monitoring(&self) -> Result<()>;
 
     /// Gets the mailbox offset from the base address
     fn get_mailbox_offset(&self) -> Result<u64>;
@@ -596,14 +596,14 @@ pub trait CardMgmtOps {
     // fn sc_fw_reboot(&mut self) -> Result<()>;
 
     /// Gets the card information
-    fn get_card_info(&mut self) -> Result<CardInfo>;
+    fn get_card_info(&self) -> Result<CardInfo>;
 }
 
 impl<T> CardMgmtOps for T
 where
     T: XdmaOps + CardMgmtSysParam,
 {
-    fn init_cms(&mut self) -> Result<()> {
+    fn init_cms(&self) -> Result<()> {
         self.set_cms_reg(CmsReg::MicroblazeResetN, 1)
     }
 
@@ -612,7 +612,7 @@ where
             .map_err(|_| Error::HostStatusNotReady)
     }
 
-    fn enable_hbm_temp_monitoring(&mut self) -> Result<()> {
+    fn enable_hbm_temp_monitoring(&self) -> Result<()> {
         let v = self.get_cms_control_reg()?;
         self.set_cms_control_reg(v | ControlRegBit::HbmTempMonitorEnable as u32)
     }
@@ -640,7 +640,7 @@ where
     //     }
     // }
 
-    fn get_card_info(&mut self) -> Result<CardInfo> {
+    fn get_card_info(&self) -> Result<CardInfo> {
         let mbox_offset = self.get_mailbox_offset()?;
         debug!("mbox_offset 0x{:x}", mbox_offset);
         self.set_cms_addr(mbox_offset, (MailboxMsgOpcode::CardInfo as u32) << 24)?;
@@ -687,7 +687,7 @@ where
         Ok(u32::from_le_bytes(data))
     }
 
-    fn set_cms_addr(&mut self, addr: u64, value: u32) -> Result<()> {
+    fn set_cms_addr(&self, addr: u64, value: u32) -> Result<()> {
         let data = value.to_le_bytes();
         self.shell_write(&data, T::BASE_ADDR + addr)
             .map_err(Error::XdmaFailed)

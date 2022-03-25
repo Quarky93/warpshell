@@ -6,7 +6,7 @@ use warp_devices::{cms::CardMgmtOps, varium_c1100::VariumC1100};
 fn main() {
     env_logger::init();
 
-    let mut varium = VariumC1100::new().expect("cannot construct device");
+    let varium = VariumC1100::new().expect("cannot construct device");
     varium.init_cms().expect("cannot initialise CMS");
 
     // Expect to wait up to at least 1s.

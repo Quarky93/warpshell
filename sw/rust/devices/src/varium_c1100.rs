@@ -22,7 +22,7 @@ impl XdmaOps for VariumC1100 {
     }
 
     #[inline]
-    fn shell_write(&mut self, buf: &[u8], offset: u64) -> XdmaResult<()> {
+    fn shell_write(&self, buf: &[u8], offset: u64) -> XdmaResult<()> {
         self.xdma.shell_write(buf, offset)
     }
 
@@ -32,7 +32,7 @@ impl XdmaOps for VariumC1100 {
     }
 
     #[inline]
-    fn dma_write(&mut self, buf: &DmaBuffer, offset: u64) -> XdmaResult<()> {
+    fn dma_write(&self, buf: &DmaBuffer, offset: u64) -> XdmaResult<()> {
         self.xdma.dma_write(buf, offset)
     }
 }

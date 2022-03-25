@@ -52,7 +52,7 @@ fn read(c: &mut Criterion) {
 }
 
 #[inline]
-fn write_payload(varium: &mut VariumC1100, buf: &DmaBuffer) {
+fn write_payload(varium: &VariumC1100, buf: &DmaBuffer) {
     varium.dma_write(buf, HBM_BASE_ADDR).expect("write failed");
 }
 
