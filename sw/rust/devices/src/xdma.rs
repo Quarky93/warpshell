@@ -36,6 +36,10 @@ impl DmaBuffer {
         self.0.as_mut_slice()
     }
 
+    pub fn get(&mut self) -> &Vec<u8> {
+        &self.0
+    }
+
     pub fn get_mut(&mut self) -> &mut Vec<u8> {
         &mut self.0
     }
@@ -123,8 +127,8 @@ mod test {
         buf.get_mut().extend_from_slice(&vec![0u8; BUF_LEN]);
 
         let ptr = buf.as_mut_slice().as_mut_ptr();
-        let len = buf.get_mut().len();
-        let cap = buf.get_mut().capacity();
+        let len = buf.get().len();
+        let cap = buf.get().capacity();
 
         assert_eq!(ptr as u64 % DMA_ALIGNMENT, 0);
         assert_eq!(len, BUF_LEN);
