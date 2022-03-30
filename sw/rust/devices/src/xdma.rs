@@ -36,7 +36,7 @@ impl DmaBuffer {
         self.0.as_mut_slice()
     }
 
-    pub fn get(&mut self) -> &Vec<u8> {
+    pub fn get(&self) -> &Vec<u8> {
         &self.0
     }
 
