@@ -21,6 +21,7 @@ struct Align4K([u8; 4096]);
 
 /// DMA-engine aligned buffer. Non-reallocatable since reallocations do not preserve alignment. The
 /// size has to be known before creation.
+#[derive(Debug)]
 pub struct DmaBuffer(Vec<u8>);
 
 impl DmaBuffer {
