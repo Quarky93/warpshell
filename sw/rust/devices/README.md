@@ -5,7 +5,7 @@ library is a part of the [warpshell](https://github.com/quarky93/warpshell) proj
 flow support on the Varium C1100 compute accelerator card. Support for other cards from the Alveo
 and Versal series may be added in the future.
 
-See the [warpshell README](../../README.md) for more information.
+See the [warpshell README](../../../README.md) for more information.
 
 
 ## Build
