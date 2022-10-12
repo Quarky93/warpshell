@@ -1,6 +1,6 @@
 extern crate warp_devices;
 
-use enum_iterator::IntoEnumIterator;
+use enum_iterator::all;
 use log::{error, info};
 use std::thread::sleep;
 use std::time::Duration;
@@ -33,7 +33,7 @@ fn main() {
     // Wait 1ms to allow readings to be populated.
     sleep(Duration::from_millis(100));
 
-    for reg in CmsReg::into_enum_iter() {
+    for reg in all::<CmsReg>() {
         println!(
             "{:?} = {}",
             reg,

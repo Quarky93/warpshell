@@ -1,5 +1,5 @@
 use crate::xdma::{Error as XdmaError, XdmaOps};
-use enum_iterator_derive::IntoEnumIterator;
+use enum_iterator::Sequence;
 use log::debug;
 use num_enum::TryFromPrimitive;
 use num_enum::TryFromPrimitiveError;
@@ -28,7 +28,7 @@ impl From<CardInfoParseError> for Error {
 }
 
 /// CMS register offsets
-#[derive(Copy, Clone, Debug, IntoEnumIterator, PartialEq)]
+#[derive(Copy, Clone, Debug, Sequence, PartialEq)]
 #[repr(u64)]
 pub enum CmsReg {
     /// Microblaze reset register. Active-Low. Default 0, reset active.

@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use packed_simd_2::Simd;
+use packed_simd::Simd;
 use std::time::Duration;
 use warp_devices::cms::{CardMgmtOps, CardMgmtSys, CmsReg};
 use warp_devices::varium_c1100::{VariumC1100, HBM_BASE_ADDR};
@@ -16,7 +16,7 @@ fn random_payload() -> DmaBuffer {
         let simd_chunk: Simd<[u8; CHUNK_LEN]> = rand::random();
         simd_chunk.write_to_slice_unaligned(&mut chunk);
         // Copy the chunk into the payload.
-        buf.extend_from_slice(&chunk)
+        buf.get_mut().extend_from_slice(&chunk)
     }
     buf
 }
@@ -24,7 +24,7 @@ fn random_payload() -> DmaBuffer {
 fn write(c: &mut Criterion) {
     let mut varium = VariumC1100::new().expect("cannot construct device");
     let buf = random_payload();
-    let bench_name = format!("write {} bytes", buf.0.len());
+    let bench_name = format!("write {} bytes", buf.get().len());
     let target_time = Duration::from_secs(12);
     let mut group = c.benchmark_group(&format!(
         "{} with target time {:?}",
@@ -39,7 +39,7 @@ fn write(c: &mut Criterion) {
 fn read(c: &mut Criterion) {
     let varium = VariumC1100::new().expect("cannot construct device");
     let mut buf = random_payload();
-    let bench_name = format!("read {} bytes", buf.0.len());
+    let bench_name = format!("read {} bytes", buf.get().len());
     let target_time = Duration::from_secs(12);
     let mut group = c.benchmark_group(&format!(
         "{} with target time {:?}",
@@ -62,7 +62,7 @@ fn read_payload(varium: &VariumC1100, buf: &mut DmaBuffer) {
 }
 
 fn get_fpga_temp_inst(c: &mut Criterion) {
-    let mut varium = VariumC1100::new().expect("cannot construct device");
+    let varium = VariumC1100::new().expect("cannot construct device");
     varium.init_cms().expect("cannot initialise CMS");
     varium
         .expect_ready_host_status(1000)

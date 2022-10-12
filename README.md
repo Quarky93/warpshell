@@ -52,10 +52,12 @@ Same as blinky, find the relevant script in:
 warpshell/hw/scripts
 ```
 
-We must also build and install the [XDMA drivers](https://github.com/Xilinx/dma_ip_drivers):
+We must also build and install the [XDMA driver](https://github.com/Xilinx/dma_ip_drivers):
 Follow the instructions [here](https://github.com/Xilinx/dma_ip_drivers/tree/master/XDMA/linux-kernel).
+As of 12 October 2022, the official Xilinx XDMA driver doesn't work on kernels 5.16.0 and above.
+There is a [PR with a patch](https://github.com/Xilinx/dma_ip_drivers/pull/179) for kernels 5.16-5.19.
 
-*Currently all shell versions are in active development and is not generally usable.*
+*Currently all shell versions are in active development and are not generally usable.*
 
 ## Customize the Shell
 Generate a Vivado project:
