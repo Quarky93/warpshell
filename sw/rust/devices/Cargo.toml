@@ -1,6 +1,11 @@
 [package]
 name = "warp-devices"
-version = "0.2.3"
+description = "Library for interfacing with Xilinx XDMA FPGAs"
+version = "0.3.0"
+authors = ["Vladimir Komendantskiy <komendantsky@gmail.com>"]
+repository = "https://github.com/Quarky93/warpshell"
+license = "Apache-2.0"
+readme = "README.md"
 edition = "2021"
 
 [dependencies]

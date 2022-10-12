@@ -1,5 +1,12 @@
 # XDMA device library
 
+This is a user-space library for interfacing with Xilinx FPGAs using the Xilinx XDMA driver. The
+library is a part of the [warpshell](https://github.com/quarky93/warpshell) project to improve Vivado
+flow support on the Varium C1100 compute accelerator card. Support for other cards from the Alveo
+and Versal series may be added in the future.
+
+See the [warpshell README](../../README.md) for more information.
+
 
 ## Build
 
@@ -17,7 +24,7 @@ should be read-only.
 To run benchmarks without `sudo`, all XDMA character devices should be assigned to a group which
 also contains the user who is running the benchmarks.
 
-There is a handy [script](../..scripts/set-xdma-perms.sh) for that.
+There is a handy [script](../../scripts/set-xdma-perms.sh) for that.
 
 
 ## Test
