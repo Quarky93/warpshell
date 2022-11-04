@@ -4,3 +4,10 @@ build/
 *~
 \#*\#
 .\#*
+
+# VSCode
+.vscode
+
+# Vivado
+vivado.log
+vivado.jou
