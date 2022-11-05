@@ -276,38 +276,39 @@ AWLEN {WIDTH 8 PRESENT 1} AWSIZE {WIDTH 3 PRESENT 1} AWBURST {WIDTH 2 PRESENT 0}
   set_property -dict [list \
     CONFIG.USER_APB_EN {true} \
     CONFIG.USER_HBM_DENSITY {8GB} \
-    CONFIG.USER_SAXI_00 {false} \
-    CONFIG.USER_SAXI_01 {false} \
-    CONFIG.USER_SAXI_02 {false} \
-    CONFIG.USER_SAXI_03 {false} \
-    CONFIG.USER_SAXI_04 {false} \
-    CONFIG.USER_SAXI_05 {false} \
-    CONFIG.USER_SAXI_06 {false} \
-    CONFIG.USER_SAXI_07 {false} \
-    CONFIG.USER_SAXI_08 {false} \
-    CONFIG.USER_SAXI_09 {false} \
-    CONFIG.USER_SAXI_10 {false} \
-    CONFIG.USER_SAXI_11 {false} \
-    CONFIG.USER_SAXI_12 {false} \
-    CONFIG.USER_SAXI_13 {false} \
-    CONFIG.USER_SAXI_14 {false} \
-    CONFIG.USER_SAXI_15 {false} \
-    CONFIG.USER_SAXI_16 {false} \
-    CONFIG.USER_SAXI_17 {false} \
-    CONFIG.USER_SAXI_18 {false} \
-    CONFIG.USER_SAXI_19 {false} \
-    CONFIG.USER_SAXI_20 {false} \
-    CONFIG.USER_SAXI_21 {false} \
-    CONFIG.USER_SAXI_22 {false} \
-    CONFIG.USER_SAXI_23 {false} \
-    CONFIG.USER_SAXI_24 {false} \
-    CONFIG.USER_SAXI_25 {false} \
-    CONFIG.USER_SAXI_26 {false} \
-    CONFIG.USER_SAXI_27 {false} \
-    CONFIG.USER_SAXI_28 {false} \
-    CONFIG.USER_SAXI_29 {false} \
-    CONFIG.USER_SAXI_30 {false} \
+    CONFIG.USER_SAXI_00 {true} \
+    CONFIG.USER_SAXI_01 {true} \
+    CONFIG.USER_SAXI_02 {true} \
+    CONFIG.USER_SAXI_03 {true} \
+    CONFIG.USER_SAXI_04 {true} \
+    CONFIG.USER_SAXI_05 {true} \
+    CONFIG.USER_SAXI_06 {true} \
+    CONFIG.USER_SAXI_07 {true} \
+    CONFIG.USER_SAXI_08 {true} \
+    CONFIG.USER_SAXI_09 {true} \
+    CONFIG.USER_SAXI_10 {true} \
+    CONFIG.USER_SAXI_11 {true} \
+    CONFIG.USER_SAXI_12 {true} \
+    CONFIG.USER_SAXI_13 {true} \
+    CONFIG.USER_SAXI_14 {true} \
+    CONFIG.USER_SAXI_15 {true} \
+    CONFIG.USER_SAXI_16 {true} \
+    CONFIG.USER_SAXI_17 {true} \
+    CONFIG.USER_SAXI_18 {true} \
+    CONFIG.USER_SAXI_19 {true} \
+    CONFIG.USER_SAXI_20 {true} \
+    CONFIG.USER_SAXI_21 {true} \
+    CONFIG.USER_SAXI_22 {true} \
+    CONFIG.USER_SAXI_23 {true} \
+    CONFIG.USER_SAXI_24 {true} \
+    CONFIG.USER_SAXI_25 {true} \
+    CONFIG.USER_SAXI_26 {true} \
+    CONFIG.USER_SAXI_27 {true} \
+    CONFIG.USER_SAXI_28 {true} \
+    CONFIG.USER_SAXI_29 {true} \
+    CONFIG.USER_SAXI_30 {true} \
     CONFIG.USER_SAXI_31 {true} \
+    CONFIG.USER_XSDB_INTF_EN {FALSE} \
   ] $hbm
 
 
@@ -423,7 +424,7 @@ AWLEN {WIDTH 8 PRESENT 1} AWSIZE {WIDTH 3 PRESENT 1} AWBURST {WIDTH 2 PRESENT 0}
     CONFIG.ENABLE_DFX {0} \
     CONFIG.LIST_SIM_BD {user_logic.bd} \
     CONFIG.LIST_SYNTH_BD {user_logic.bd} \
-    CONFIG.LOCK_PROPAGATE {0} \
+    CONFIG.LOCK_PROPAGATE {true} \
   ] $user_logic
 
   set_property APERTURES {{0x100_0000 64M}} [get_bd_intf_pins /user_logic/user_axi_ctrl]
@@ -471,6 +472,37 @@ AWLEN {WIDTH 8 PRESENT 1} AWSIZE {WIDTH 3 PRESENT 1} AWBURST {WIDTH 2 PRESENT 0}
   connect_bd_intf_net -intf_net smartconnect_dma_M01_AXI [get_bd_intf_pins dma_firewall/S_AXI] [get_bd_intf_pins smartconnect_dma/M01_AXI]
   connect_bd_intf_net -intf_net user_axi_ctrl_1 [get_bd_intf_pins dfx_decoupler/rp_ctrl] [get_bd_intf_pins user_logic/user_axi_ctrl]
   connect_bd_intf_net -intf_net user_axi_dma_1 [get_bd_intf_pins dfx_decoupler/rp_dma] [get_bd_intf_pins user_logic/user_axi_dma]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s00 [get_bd_intf_pins hbm/SAXI_00] [get_bd_intf_pins user_logic/user_axi_hbm_s00]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s01 [get_bd_intf_pins hbm/SAXI_01] [get_bd_intf_pins user_logic/user_axi_hbm_s01]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s02 [get_bd_intf_pins hbm/SAXI_02] [get_bd_intf_pins user_logic/user_axi_hbm_s02]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s03 [get_bd_intf_pins hbm/SAXI_03] [get_bd_intf_pins user_logic/user_axi_hbm_s03]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s04 [get_bd_intf_pins hbm/SAXI_04] [get_bd_intf_pins user_logic/user_axi_hbm_s04]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s05 [get_bd_intf_pins hbm/SAXI_05] [get_bd_intf_pins user_logic/user_axi_hbm_s05]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s06 [get_bd_intf_pins hbm/SAXI_06] [get_bd_intf_pins user_logic/user_axi_hbm_s06]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s07 [get_bd_intf_pins hbm/SAXI_07] [get_bd_intf_pins user_logic/user_axi_hbm_s07]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s08 [get_bd_intf_pins hbm/SAXI_08] [get_bd_intf_pins user_logic/user_axi_hbm_s08]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s09 [get_bd_intf_pins hbm/SAXI_09] [get_bd_intf_pins user_logic/user_axi_hbm_s09]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s10 [get_bd_intf_pins hbm/SAXI_10] [get_bd_intf_pins user_logic/user_axi_hbm_s10]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s11 [get_bd_intf_pins hbm/SAXI_11] [get_bd_intf_pins user_logic/user_axi_hbm_s11]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s12 [get_bd_intf_pins hbm/SAXI_12] [get_bd_intf_pins user_logic/user_axi_hbm_s12]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s13 [get_bd_intf_pins hbm/SAXI_13] [get_bd_intf_pins user_logic/user_axi_hbm_s13]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s14 [get_bd_intf_pins hbm/SAXI_14] [get_bd_intf_pins user_logic/user_axi_hbm_s14]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s15 [get_bd_intf_pins hbm/SAXI_15] [get_bd_intf_pins user_logic/user_axi_hbm_s15]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s16 [get_bd_intf_pins hbm/SAXI_16] [get_bd_intf_pins user_logic/user_axi_hbm_s16]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s17 [get_bd_intf_pins hbm/SAXI_17] [get_bd_intf_pins user_logic/user_axi_hbm_s17]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s18 [get_bd_intf_pins hbm/SAXI_18] [get_bd_intf_pins user_logic/user_axi_hbm_s18]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s19 [get_bd_intf_pins hbm/SAXI_19] [get_bd_intf_pins user_logic/user_axi_hbm_s19]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s20 [get_bd_intf_pins hbm/SAXI_20] [get_bd_intf_pins user_logic/user_axi_hbm_s20]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s21 [get_bd_intf_pins hbm/SAXI_21] [get_bd_intf_pins user_logic/user_axi_hbm_s21]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s22 [get_bd_intf_pins hbm/SAXI_22] [get_bd_intf_pins user_logic/user_axi_hbm_s22]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s23 [get_bd_intf_pins hbm/SAXI_23] [get_bd_intf_pins user_logic/user_axi_hbm_s23]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s24 [get_bd_intf_pins hbm/SAXI_24] [get_bd_intf_pins user_logic/user_axi_hbm_s24]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s25 [get_bd_intf_pins hbm/SAXI_25] [get_bd_intf_pins user_logic/user_axi_hbm_s25]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s26 [get_bd_intf_pins hbm/SAXI_26] [get_bd_intf_pins user_logic/user_axi_hbm_s26]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s27 [get_bd_intf_pins hbm/SAXI_27] [get_bd_intf_pins user_logic/user_axi_hbm_s27]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s28 [get_bd_intf_pins hbm/SAXI_28] [get_bd_intf_pins user_logic/user_axi_hbm_s28]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s29 [get_bd_intf_pins hbm/SAXI_29] [get_bd_intf_pins user_logic/user_axi_hbm_s29]
+  connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s30 [get_bd_intf_pins hbm/SAXI_30] [get_bd_intf_pins user_logic/user_axi_hbm_s30]
   connect_bd_intf_net -intf_net user_logic_user_axi_hbm_s31 [get_bd_intf_pins hbm/SAXI_31] [get_bd_intf_pins user_logic/user_axi_hbm_s31]
   connect_bd_intf_net -intf_net xdma_M_AXI [get_bd_intf_pins smartconnect_dma/S00_AXI] [get_bd_intf_pins xdma/M_AXI]
   connect_bd_intf_net -intf_net xdma_M_AXI_LITE [get_bd_intf_pins smartconnect_ctrl/S00_AXI] [get_bd_intf_pins xdma/M_AXI_LITE]
@@ -480,7 +512,7 @@ AWLEN {WIDTH 8 PRESENT 1} AWSIZE {WIDTH 3 PRESENT 1} AWBURST {WIDTH 2 PRESENT 0}
   # Create port connections
   connect_bd_net -net apb_reset_peripheral_aresetn [get_bd_pins apb_reset/peripheral_aresetn] [get_bd_pins axi_apb_bridge/s_axi_aresetn] [get_bd_pins hbm/APB_0_PRESET_N] [get_bd_pins hbm/APB_1_PRESET_N]
   connect_bd_net -net cattrip_Res [get_bd_pins cattrip/Res] [get_bd_pins cms/interrupt_hbm_cattrip]
-  connect_bd_net -net core_clk_wiz_hbm_clk [get_bd_pins core_clk_wiz/hbm_clk] [get_bd_pins hbm/AXI_31_ACLK] [get_bd_pins user_axi_hbm_reset/slowest_sync_clk] [get_bd_pins user_logic/user_axi_hbm_clk]
+  connect_bd_net -net core_clk_wiz_hbm_clk [get_bd_pins core_clk_wiz/hbm_clk] [get_bd_pins hbm/AXI_00_ACLK] [get_bd_pins hbm/AXI_01_ACLK] [get_bd_pins hbm/AXI_02_ACLK] [get_bd_pins hbm/AXI_03_ACLK] [get_bd_pins hbm/AXI_04_ACLK] [get_bd_pins hbm/AXI_05_ACLK] [get_bd_pins hbm/AXI_06_ACLK] [get_bd_pins hbm/AXI_07_ACLK] [get_bd_pins hbm/AXI_08_ACLK] [get_bd_pins hbm/AXI_09_ACLK] [get_bd_pins hbm/AXI_10_ACLK] [get_bd_pins hbm/AXI_11_ACLK] [get_bd_pins hbm/AXI_12_ACLK] [get_bd_pins hbm/AXI_13_ACLK] [get_bd_pins hbm/AXI_14_ACLK] [get_bd_pins hbm/AXI_15_ACLK] [get_bd_pins hbm/AXI_16_ACLK] [get_bd_pins hbm/AXI_17_ACLK] [get_bd_pins hbm/AXI_18_ACLK] [get_bd_pins hbm/AXI_19_ACLK] [get_bd_pins hbm/AXI_20_ACLK] [get_bd_pins hbm/AXI_21_ACLK] [get_bd_pins hbm/AXI_22_ACLK] [get_bd_pins hbm/AXI_23_ACLK] [get_bd_pins hbm/AXI_24_ACLK] [get_bd_pins hbm/AXI_25_ACLK] [get_bd_pins hbm/AXI_26_ACLK] [get_bd_pins hbm/AXI_27_ACLK] [get_bd_pins hbm/AXI_28_ACLK] [get_bd_pins hbm/AXI_29_ACLK] [get_bd_pins hbm/AXI_30_ACLK] [get_bd_pins hbm/AXI_31_ACLK] [get_bd_pins user_axi_hbm_reset/slowest_sync_clk] [get_bd_pins user_logic/user_axi_hbm_clk]
   connect_bd_net -net core_clk_wiz_locked [get_bd_pins core_clk_wiz/locked] [get_bd_pins user_axi_hbm_reset/dcm_locked]
   connect_bd_net -net dfx_decoupler_decouple_status [get_bd_pins dfx_decoupler/decouple_status] [get_bd_pins user_axi_hbm_reset/ext_reset_in] [get_bd_pins user_axi_reset_inverter/Op1]
   connect_bd_net -net hbm_DRAM_0_STAT_CATTRIP [get_bd_pins cattrip/Op1] [get_bd_pins hbm/DRAM_0_STAT_CATTRIP]
@@ -488,7 +520,7 @@ AWLEN {WIDTH 8 PRESENT 1} AWSIZE {WIDTH 3 PRESENT 1} AWBURST {WIDTH 2 PRESENT 0}
   connect_bd_net -net hbm_DRAM_1_STAT_CATTRIP [get_bd_pins cattrip/Op2] [get_bd_pins hbm/DRAM_1_STAT_CATTRIP]
   connect_bd_net -net hbm_DRAM_1_STAT_TEMP [get_bd_pins cms/hbm_temp_2] [get_bd_pins hbm/DRAM_1_STAT_TEMP]
   connect_bd_net -net hbm_refclk_buf_IBUF_OUT [get_bd_pins hbm/HBM_REF_CLK_0] [get_bd_pins hbm/HBM_REF_CLK_1] [get_bd_pins hbm_refclk_buf/IBUF_OUT]
-  connect_bd_net -net hbm_reset_peripheral_aresetn [get_bd_pins hbm/AXI_31_ARESET_N] [get_bd_pins user_axi_hbm_reset/peripheral_aresetn]
+  connect_bd_net -net hbm_reset_peripheral_aresetn [get_bd_pins hbm/AXI_00_ARESET_N] [get_bd_pins hbm/AXI_01_ARESET_N] [get_bd_pins hbm/AXI_02_ARESET_N] [get_bd_pins hbm/AXI_03_ARESET_N] [get_bd_pins hbm/AXI_04_ARESET_N] [get_bd_pins hbm/AXI_05_ARESET_N] [get_bd_pins hbm/AXI_06_ARESET_N] [get_bd_pins hbm/AXI_07_ARESET_N] [get_bd_pins hbm/AXI_08_ARESET_N] [get_bd_pins hbm/AXI_09_ARESET_N] [get_bd_pins hbm/AXI_10_ARESET_N] [get_bd_pins hbm/AXI_11_ARESET_N] [get_bd_pins hbm/AXI_12_ARESET_N] [get_bd_pins hbm/AXI_13_ARESET_N] [get_bd_pins hbm/AXI_14_ARESET_N] [get_bd_pins hbm/AXI_15_ARESET_N] [get_bd_pins hbm/AXI_16_ARESET_N] [get_bd_pins hbm/AXI_17_ARESET_N] [get_bd_pins hbm/AXI_18_ARESET_N] [get_bd_pins hbm/AXI_19_ARESET_N] [get_bd_pins hbm/AXI_20_ARESET_N] [get_bd_pins hbm/AXI_21_ARESET_N] [get_bd_pins hbm/AXI_22_ARESET_N] [get_bd_pins hbm/AXI_23_ARESET_N] [get_bd_pins hbm/AXI_24_ARESET_N] [get_bd_pins hbm/AXI_25_ARESET_N] [get_bd_pins hbm/AXI_26_ARESET_N] [get_bd_pins hbm/AXI_27_ARESET_N] [get_bd_pins hbm/AXI_28_ARESET_N] [get_bd_pins hbm/AXI_29_ARESET_N] [get_bd_pins hbm/AXI_30_ARESET_N] [get_bd_pins hbm/AXI_31_ARESET_N] [get_bd_pins user_axi_hbm_reset/peripheral_aresetn]
   connect_bd_net -net mgmt_clk_wiz_apb_clk [get_bd_pins apb_reset/slowest_sync_clk] [get_bd_pins axi_apb_bridge/s_axi_aclk] [get_bd_pins hbm/APB_0_PCLK] [get_bd_pins hbm/APB_1_PCLK] [get_bd_pins mgmt_clk_wiz/apb_clk] [get_bd_pins smartconnect_ctrl/aclk1]
   connect_bd_net -net mgmt_clk_wiz_icap_clk [get_bd_pins hbicap/icap_clk] [get_bd_pins mgmt_clk_wiz/icap_clk]
   connect_bd_net -net mgmt_clk_wiz_locked [get_bd_pins apb_reset/dcm_locked] [get_bd_pins mgmt_clk_wiz/locked]
@@ -503,6 +535,998 @@ AWLEN {WIDTH 8 PRESENT 1} AWSIZE {WIDTH 3 PRESENT 1} AWBURST {WIDTH 2 PRESENT 0}
   connect_bd_net -net xdma_axi_aresetn [get_bd_pins apb_reset/ext_reset_in] [get_bd_pins cms/aresetn_ctrl] [get_bd_pins core_clk_wiz/s_axi_aresetn] [get_bd_pins ctrl_firewall/aresetn] [get_bd_pins dfx_decoupler/ctrl_arstn] [get_bd_pins dfx_decoupler/dma_arstn] [get_bd_pins dfx_decoupler/s_axi_reg_aresetn] [get_bd_pins dma_firewall/aresetn] [get_bd_pins hbicap/s_axi_aresetn] [get_bd_pins hbicap/s_axi_mm_aresetn] [get_bd_pins mgmt_bram_ctrl/s_axi_aresetn] [get_bd_pins mgmt_clk_wiz/s_axi_aresetn] [get_bd_pins qspi/s_axi_aresetn] [get_bd_pins smartconnect_ctrl/aresetn] [get_bd_pins smartconnect_dma/aresetn] [get_bd_pins xdma/axi_aresetn]
 
   # Create address segments
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_0/m_axi] [get_bd_addr_segs hbm/SAXI_00/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_1/m_axi] [get_bd_addr_segs hbm/SAXI_01/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_10/m_axi] [get_bd_addr_segs hbm/SAXI_10/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_11/m_axi] [get_bd_addr_segs hbm/SAXI_11/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_12/m_axi] [get_bd_addr_segs hbm/SAXI_12/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_13/m_axi] [get_bd_addr_segs hbm/SAXI_13/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_14/m_axi] [get_bd_addr_segs hbm/SAXI_14/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_15/m_axi] [get_bd_addr_segs hbm/SAXI_15/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_16/m_axi] [get_bd_addr_segs hbm/SAXI_16/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_17/m_axi] [get_bd_addr_segs hbm/SAXI_17/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_18/m_axi] [get_bd_addr_segs hbm/SAXI_18/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_19/m_axi] [get_bd_addr_segs hbm/SAXI_19/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_2/m_axi] [get_bd_addr_segs hbm/SAXI_02/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_20/m_axi] [get_bd_addr_segs hbm/SAXI_20/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_21/m_axi] [get_bd_addr_segs hbm/SAXI_21/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_22/m_axi] [get_bd_addr_segs hbm/SAXI_22/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_23/m_axi] [get_bd_addr_segs hbm/SAXI_23/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_24/m_axi] [get_bd_addr_segs hbm/SAXI_24/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_25/m_axi] [get_bd_addr_segs hbm/SAXI_25/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_26/m_axi] [get_bd_addr_segs hbm/SAXI_26/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_27/m_axi] [get_bd_addr_segs hbm/SAXI_27/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_28/m_axi] [get_bd_addr_segs hbm/SAXI_28/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_29/m_axi] [get_bd_addr_segs hbm/SAXI_29/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_3/m_axi] [get_bd_addr_segs hbm/SAXI_03/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_30/m_axi] [get_bd_addr_segs hbm/SAXI_30/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_4/m_axi] [get_bd_addr_segs hbm/SAXI_04/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_5/m_axi] [get_bd_addr_segs hbm/SAXI_05/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_6/m_axi] [get_bd_addr_segs hbm/SAXI_06/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_7/m_axi] [get_bd_addr_segs hbm/SAXI_07/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_8/m_axi] [get_bd_addr_segs hbm/SAXI_08/HBM_MEM31] -force
+  assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM00] -force
+  assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM01] -force
+  assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM02] -force
+  assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM07] -force
+  assign_bd_address -offset 0x80000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM08] -force
+  assign_bd_address -offset 0x90000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM09] -force
+  assign_bd_address -offset 0xA0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM10] -force
+  assign_bd_address -offset 0xB0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM11] -force
+  assign_bd_address -offset 0xC0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM12] -force
+  assign_bd_address -offset 0xD0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM13] -force
+  assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM14] -force
+  assign_bd_address -offset 0xF0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM15] -force
+  assign_bd_address -offset 0x000100000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM16] -force
+  assign_bd_address -offset 0x000110000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM17] -force
+  assign_bd_address -offset 0x000120000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM18] -force
+  assign_bd_address -offset 0x000130000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM19] -force
+  assign_bd_address -offset 0x000140000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM20] -force
+  assign_bd_address -offset 0x000150000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM21] -force
+  assign_bd_address -offset 0x000160000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM22] -force
+  assign_bd_address -offset 0x000170000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM23] -force
+  assign_bd_address -offset 0x000180000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM24] -force
+  assign_bd_address -offset 0x000190000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM25] -force
+  assign_bd_address -offset 0x0001A0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM26] -force
+  assign_bd_address -offset 0x0001B0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM27] -force
+  assign_bd_address -offset 0x0001C0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM28] -force
+  assign_bd_address -offset 0x0001D0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM29] -force
+  assign_bd_address -offset 0x0001E0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM30] -force
+  assign_bd_address -offset 0x0001F0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces user_logic/hbm_channel_nc/hbm_channel_nc_9/m_axi] [get_bd_addr_segs hbm/SAXI_09/HBM_MEM31] -force
   assign_bd_address -offset 0xF000000000000000 -range 0x40000000 -target_address_space [get_bd_addr_spaces xdma/M_AXI] [get_bd_addr_segs hbicap/S_AXI/Mem0] -force
   assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces xdma/M_AXI] [get_bd_addr_segs hbm/SAXI_31/HBM_MEM00] -force
   assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces xdma/M_AXI] [get_bd_addr_segs hbm/SAXI_31/HBM_MEM01] -force
@@ -545,9 +1569,9 @@ AWLEN {WIDTH 8 PRESENT 1} AWSIZE {WIDTH 3 PRESENT 1} AWBURST {WIDTH 2 PRESENT 0}
   assign_bd_address -offset 0x00080000 -range 0x00010000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs hbicap/S_AXI_CTRL/Reg0] -force
   assign_bd_address -offset 0x00400000 -range 0x00400000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs hbm/SAPB_0/Reg] -force
   assign_bd_address -offset 0x00800000 -range 0x00400000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs hbm/SAPB_1/Reg] -force
+  assign_bd_address -offset 0x00040000 -range 0x00001000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs mgmt_bram_ctrl/S_AXI/Mem0] -force
   assign_bd_address -offset 0x00060000 -range 0x00010000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs mgmt_clk_wiz/s_axi_lite/Reg] -force
   assign_bd_address -offset 0x00050000 -range 0x00010000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs qspi/AXI_LITE/Reg] -force
-  assign_bd_address -offset 0x00040000 -range 0x00001000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs mgmt_bram_ctrl/S_AXI/Mem0] -force
 
 
   # Restore current instance

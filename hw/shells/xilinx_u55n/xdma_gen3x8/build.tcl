@@ -6,13 +6,13 @@ set_property source_mgmt_mode All [current_project]
 # -- [READ FILES] -------------------------------------------------------------
 source "${script_path}/user_logic.tcl"
 source "${script_path}/shell.tcl"
+read_verilog "${script_path}/../../../utils/hbm_channel_nc.v"
 read_xdc "${script_path}/io.xdc"
 read_xdc "${script_path}/floorplan.xdc"
 # -----------------------------------------------------------------------------
 
 # -- [CONFIGURE USER_LOGIC BD] ------------------------------------------------
 cr_bd_user_logic {}
-generate_target all [get_files user_logic.bd]
 # -----------------------------------------------------------------------------
 
 # -- [CONFIGURE SHELL BD] -----------------------------------------------------
