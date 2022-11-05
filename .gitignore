@@ -9,5 +9,5 @@ build/
 .vscode
 
 # Vivado
-vivado.log
+vivado*.log
 vivado.jou

@@ -1,16 +1,16 @@
 # -- [Clocks] ------------------------------------------------------------------
-# pcie clock
-create_clock -period 10.000 -name pcie_ref_clk [get_ports pcie_refclk_clk_p]
-# sys clock
-create_clock -period 10.000 -name hbm_ref_clk [get_ports hbm_refclk_clk_p]
+# pcie refclock
+create_clock -period 10.000 -name pcie_refclk [get_ports pcie_refclk_clk_p]
+# hbm refclock
+create_clock -period 10.000 -name hbm_refclk [get_ports hbm_refclk_clk_p]
 # ------------------------------------------------------------------------------
 
 # -- [Clock Pins] --------------------------------------------------------------
-set_property PACKAGE_PIN AR14 [get_ports pcie_refclk_n]
-set_property PACKAGE_PIN AR15 [get_ports pcie_refclk_p]
+set_property PACKAGE_PIN AR14 [get_ports pcie_refclk_clk_n]
+set_property PACKAGE_PIN AR15 [get_ports pcie_refclk_clk_p]
 
-set_property -dict {IOSTANDARD LVDS PACKAGE_PIN BK44} [get_ports hbm_refclk_n]
-set_property -dict {IOSTANDARD LVDS PACKAGE_PIN BK43} [get_ports hbm_refclk_p]
+set_property -dict {IOSTANDARD LVDS PACKAGE_PIN BK44} [get_ports hbm_refclk_clk_n]
+set_property -dict {IOSTANDARD LVDS PACKAGE_PIN BK43} [get_ports hbm_refclk_clk_p]
 # ------------------------------------------------------------------------------
 
 # -- [PCIE Pins] ---------------------------------------------------------------
