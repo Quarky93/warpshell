@@ -16,9 +16,10 @@ proc cr_bd_user { parentCell } {
   if { $bCheckIPs == 1 } {
      set list_check_ips "\ 
   xilinx.com:ip:axi_apb_bridge:3.0\
+  xilinx.com:ip:clk_wiz:6.0\
+  xilinx.com:ip:proc_sys_reset:5.0\
   xilinx.com:ip:hbm:1.0\
   xilinx.com:ip:util_vector_logic:2.0\
-  xilinx.com:ip:proc_sys_reset:5.0\
   xilinx.com:ip:smartconnect:1.0\
   "
 
@@ -157,6 +158,28 @@ proc cr_bd_user { parentCell } {
   ] $axi_apb_bridge
 
 
+  # Create instance: core_clk, and set properties
+  set core_clk [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:6.0 core_clk ]
+  set_property -dict [list \
+    CONFIG.CLKOUT1_JITTER {104.289} \
+    CONFIG.CLKOUT1_PHASE_ERROR {153.873} \
+    CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {450} \
+    CONFIG.CLK_OUT1_PORT {hbm_axi_clk} \
+    CONFIG.ENABLE_CDDC {false} \
+    CONFIG.MMCM_CLKFBOUT_MULT_F {23.625} \
+    CONFIG.MMCM_CLKOUT0_DIVIDE_F {2.625} \
+    CONFIG.MMCM_DIVCLK_DIVIDE {5} \
+    CONFIG.PRIM_SOURCE {No_buffer} \
+    CONFIG.RESET_PORT {reset} \
+    CONFIG.RESET_TYPE {ACTIVE_HIGH} \
+    CONFIG.USE_LOCKED {false} \
+    CONFIG.USE_RESET {false} \
+  ] $core_clk
+
+
+  # Create instance: core_reset, and set properties
+  set core_reset [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 core_reset ]
+
   # Create instance: hbm, and set properties
   set hbm [ create_bd_cell -type ip -vlnv xilinx.com:ip:hbm:1.0 hbm ]
   set_property -dict [list \
@@ -218,7 +241,7 @@ proc cr_bd_user { parentCell } {
   # Create instance: smartconnect_dma, and set properties
   set smartconnect_dma [ create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 smartconnect_dma ]
   set_property -dict [list \
-    CONFIG.NUM_CLKS {1} \
+    CONFIG.NUM_CLKS {2} \
     CONFIG.NUM_SI {1} \
   ] $smartconnect_dma
 
@@ -232,15 +255,17 @@ proc cr_bd_user { parentCell } {
   connect_bd_intf_net -intf_net smartconnect_dma_M00_AXI [get_bd_intf_pins hbm/SAXI_31] [get_bd_intf_pins smartconnect_dma/M00_AXI]
 
   # Create port connections
+  connect_bd_net -net core_clk_hbm_axi_clk [get_bd_pins core_clk/hbm_axi_clk] [get_bd_pins core_reset/slowest_sync_clk] [get_bd_pins hbm/AXI_31_ACLK] [get_bd_pins smartconnect_dma/aclk1]
+  connect_bd_net -net core_reset_peripheral_aresetn [get_bd_pins core_reset/peripheral_aresetn] [get_bd_pins hbm/AXI_31_ARESET_N]
   connect_bd_net -net hbm_DRAM_0_STAT_CATTRIP [get_bd_pins hbm/DRAM_0_STAT_CATTRIP] [get_bd_pins hbm_cattrip/Op1]
   connect_bd_net -net hbm_DRAM_0_STAT_TEMP [get_bd_ports user_hbm_temp_0] [get_bd_pins hbm/DRAM_0_STAT_TEMP]
   connect_bd_net -net hbm_DRAM_1_STAT_CATTRIP [get_bd_pins hbm/DRAM_1_STAT_CATTRIP] [get_bd_pins hbm_cattrip/Op2]
   connect_bd_net -net hbm_DRAM_1_STAT_TEMP [get_bd_ports user_hbm_temp_1] [get_bd_pins hbm/DRAM_1_STAT_TEMP]
   connect_bd_net -net hbm_cattrip_Res [get_bd_ports user_hbm_cattrip] [get_bd_pins hbm_cattrip/Res]
   connect_bd_net -net hbm_refclk_buf_IBUF_OUT [get_bd_ports shell_refclk_0] [get_bd_pins axi_apb_bridge/s_axi_aclk] [get_bd_pins hbm/APB_0_PCLK] [get_bd_pins hbm/APB_1_PCLK] [get_bd_pins hbm/HBM_REF_CLK_0] [get_bd_pins hbm/HBM_REF_CLK_1] [get_bd_pins hbm_reset/slowest_sync_clk] [get_bd_pins smartconnect_ctrl/aclk1]
-  connect_bd_net -net shell_axi_clk_1 [get_bd_ports shell_axi_clk] [get_bd_pins hbm/AXI_31_ACLK] [get_bd_pins smartconnect_ctrl/aclk] [get_bd_pins smartconnect_dma/aclk]
-  connect_bd_net -net shell_rstn_1 [get_bd_ports shell_rstn] [get_bd_pins hbm_reset/ext_reset_in] [get_bd_pins smartconnect_ctrl/aresetn] [get_bd_pins smartconnect_dma/aresetn]
-  connect_bd_net -net sys_reset_peripheral_aresetn [get_bd_pins axi_apb_bridge/s_axi_aresetn] [get_bd_pins hbm/APB_0_PRESET_N] [get_bd_pins hbm/APB_1_PRESET_N] [get_bd_pins hbm/AXI_31_ARESET_N] [get_bd_pins hbm_reset/peripheral_aresetn]
+  connect_bd_net -net shell_axi_clk_1 [get_bd_ports shell_axi_clk] [get_bd_pins core_clk/clk_in1] [get_bd_pins smartconnect_ctrl/aclk] [get_bd_pins smartconnect_dma/aclk]
+  connect_bd_net -net shell_rstn_1 [get_bd_ports shell_rstn] [get_bd_pins core_reset/ext_reset_in] [get_bd_pins hbm_reset/ext_reset_in] [get_bd_pins smartconnect_ctrl/aresetn] [get_bd_pins smartconnect_dma/aresetn]
+  connect_bd_net -net sys_reset_peripheral_aresetn [get_bd_pins axi_apb_bridge/s_axi_aresetn] [get_bd_pins hbm/APB_0_PRESET_N] [get_bd_pins hbm/APB_1_PRESET_N] [get_bd_pins hbm_reset/peripheral_aresetn]
 
   # Create address segments
   assign_bd_address -offset 0x00000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces shell_axi_dma] [get_bd_addr_segs hbm/SAXI_31/HBM_MEM00] -force

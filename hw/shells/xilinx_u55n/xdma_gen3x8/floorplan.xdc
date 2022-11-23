@@ -1,6 +1,7 @@
 create_pblock shell_partition
 resize_pblock shell_partition -add {CLOCKREGION_X7Y1:CLOCKREGION_X7Y5}
 add_cells_to_pblock shell_partition [get_cells shell_partition]
+set_property USER_SLR_ASSIGNMENT SLR0 [get_cells {shell_partition/ctrl_firewall shell_partition/dma_firewall}]
 
 create_pblock user_partition
 resize_pblock user_partition -add {CLOCKREGION_X0Y4:CLOCKREGION_X6Y7}
