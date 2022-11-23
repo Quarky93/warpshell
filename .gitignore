@@ -1,4 +1,5 @@
 build/
+.Xil/
 
 # Emacs
 *~
@@ -9,5 +10,4 @@ build/
 .vscode
 
 # Vivado
-vivado*.log
-vivado.jou
+vivado*
