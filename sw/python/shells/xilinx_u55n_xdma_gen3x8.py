@@ -34,6 +34,12 @@ class XILINX_U55N_XDMA_GEN3X8():
 
     def ctrl_write(self, addr, data):
         return os.pwrite(self.ctrl, data, addr)
+    
+    def ctrl_user_read(self, addr, size):
+        return os.pread(self.ctrl, size, addr + self.ctrl_user_partition_baseaddr)
+
+    def ctrl_user_write(self, addr, data):
+        return os.pwrite(self.ctrl, data, addr + self.ctrl_user_partition_baseaddr)
     # -------------------------------------------------------------------------
 
     # -- DMA Bus --------------------------------------------------------------
@@ -43,6 +49,11 @@ class XILINX_U55N_XDMA_GEN3X8():
     def dma_write(self, addr, data, channel=0):
         return os.pwrite(self.h2c[channel], data, addr)
     
+    def dma_user_read(self, addr, size, channel=0):
+        return os.pread(self.c2h[channel], size, addr + self.dma_user_partition_baseaddr)
+    
+    def dma_user_write(self, addr, data, channel=0):
+        return os.pwrite(self.h2c[channel], data, addr + self.dma_user_partition_baseaddr)
     # -------------------------------------------------------------------------
 
     # -- CMS ------------------------------------------------------------------
@@ -242,13 +253,14 @@ class XILINX_U55N_XDMA_GEN3X8():
     # -------------------------------------------------------------------------
 
     # -- User Partition Reset -------------------------------------------------
-    def user_partition_reset(self):
-        self.set_ctrl_firewall_block()
-        self.set_dma_firewall_block()
-        self.set_dfx_decoupling(True)
-        self.set_dfx_decoupling(False)
-        self.set_ctrl_firewall_unblock()
-        self.set_dma_firewall_unblock()
+    # BUGGY DO NOT USE
+    # def user_partition_reset(self):
+    #     self.set_ctrl_firewall_block()
+    #     self.set_dma_firewall_block()
+    #     self.set_dfx_decoupling(True)
+    #     self.set_dfx_decoupling(False)
+    #     self.set_ctrl_firewall_unblock()
+    #     self.set_dma_firewall_unblock()
     # -------------------------------------------------------------------------
 
     # -- HBICAP ---------------------------------------------------------------
