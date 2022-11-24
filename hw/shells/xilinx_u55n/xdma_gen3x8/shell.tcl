@@ -362,7 +362,7 @@ proc cr_bd_shell { parentCell } {
   connect_bd_net -net xdma_axi_aresetn [get_bd_pins cms/aresetn_ctrl] [get_bd_pins ctrl_firewall/aresetn] [get_bd_pins dfx_decoupler/s_axi_reg_aresetn] [get_bd_pins dma_firewall/aresetn] [get_bd_pins hbicap/s_axi_aresetn] [get_bd_pins hbicap/s_axi_mm_aresetn] [get_bd_pins mgmt_clk_wiz/resetn] [get_bd_pins mgmt_ram/s_axi_aresetn] [get_bd_pins qspi/s_axi_aresetn] [get_bd_pins smartconnect_ctrl/aresetn] [get_bd_pins smartconnect_dma/aresetn] [get_bd_pins xdma/axi_aresetn]
 
   # Create address segments
-  assign_bd_address -offset 0xF000000000000000 -range 0x40000000 -target_address_space [get_bd_addr_spaces xdma/M_AXI] [get_bd_addr_segs hbicap/S_AXI/Mem0] -force
+  assign_bd_address -offset 0x1000000000000000 -range 0x40000000 -target_address_space [get_bd_addr_spaces xdma/M_AXI] [get_bd_addr_segs hbicap/S_AXI/Mem0] -force
   assign_bd_address -offset 0x00000000 -range 0x0001000000000000 -target_address_space [get_bd_addr_spaces xdma/M_AXI] [get_bd_addr_segs shell_axi_dma/Reg] -force
   assign_bd_address -offset 0x04000000 -range 0x00040000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs cms/s_axi_ctrl/Mem] -force
   assign_bd_address -offset 0x04070000 -range 0x00010000 -target_address_space [get_bd_addr_spaces xdma/M_AXI_LITE] [get_bd_addr_segs ctrl_firewall/S_AXI_CTL/Control] -force
