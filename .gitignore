@@ -1,5 +1,6 @@
 build/
 .Xil/
+hd_visual/
 
 # Emacs
 *~
