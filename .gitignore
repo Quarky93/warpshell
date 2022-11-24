@@ -1,6 +1,8 @@
 build/
-.Xil/
-hd_visual/
+**.Xil/
+**hd_visual/
+
+**__pycache__/
 
 # Emacs
 *~
