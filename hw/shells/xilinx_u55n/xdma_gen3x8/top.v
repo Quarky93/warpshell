@@ -18,6 +18,7 @@ module top (
     input sys_refclk_0_clk_p
     // ----------------------------------------------------------------------------------------------------------------
 );
+wire shell_refclk_0;
 wire shell_axi_clk;
 wire [63:0]shell_axi_dma_araddr;
 wire [1:0]shell_axi_dma_arburst;
@@ -78,7 +79,7 @@ wire [6:0]user_hbm_temp_1;
 
 user user_partition (
     // -- REFCLKS --
-    .shell_refclk_0(sys_refclk_0),
+    .shell_refclk_0(shell_refclk_0),
     // -- SHELL <> USER --
     .shell_axi_clk(shell_axi_clk),
     .shell_rstn(shell_rstn),
