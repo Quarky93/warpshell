@@ -1,6 +1,7 @@
 import os
 import struct
 from time import sleep
+from ctypes import *
 
 class XILINX_U55N_XDMA_GEN3X8():
     def __init__(self, id):
@@ -13,7 +14,7 @@ class XILINX_U55N_XDMA_GEN3X8():
 
         # -- XDMA CTRL BUS --------------------------------------------------------------------------------------------
         self.ctrl_user_partition_baseaddr = 0x0000_0000
-        self.ctrl_ctrl_cms_baseaddr = 0x0400_0000
+        self.ctrl_cms_baseaddr = 0x0400_0000
         self.ctrl_qspi_baseaddr = 0x0404_0000
         self.ctrl_hbicap_baseaddr = 0x0405_0000
         self.ctrl_mgmt_ram_baseaddr = 0x0406_0000
@@ -24,7 +25,7 @@ class XILINX_U55N_XDMA_GEN3X8():
 
         # -- XDMA DMA BUS ---------------------------------------------------------------------------------------------
         self.dma_user_partition_baseaddr = 0x0000_0000_0000_0000
-        self.dma_hbicap_baseaddr = 0xF000_0000_0000_0000
+        self.dma_hbicap_baseaddr = 0x1000_0000_0000_0000
         # -------------------------------------------------------------------------------------------------------------
 
     # -- CTRL Bus -------------------------------------------------------------
@@ -41,6 +42,7 @@ class XILINX_U55N_XDMA_GEN3X8():
     
     def dma_write(self, addr, data, channel=0):
         return os.pwrite(self.h2c[channel], data, addr)
+    
     # -------------------------------------------------------------------------
 
     # -- CMS ------------------------------------------------------------------
@@ -203,7 +205,7 @@ class XILINX_U55N_XDMA_GEN3X8():
         return (status & 1) == 1
     # -------------------------------------------------------------------------
 
-        # -- DMA Firewall ---------------------------------------------------------
+    # -- DMA Firewall ---------------------------------------------------------
     def get_dma_firewall_status(self):
         data = self.ctrl_read(self.ctrl_dma_firewall_baseaddr + 0x0, 4)
         [status] = struct.unpack("I", data)
@@ -252,7 +254,7 @@ class XILINX_U55N_XDMA_GEN3X8():
     # -- HBICAP ---------------------------------------------------------------
     # Get the HBICAP status register
     def get_hbicap_status(self):
-        data = self.ctrl_read(self.hbicap_ctrl_baseaddr + 0x110, 4)
+        data = self.ctrl_read(self.ctrl_hbicap_baseaddr + 0x110, 4)
         [status] = struct.unpack("I", data)
         return status
 
@@ -262,19 +264,19 @@ class XILINX_U55N_XDMA_GEN3X8():
         return status == 5
     
     def hbicap_reset(self):
-        self.ctrl_write(self.hbicap_ctrl_baseaddr + 0x10C, (0xC).to_bytes(4, 'little'))
+        self.ctrl_write(self.ctrl_hbicap_baseaddr + 0x10C, (0xC).to_bytes(4, 'little'))
 
     def set_hbicap_transfer_size(self, size):
-        self.ctrl_write(self.hbicap_ctrl_baseaddr + 0x108, size.to_bytes(4, 'little'))
+        self.ctrl_write(self.ctrl_hbicap_baseaddr + 0x108, size.to_bytes(4, 'little'))
 
     def get_hbicap_abort_status(self):
-        data = self.ctrl_read(self.hbicap_ctrl_baseaddr + 0x118, 4)
+        data = self.ctrl_read(self.ctrl_hbicap_baseaddr + 0x118, 4)
         [status] = struct.unpack("I", data)
         return status
 
     # Write a partial bitstream
     def __write_partial_bitstream(self, data, channel = 0):
-        return self.dma_write(self.hbicap_baseaddr, data, channel)
+        return self.dma_write(self.dma_hbicap_baseaddr, data, channel)
     # -------------------------------------------------------------------------
 
     # -- DFX ------------------------------------------------------------------
