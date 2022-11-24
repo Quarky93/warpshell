@@ -1,20 +1,20 @@
 # -- [Clocks] ------------------------------------------------------------------
-# pcie clock
-create_clock -period 10.000 -name pcie_ref_clk [get_ports pcie_clk_clk_p]
-# sys clock
-create_clock -period 10.000 -name hbm_ref_clk [get_ports hbm_clk_clk_p]
+# pcie refclock
+create_clock -period 10.000 -name pcie_refclk [get_ports pcie_refclk_clk_p]
+# hbm refclock
+create_clock -period 10.000 -name sysclk_0 [get_ports sys_refclk_0_clk_p]
 # ------------------------------------------------------------------------------
 
 # -- [Clock Pins] --------------------------------------------------------------
-set_property PACKAGE_PIN AR14 [get_ports pcie_clk_clk_n]
-set_property PACKAGE_PIN AR15 [get_ports pcie_clk_clk_p]
+set_property PACKAGE_PIN AR14 [get_ports pcie_refclk_clk_n]
+set_property PACKAGE_PIN AR15 [get_ports pcie_refclk_clk_p]
 
-set_property -dict {IOSTANDARD LVDS PACKAGE_PIN BK44} [get_ports hbm_clk_clk_p]
-set_property -dict {IOSTANDARD LVDS PACKAGE_PIN BK43} [get_ports hbm_clk_clk_p]
+set_property -dict {IOSTANDARD LVDS PACKAGE_PIN BK44} [get_ports sys_refclk_0_clk_n]
+set_property -dict {IOSTANDARD LVDS PACKAGE_PIN BK43} [get_ports sys_refclk_0_clk_p]
 # ------------------------------------------------------------------------------
 
 # -- [PCIE Pins] ---------------------------------------------------------------
-set_property -dict {IOSTANDARD LVCMOS18 PACKAGE_PIN BF41} [get_ports pcie_clkreq]
+set_property -dict {IOSTANDARD LVCMOS18 PACKAGE_PIN BF41} [get_ports pcie_rstn]
 
 set_property PACKAGE_PIN AU10 [get_ports { pcie_mgt_txn[7] }]
 set_property PACKAGE_PIN AU11 [get_ports { pcie_mgt_txp[7] }]
@@ -57,17 +57,4 @@ set_property -dict { IOSTANDARD LVCMOS18 PACKAGE_PIN BF45 } [get_ports { satelli
 set_property -dict { IOSTANDARD LVCMOS18 PACKAGE_PIN BH46 } [get_ports { satellite_gpio[1] }]
 set_property -dict { IOSTANDARD LVCMOS18 PACKAGE_PIN BJ42 } [get_ports satellite_uart_rxd]
 set_property -dict { IOSTANDARD LVCMOS18 PACKAGE_PIN BH42 } [get_ports satellite_uart_txd]
-# ------------------------------------------------------------------------------
-
-# -- [BITSTREAM] ---------------------------------------------------------------
-set_property CONFIG_VOLTAGE 1.8 [current_design]
-set_property BITSTREAM.CONFIG.CONFIGFALLBACK ENABLE [current_design]
-set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
-set_property CONFIG_MODE SPIx4 [current_design]
-set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
-set_property BITSTREAM.CONFIG.CONFIGRATE 63.8 [current_design]
-set_property BITSTREAM.CONFIG.EXTMASTERCCLK_EN DISABLE [current_design]
-set_property BITSTREAM.CONFIG.SPI_FALL_EDGE YES [current_design]
-set_property BITSTREAM.CONFIG.UNUSEDPIN PULLUP [current_design]
-set_property BITSTREAM.CONFIG.SPI_32BIT_ADDR YES [current_design]
 # ------------------------------------------------------------------------------
