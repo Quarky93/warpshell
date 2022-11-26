@@ -30,16 +30,27 @@ class XILINX_U55N_XDMA_GEN3X8():
 
     # -- CTRL Bus -------------------------------------------------------------
     def ctrl_read(self, addr, size):
-        return os.pread(self.ctrl, size, addr)
+        pkts = []
+        while size > 4:
+            pkts.append(os.pread(self.ctrl, 4, addr))
+            addr += 4
+            size -= 4
+        pkts.append(os.pread(self.ctrl, size, addr))
+        return b''.join(pkts)
 
     def ctrl_write(self, addr, data):
-        return os.pwrite(self.ctrl, data, addr)
+        bytes_written = 0
+        pkts = [data[i:i+4] for i in range(0, len(data), 4)]
+        for pkt in pkts:
+            bytes_written += os.pwrite(self.ctrl, pkt, addr)
+            addr += 4
+        return bytes_written
     
     def ctrl_user_read(self, addr, size):
-        return os.pread(self.ctrl, size, addr + self.ctrl_user_partition_baseaddr)
+        return self.ctrl_read(addr + self.ctrl_user_partition_baseaddr, size)
 
     def ctrl_user_write(self, addr, data):
-        return os.pwrite(self.ctrl, data, addr + self.ctrl_user_partition_baseaddr)
+        return self.ctrl_write(addr + self.ctrl_user_partition_baseaddr, data)
     # -------------------------------------------------------------------------
 
     # -- DMA Bus --------------------------------------------------------------

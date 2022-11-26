@@ -31,22 +31,16 @@ def wait_until_done(dev: XILINX_U55N_XDMA_GEN3X8):
 
 # Set the starting address for input
 def set_source_addr(dev: XILINX_U55N_XDMA_GEN3X8, source_baseaddr):
-    # only set the LSB for now
-    dev.ctrl_write(axi_sum_example_baseaddr + 0x10, source_baseaddr.to_bytes(4, 'little'))
-    print(int.from_bytes(dev.ctrl_read(axi_sum_example_baseaddr + 0x10, 4), 'little'))
+    dev.ctrl_write(axi_sum_example_baseaddr + 0x10, source_baseaddr.to_bytes(8, 'little'))
 
 def set_sink_addr(dev: XILINX_U55N_XDMA_GEN3X8, sink_baseaddr):
-    # only set the LSB for now
-    dev.ctrl_write(axi_sum_example_baseaddr + 0x1c, sink_baseaddr.to_bytes(4, 'little'))
-    print(int.from_bytes(dev.ctrl_read(axi_sum_example_baseaddr + 0x1c, 4), 'little'))
+    dev.ctrl_write(axi_sum_example_baseaddr + 0x1c, sink_baseaddr.to_bytes(8, 'little'))
 
 def set_n_elements(dev: XILINX_U55N_XDMA_GEN3X8, n_elements):
     dev.ctrl_write(axi_sum_example_baseaddr + 0x28, n_elements.to_bytes(4, 'little'))
-    print(int.from_bytes(dev.ctrl_read(axi_sum_example_baseaddr + 0x28, 4), 'little'))
 
 def set_n_rounds(dev: XILINX_U55N_XDMA_GEN3X8, n_rounds):
     dev.ctrl_write(axi_sum_example_baseaddr + 0x30, n_rounds.to_bytes(4, 'little'))
-    print(int.from_bytes(dev.ctrl_read(axi_sum_example_baseaddr + 0x30, 4), 'little'))
 
 dev = XILINX_U55N_XDMA_GEN3X8(0)
 
@@ -68,13 +62,19 @@ else:
     exit()
 
 check_firewall_status(dev)
+print('--[TEST AXIL SEQUENTIAL TRANSACTIONS]--')
+hello_world = bytes('Hello World', 'ascii')
+dev.ctrl_write(dev.ctrl_mgmt_ram_baseaddr, hello_world)
+print(dev.ctrl_read(dev.ctrl_mgmt_ram_baseaddr, len(hello_world)))
+
+check_firewall_status(dev)
 
 # TEST AXI SUM EXAMPLE CORE
 print('--[AXI SUM EXAMPLE TEST]--')
 rounds = 1000
 set_source_addr(dev, 0x0000_0000_0000_0000)
 # + 256MiB
-set_sink_addr(dev, 0x0000_0000_2000_0000)
+set_sink_addr(dev, 0x0000_0000_1000_0000)
 set_n_elements(dev, int(payload_size / 32))
 set_n_rounds(dev, rounds)
 t_start = perf_counter()
