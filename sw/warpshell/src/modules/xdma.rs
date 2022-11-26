@@ -2,8 +2,8 @@ use super::io::{ReadWritableCdev, ReadableCdev, WritableCdev};
 use std::fs::OpenOptions;
 
 pub struct Xdma {
-    pub user: Option<ReadWritableCdev>,
-    pub bypass: Option<ReadWritableCdev>,
+    pub user: Vec<ReadWritableCdev>,
+    pub bypass: Vec<ReadWritableCdev>,
     pub h2c: Vec<WritableCdev>,
     pub c2h: Vec<ReadableCdev>,
 }
@@ -14,26 +14,22 @@ impl Xdma {
             .read(true)
             .write(true)
             .open(format!("/dev/xdma{id}_user"));
-        let user: Option<ReadWritableCdev>;
+        let mut user: Vec<ReadWritableCdev> = Vec::new();
         if user_cdev.is_ok() {
-            user = Some(ReadWritableCdev {
+            user.push(ReadWritableCdev {
                 cdev: user_cdev.unwrap(),
             });
-        } else {
-            user = None
         }
 
         let bypass_cdev = OpenOptions::new()
             .read(true)
             .write(true)
             .open(format!("/dev/xdma{id}_bypass"));
-        let bypass: Option<ReadWritableCdev>;
+        let mut bypass: Vec<ReadWritableCdev> = Vec::new();
         if bypass_cdev.is_ok() {
-            bypass = Some(ReadWritableCdev {
+            bypass.push(ReadWritableCdev {
                 cdev: bypass_cdev.unwrap(),
             });
-        } else {
-            bypass = None
         }
 
         let mut h2c: Vec<WritableCdev> = Vec::new();

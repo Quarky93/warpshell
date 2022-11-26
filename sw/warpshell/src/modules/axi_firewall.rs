@@ -12,10 +12,6 @@ const IP_VERSION_REGISTER_OFFSET: u64 = 0x10;
 // const SOFT_PAUSE_REGISTER_OFFSET: u64 = 0x14;
 
 impl<'a> AxiFirewall<'a> {
-    pub fn new(ctrl_baseaddr: u64, ctrl_channel: &'a dyn ReadWritable) -> Self {
-        Self { ctrl_baseaddr, ctrl_channel }
-    }
-
     pub fn get_ip_version(&self) -> u32 {
         self.ctrl_channel.read_u32(self.ctrl_baseaddr + IP_VERSION_REGISTER_OFFSET).unwrap()
     }
