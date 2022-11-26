@@ -4,22 +4,22 @@ create_project -in_memory -part xcu55n-fsvh2892-2L-e
 set_property source_mgmt_mode All [current_project]
 
 # -- [READ FILES] -------------------------------------------------------------
-source "${script_path}/user.tcl"
-source "${script_path}/shell.tcl"
+file mkdir ./shell/
+file mkdir ./user/
+file copy ${script_path}/shell.bd ./shell/shell.bd
+file copy ${script_path}/user.bd ./user/user.bd
+read_bd ./shell/shell.bd
+read_bd ./user/user.bd
+
 read_xdc "${script_path}/io.xdc"
 read_xdc "${script_path}/misc.xdc"
 read_xdc "${script_path}/floorplan.xdc"
 read_verilog "${script_path}/top.v"
 # -----------------------------------------------------------------------------
 
-# -- [CONFIGURE USER BD] ------------------------------------------------------
-cr_bd_user {}
-generate_target all [get_files user.bd]
-# -----------------------------------------------------------------------------
-
-# -- [CONFIGURE SHELL BD] -----------------------------------------------------
-cr_bd_shell {}
+# -- [GENERATE BDS] -----------------------------------------------------------
 generate_target all [get_files shell.bd]
+generate_target all [get_files user.bd]
 # -----------------------------------------------------------------------------
 
 # -- [COMPILE] ----------------------------------------------------------------

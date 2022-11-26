@@ -1,0 +1,15 @@
+[package]
+name = "warpshell"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "warpshell"
+path = "src/lib.rs"
+
+[[bin]]
+name = "warpshell-cli"
+path = "src/warpshell-cli/warpshell-cli.rs"
+
+[dependencies]
+anyhow = "1.0"
