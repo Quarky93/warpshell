@@ -1,70 +1,70 @@
-use std::{fs::File, os::unix::prelude::FileExt};
-use anyhow::Result;
-
 pub trait Readable {
-    fn read(&self, buf: &mut [u8], offset: u64) -> Result<()>;
+    fn read(&self, buf: &mut [u8], offset: u64);
 
-    fn read_u32(&self, offset: u64) -> Result<u32> {
+    fn read_u32(&self, offset: u64) -> u32 {
         let mut buf: [u8; 4] = [0; 4];
-        self.read(&mut buf, offset)?;
-        Ok(u32::from_le_bytes(buf))
+        self.read(&mut buf, offset);
+        u32::from_le_bytes(buf)
     }
 
-    fn read_u64(&self, offset: u64) -> Result<u64> {
+    fn read_u64(&self, offset: u64) -> u64 {
         let mut buf: [u8; 8] = [0; 8];
-        self.read(&mut buf, offset)?;
-        Ok(u64::from_le_bytes(buf))
+        self.read(&mut buf, offset);
+        u64::from_le_bytes(buf)
     }
 }
 
 pub trait Writable {
-    fn write(&self, buf: &[u8], offset: u64) -> Result<()>;
+    fn write(&self, buf: &[u8], offset: u64);
 
-    fn write_u32(&self, data: u32, offset: u64) -> Result<()> {
+    fn write_u32(&self, data: u32, offset: u64) {
         self.write(&data.to_le_bytes(), offset)
     }
 
-    fn write_u64(&self, data: u64, offset: u64) -> Result<()> {
+    fn write_u64(&self, data: u64, offset: u64) {
         self.write(&data.to_le_bytes(), offset)
     }
 }
 
-pub trait ReadWritable: Readable + Writable {}
+pub trait  ReadWritable: Readable + Writable {}
 
-pub struct ReadableCdev {
-    pub cdev: File
+pub struct ReadableAddressSpace<'a> {
+    channel: &'a dyn Readable,
+    baseaddr: u64
 }
 
-pub struct WritableCdev {
-    pub cdev: File
+pub struct WritableAddressSpace<'a> {
+    channel: &'a dyn Writable,
+    baseaddr: u64
 }
 
-pub struct ReadWritableCdev {
-    pub cdev: File
+pub struct ReadWritableAddressSpace<'a> {
+    pub channel: &'a dyn ReadWritable,
+    pub baseaddr: u64
 }
 
-impl Readable for ReadableCdev {
-    fn read(&self, buf: &mut [u8], offset: u64) -> Result<()> {
-        self.cdev.read_exact_at(buf, offset).map_err(anyhow::Error::from)
+impl Readable for ReadableAddressSpace<'_> {
+    fn read(&self, buf: &mut [u8], offset: u64) {
+        self.channel.read(buf, self.baseaddr + offset);
     }
 }
 
-impl Writable for WritableCdev {
-    fn write(&self, buf: &[u8], offset: u64) -> Result<()> {
-        self.cdev.write_all_at(buf, offset).map_err(anyhow::Error::from)
+impl Writable for WritableAddressSpace<'_> {
+    fn write(&self, buf: &[u8], offset: u64) {
+        self.channel.write(buf, self.baseaddr + offset);
     }
 }
 
-impl Readable for ReadWritableCdev {
-    fn read(&self, buf: &mut [u8], offset: u64) -> Result<()> {
-        self.cdev.read_exact_at(buf, offset).map_err(anyhow::Error::from)
+impl Readable for ReadWritableAddressSpace<'_> {
+    fn read(&self, buf: &mut [u8], offset: u64) {
+        self.channel.read(buf, self.baseaddr + offset);
     }
 }
 
-impl Writable for ReadWritableCdev {
-    fn write(&self, buf: &[u8], offset: u64) -> Result<()> {
-        self.cdev.write_all_at(buf, offset).map_err(anyhow::Error::from)
+impl Writable for ReadWritableAddressSpace<'_> {
+    fn write(&self, buf: &[u8], offset: u64) {
+        self.channel.write(buf, self.baseaddr + offset);
     }
 }
 
-impl ReadWritable for ReadWritableCdev {}
+impl ReadWritable for ReadWritableAddressSpace<'_> {}

@@ -1,12 +1,15 @@
 use anyhow::{Result, anyhow};
 
-use crate::modules::{xdma::Xdma, axi_firewall::AxiFirewall};
+use crate::modules::{xdma::Xdma, axi_firewall::AxiFirewall, cms::Cms};
 
 pub struct XilinxU55nXdmaStd<'a> {
     pub xdma: &'a Xdma,
-    pub ctrl_firewall: AxiFirewall<'a>
+    pub cms: Cms<'a>,
+    pub ctrl_firewall: AxiFirewall<'a>,
+    pub dma_firewall: AxiFirewall<'a>
 }
 
+// -- ADDRESS MAP -----------------------------------------------------------------------------------------------------
 const CTRL_USER_BASEADDR: u64 = 0x0000_0000;
 const CTRL_CMS_BASEADDR: u64 = 0x0400_0000;
 const CTRL_QSPI_BASEADDR: u64 = 0x0404_0000;
@@ -15,6 +18,7 @@ const CTRL_MGMT_RAM_BASEADDR: u64 = 0x0406_0000;
 const CTRL_CTRL_FIREWALL_BASEADDR: u64 = 0x0407_0000;
 const CTRL_DMA_FIREWALL_BASEADDR: u64 = 0x0408_0000;
 const CTRL_DECOUPLER_BASEADDR: u64 = 0x0409_0000;
+// --------------------------------------------------------------------------------------------------------------------
 
 impl<'a> XilinxU55nXdmaStd<'a> {
     pub fn new(xdma: &'a Xdma) -> Result<Self> {
@@ -29,7 +33,13 @@ impl<'a> XilinxU55nXdmaStd<'a> {
         }
         Ok(Self {
             xdma,
-            ctrl_firewall: AxiFirewall { ctrl_baseaddr: CTRL_CTRL_FIREWALL_BASEADDR, ctrl_channel: &xdma.user[0] }
+            cms: Cms::new(&xdma.user[0], CTRL_CMS_BASEADDR),
+            ctrl_firewall: AxiFirewall::new(&xdma.user[0], CTRL_CTRL_FIREWALL_BASEADDR),
+            dma_firewall: AxiFirewall::new(&xdma.user[0], CTRL_DMA_FIREWALL_BASEADDR)
         })
+    }
+
+    pub fn init(&self) {
+        self.cms.init();
     }
 }
