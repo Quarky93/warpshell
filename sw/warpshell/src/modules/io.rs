@@ -12,6 +12,12 @@ pub trait Readable {
         self.read(&mut buf, offset);
         u64::from_le_bytes(buf)
     }
+
+    fn read_u128(&self, offset: u64) -> u128 {
+        let mut buf: [u8; 16] = [0; 16];
+        self.read(&mut buf, offset);
+        u128::from_le_bytes(buf)
+    }
 }
 
 pub trait Writable {
@@ -22,6 +28,10 @@ pub trait Writable {
     }
 
     fn write_u64(&self, data: u64, offset: u64) {
+        self.write(&data.to_le_bytes(), offset)
+    }
+
+    fn write_u128(&self, data: u128, offset: u64) {
         self.write(&data.to_le_bytes(), offset)
     }
 }

@@ -13,3 +13,5 @@ path = "src/warpshell-cli/warpshell-cli.rs"
 
 [dependencies]
 anyhow = "1.0"
+clap = {version = "4.0.27", features = ["derive"]}
+sha2 = "0.10.6"

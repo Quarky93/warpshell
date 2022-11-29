@@ -2,6 +2,8 @@ use anyhow::{Result, anyhow};
 
 use crate::modules::{xdma::Xdma, axi_firewall::AxiFirewall, cms::Cms};
 
+use super::warpshell::Warpshell;
+
 pub struct XilinxU55nXdmaStd<'a> {
     pub xdma: &'a Xdma,
     pub cms: Cms<'a>,
@@ -38,8 +40,14 @@ impl<'a> XilinxU55nXdmaStd<'a> {
             dma_firewall: AxiFirewall::new(&xdma.user[0], CTRL_DMA_FIREWALL_BASEADDR)
         })
     }
+}
 
-    pub fn init(&self) {
+impl<'a> Warpshell for XilinxU55nXdmaStd<'a> {
+    fn init(&self) {
         self.cms.init();
+    }
+
+    fn load_raw_user_image(&self, image: &[u8]) {
+        todo!()
     }
 }
