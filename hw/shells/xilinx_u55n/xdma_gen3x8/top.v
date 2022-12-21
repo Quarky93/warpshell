@@ -77,9 +77,35 @@ wire user_hbm_cattrip;
 wire [6:0]user_hbm_temp_0;
 wire [6:0]user_hbm_temp_1;
 
+wire bscan_bscanid_en;
+wire bscan_capture;
+wire bscan_drck;
+wire bscan_reset;
+wire bscan_runtest;
+wire bscan_sel;
+wire bscan_shift;
+wire bscan_tck;
+wire bscan_tdi;
+wire bscan_tdo;
+wire bscan_tms;
+wire bscan_update;
+
 user user_partition (
     // -- REFCLKS --
     .shell_refclk_0(shell_refclk_0),
+    // -- BSCAN --
+    .bscan_bscanid_en(bscan_bscanid_en),
+    .bscan_capture(bscan_capture),
+    .bscan_drck(bscan_drck),
+    .bscan_reset(bscan_reset),
+    .bscan_runtest(bscan_runtest),
+    .bscan_sel(bscan_sel),
+    .bscan_shift(bscan_shift),
+    .bscan_tck(bscan_tck),
+    .bscan_tdi(bscan_tdi),
+    .bscan_tdo(bscan_tdo),
+    .bscan_tms(bscan_tms),
+    .bscan_update(bscan_update),
     // -- SHELL <> USER --
     .shell_axi_clk(shell_axi_clk),
     .shell_rstn(shell_rstn),
@@ -147,6 +173,19 @@ shell shell_partition (
     .sys_refclk_0_clk_n(sys_refclk_0_clk_n),
     .sys_refclk_0_clk_p(sys_refclk_0_clk_p),
     .shell_refclk_0(shell_refclk_0),
+    // -- BSCAN --
+    .bscan_bscanid_en(bscan_bscanid_en),
+    .bscan_capture(bscan_capture),
+    .bscan_drck(bscan_drck),
+    .bscan_reset(bscan_reset),
+    .bscan_runtest(bscan_runtest),
+    .bscan_sel(bscan_sel),
+    .bscan_shift(bscan_shift),
+    .bscan_tck(bscan_tck),
+    .bscan_tdi(bscan_tdi),
+    .bscan_tdo(bscan_tdo),
+    .bscan_tms(bscan_tms),
+    .bscan_update(bscan_update),
     // -- PCIE --
     .pcie_refclk_clk_n(pcie_refclk_clk_n),
     .pcie_refclk_clk_p(pcie_refclk_clk_p),

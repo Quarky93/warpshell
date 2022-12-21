@@ -1,7 +1,7 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0x3911376C0308FEB9",
+      "boundary_crc": "0x9DAB164180AD5288",
       "device": "xcu55n-fsvh2892-2L-e",
       "name": "user",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
@@ -17,7 +17,9 @@
       "hbm_cattrip": "",
       "hbm_reset": "",
       "smartconnect_ctrl": "",
-      "smartconnect_dma": ""
+      "smartconnect_dma": "",
+      "debug_bridge": "",
+      "shell_axi_ila": ""
     },
     "interface_ports": {
       "shell_axi_dma": {
@@ -522,6 +524,61 @@
           },
           "RREADY": {
             "physical_name": "shell_axil_ctrl_rready",
+            "direction": "I"
+          }
+        }
+      },
+      "bscan": {
+        "mode": "Slave",
+        "vlnv_bus_definition": "xilinx.com:interface:bscan:1.0",
+        "vlnv": "xilinx.com:interface:bscan_rtl:1.0",
+        "port_maps": {
+          "BSCANID_EN": {
+            "physical_name": "bscan_bscanid_en",
+            "direction": "I"
+          },
+          "CAPTURE": {
+            "physical_name": "bscan_capture",
+            "direction": "I"
+          },
+          "DRCK": {
+            "physical_name": "bscan_drck",
+            "direction": "I"
+          },
+          "RESET": {
+            "physical_name": "bscan_reset",
+            "direction": "I"
+          },
+          "RUNTEST": {
+            "physical_name": "bscan_runtest",
+            "direction": "I"
+          },
+          "SEL": {
+            "physical_name": "bscan_sel",
+            "direction": "I"
+          },
+          "SHIFT": {
+            "physical_name": "bscan_shift",
+            "direction": "I"
+          },
+          "TCK": {
+            "physical_name": "bscan_tck",
+            "direction": "I"
+          },
+          "TDI": {
+            "physical_name": "bscan_tdi",
+            "direction": "I"
+          },
+          "TDO": {
+            "physical_name": "bscan_tdo",
+            "direction": "O"
+          },
+          "TMS": {
+            "physical_name": "bscan_tms",
+            "direction": "I"
+          },
+          "UPDATE": {
+            "physical_name": "bscan_update",
             "direction": "I"
           }
         }
@@ -1192,6 +1249,47 @@
             }
           }
         }
+      },
+      "debug_bridge": {
+        "vlnv": "xilinx.com:ip:debug_bridge:3.0",
+        "xci_name": "user_debug_bridge_0_0",
+        "xci_path": "ip/user_debug_bridge_0_0/user_debug_bridge_0_0.xci",
+        "inst_hier_path": "debug_bridge",
+        "parameters": {
+          "C_DESIGN_TYPE": {
+            "value": "1"
+          }
+        },
+        "interface_ports": {
+          "S_BSCAN": {
+            "mode": "Slave",
+            "vlnv_bus_definition": "xilinx.com:interface:bscan:1.0",
+            "vlnv": "xilinx.com:interface:bscan_rtl:1.0"
+          }
+        }
+      },
+      "shell_axi_ila": {
+        "vlnv": "xilinx.com:ip:system_ila:1.1",
+        "xci_name": "user_system_ila_0_0",
+        "xci_path": "ip/user_system_ila_0_0/user_system_ila_0_0.xci",
+        "inst_hier_path": "shell_axi_ila",
+        "parameters": {
+          "C_NUM_MONITOR_SLOTS": {
+            "value": "2"
+          }
+        },
+        "interface_ports": {
+          "SLOT_0_AXI": {
+            "mode": "Monitor",
+            "vlnv_bus_definition": "xilinx.com:interface:aximm:1.0",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+          },
+          "SLOT_1_AXI": {
+            "mode": "Monitor",
+            "vlnv_bus_definition": "xilinx.com:interface:aximm:1.0",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+          }
+        }
       }
     },
     "interface_nets": {
@@ -1207,16 +1305,24 @@
           "hbm/SAPB_1"
         ]
       },
+      "bscan": {
+        "interface_ports": [
+          "bscan",
+          "debug_bridge/S_BSCAN"
+        ]
+      },
       "shell_axi_dma_1": {
         "interface_ports": [
           "shell_axi_dma",
-          "smartconnect_dma/S00_AXI"
+          "smartconnect_dma/S00_AXI",
+          "shell_axi_ila/SLOT_1_AXI"
         ]
       },
       "shell_axil_ctrl_1": {
         "interface_ports": [
           "shell_axil_ctrl",
-          "smartconnect_ctrl/S00_AXI"
+          "smartconnect_ctrl/S00_AXI",
+          "shell_axi_ila/SLOT_0_AXI"
         ]
       },
       "smartconnect_ctrl_M00_AXI": {
@@ -1294,7 +1400,9 @@
           "shell_axi_clk",
           "core_clk/clk_in1",
           "smartconnect_ctrl/aclk",
-          "smartconnect_dma/aclk"
+          "smartconnect_dma/aclk",
+          "debug_bridge/clk",
+          "shell_axi_ila/clk"
         ]
       },
       "shell_rstn_1": {
@@ -1303,7 +1411,8 @@
           "core_reset/ext_reset_in",
           "hbm_reset/ext_reset_in",
           "smartconnect_ctrl/aresetn",
-          "smartconnect_dma/aresetn"
+          "smartconnect_dma/aresetn",
+          "shell_axi_ila/resetn"
         ]
       },
       "sys_reset_peripheral_aresetn": {

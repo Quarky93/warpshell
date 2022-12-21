@@ -1,7 +1,7 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0xA02A750D54DB1CE3",
+      "boundary_crc": "0x7BC4BA6ECE328A34",
       "device": "xcu55n-fsvh2892-2L-e",
       "name": "shell",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
@@ -140,7 +140,7 @@
             "value_src": "user_prop"
           },
           "CLK_DOMAIN": {
-            "value": "shell_xdma_1_axi_aclk",
+            "value": "shell_xdma_0_axi_aclk",
             "value_src": "default_prop"
           },
           "DATA_WIDTH": {
@@ -446,7 +446,7 @@
             "value_src": "const_prop"
           },
           "CLK_DOMAIN": {
-            "value": "shell_xdma_1_axi_aclk",
+            "value": "shell_xdma_0_axi_aclk",
             "value_src": "default_prop"
           },
           "DATA_WIDTH": {
@@ -680,137 +680,64 @@
             "right": "0"
           }
         }
+      },
+      "bscan": {
+        "mode": "Master",
+        "vlnv_bus_definition": "xilinx.com:interface:bscan:1.0",
+        "vlnv": "xilinx.com:interface:bscan_rtl:1.0",
+        "port_maps": {
+          "BSCANID_EN": {
+            "physical_name": "bscan_bscanid_en",
+            "direction": "O"
+          },
+          "CAPTURE": {
+            "physical_name": "bscan_capture",
+            "direction": "O"
+          },
+          "DRCK": {
+            "physical_name": "bscan_drck",
+            "direction": "O"
+          },
+          "RESET": {
+            "physical_name": "bscan_reset",
+            "direction": "O"
+          },
+          "RUNTEST": {
+            "physical_name": "bscan_runtest",
+            "direction": "O"
+          },
+          "SEL": {
+            "physical_name": "bscan_sel",
+            "direction": "O"
+          },
+          "SHIFT": {
+            "physical_name": "bscan_shift",
+            "direction": "O"
+          },
+          "TCK": {
+            "physical_name": "bscan_tck",
+            "direction": "O"
+          },
+          "TDI": {
+            "physical_name": "bscan_tdi",
+            "direction": "O"
+          },
+          "TDO": {
+            "physical_name": "bscan_tdo",
+            "direction": "I"
+          },
+          "TMS": {
+            "physical_name": "bscan_tms",
+            "direction": "O"
+          },
+          "UPDATE": {
+            "physical_name": "bscan_update",
+            "direction": "O"
+          }
+        }
       }
     },
     "ports": {
-      "pcie_rstn": {
-        "type": "rst",
-        "direction": "I",
-        "parameters": {
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "POLARITY": {
-            "value": "ACTIVE_LOW",
-            "value_src": "default"
-          }
-        }
-      },
-      "satellite_gpio": {
-        "type": "intr",
-        "direction": "I",
-        "left": "3",
-        "right": "0",
-        "parameters": {
-          "PortWidth": {
-            "value": "4"
-          },
-          "SENSITIVITY": {
-            "value": "EDGE_RISING"
-          }
-        }
-      },
-      "shell_axi_clk": {
-        "type": "clk",
-        "direction": "O",
-        "parameters": {
-          "ASSOCIATED_BUSIF": {
-            "value": "shell_axi_dma:shell_axil_ctrl"
-          },
-          "ASSOCIATED_RESET": {
-            "value": "shell_rstn"
-          },
-          "CLK_DOMAIN": {
-            "value": "shell_xdma_1_axi_aclk",
-            "value_src": "default_prop"
-          },
-          "FREQ_HZ": {
-            "value": "250000000",
-            "value_src": "user_prop"
-          },
-          "FREQ_TOLERANCE_HZ": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.0",
-            "value_src": "default"
-          }
-        }
-      },
-      "shell_refclk_0": {
-        "type": "clk",
-        "direction": "O",
-        "left": "0",
-        "right": "0",
-        "parameters": {
-          "CLK_DOMAIN": {
-            "value": "shell_sys_refclk_0_buf_1_IBUF_OUT",
-            "value_src": "default_prop"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "ip_prop"
-          },
-          "FREQ_TOLERANCE_HZ": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.0",
-            "value_src": "default"
-          }
-        }
-      },
-      "shell_rstn": {
-        "type": "rst",
-        "direction": "O",
-        "left": "0",
-        "right": "0",
-        "parameters": {
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "POLARITY": {
-            "value": "ACTIVE_LOW",
-            "value_src": "const_prop"
-          }
-        }
-      },
-      "user_hbm_cattrip": {
-        "type": "intr",
-        "direction": "I",
-        "parameters": {
-          "PortWidth": {
-            "value": "1",
-            "value_src": "default"
-          },
-          "SENSITIVITY": {
-            "value": "LEVEL_HIGH",
-            "value_src": "default"
-          }
-        }
-      },
-      "user_hbm_temp_0": {
-        "direction": "I",
-        "left": "6",
-        "right": "0"
-      },
-      "user_hbm_temp_1": {
-        "direction": "I",
-        "left": "6",
-        "right": "0"
-      },
       "pcie_mgt_rxn": {
         "direction": "I",
         "left": "7",
@@ -1072,13 +999,141 @@
         "direction": "I",
         "left": "0",
         "right": "0"
+      },
+      "pcie_rstn": {
+        "type": "rst",
+        "direction": "I",
+        "parameters": {
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "POLARITY": {
+            "value": "ACTIVE_LOW",
+            "value_src": "default"
+          }
+        }
+      },
+      "satellite_gpio": {
+        "type": "intr",
+        "direction": "I",
+        "left": "3",
+        "right": "0",
+        "parameters": {
+          "PortWidth": {
+            "value": "4"
+          },
+          "SENSITIVITY": {
+            "value": "EDGE_RISING"
+          }
+        }
+      },
+      "shell_axi_clk": {
+        "type": "clk",
+        "direction": "O",
+        "parameters": {
+          "ASSOCIATED_BUSIF": {
+            "value": "shell_axi_dma:shell_axil_ctrl"
+          },
+          "ASSOCIATED_RESET": {
+            "value": "shell_rstn"
+          },
+          "CLK_DOMAIN": {
+            "value": "shell_xdma_0_axi_aclk",
+            "value_src": "default_prop"
+          },
+          "FREQ_HZ": {
+            "value": "250000000",
+            "value_src": "user_prop"
+          },
+          "FREQ_TOLERANCE_HZ": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.0",
+            "value_src": "default"
+          }
+        }
+      },
+      "shell_refclk_0": {
+        "type": "clk",
+        "direction": "O",
+        "left": "0",
+        "right": "0",
+        "parameters": {
+          "CLK_DOMAIN": {
+            "value": "shell_sys_refclk_0_buf_0_IBUF_OUT",
+            "value_src": "default_prop"
+          },
+          "FREQ_HZ": {
+            "value": "100000000",
+            "value_src": "ip_prop"
+          },
+          "FREQ_TOLERANCE_HZ": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.0",
+            "value_src": "default"
+          }
+        }
+      },
+      "shell_rstn": {
+        "type": "rst",
+        "direction": "O",
+        "left": "0",
+        "right": "0",
+        "parameters": {
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "POLARITY": {
+            "value": "ACTIVE_LOW",
+            "value_src": "const_prop"
+          }
+        }
+      },
+      "user_hbm_cattrip": {
+        "type": "intr",
+        "direction": "I",
+        "parameters": {
+          "PortWidth": {
+            "value": "1",
+            "value_src": "default"
+          },
+          "SENSITIVITY": {
+            "value": "LEVEL_HIGH",
+            "value_src": "default"
+          }
+        }
+      },
+      "user_hbm_temp_0": {
+        "direction": "I",
+        "left": "6",
+        "right": "0"
+      },
+      "user_hbm_temp_1": {
+        "direction": "I",
+        "left": "6",
+        "right": "0"
       }
     },
     "components": {
       "cms": {
         "vlnv": "xilinx.com:ip:cms_subsystem:4.0",
-        "xci_name": "shell_cms_1",
-        "xci_path": "ip/shell_cms_1/shell_cms_1.xci",
+        "xci_name": "shell_cms_0",
+        "xci_path": "ip/shell_cms_0/shell_cms_0.xci",
         "inst_hier_path": "cms",
         "interface_ports": {
           "s_axi_ctrl": {
@@ -1231,8 +1286,8 @@
       },
       "ctrl_firewall": {
         "vlnv": "xilinx.com:ip:axi_firewall:1.2",
-        "xci_name": "shell_ctrl_firewall_1",
-        "xci_path": "ip/shell_ctrl_firewall_1/shell_ctrl_firewall_1.xci",
+        "xci_name": "shell_ctrl_firewall_0",
+        "xci_path": "ip/shell_ctrl_firewall_0/shell_ctrl_firewall_0.xci",
         "inst_hier_path": "ctrl_firewall",
         "parameters": {
           "ADDR_WIDTH": {
@@ -1302,10 +1357,13 @@
       },
       "debug_bridge": {
         "vlnv": "xilinx.com:ip:debug_bridge:3.0",
-        "xci_name": "shell_debug_bridge_1",
-        "xci_path": "ip/shell_debug_bridge_1/shell_debug_bridge_1.xci",
+        "xci_name": "shell_debug_bridge_0",
+        "xci_path": "ip/shell_debug_bridge_0/shell_debug_bridge_0.xci",
         "inst_hier_path": "debug_bridge",
         "parameters": {
+          "C_BSCAN_MUX": {
+            "value": "2"
+          },
           "C_DEBUG_MODE": {
             "value": "5"
           },
@@ -1318,13 +1376,18 @@
             "mode": "Slave",
             "vlnv_bus_definition": "xilinx.com:interface:pcie3_cfg_ext:1.0",
             "vlnv": "xilinx.com:interface:pcie3_cfg_ext_rtl:1.0"
+          },
+          "m0_bscan": {
+            "mode": "Master",
+            "vlnv_bus_definition": "xilinx.com:interface:bscan:1.0",
+            "vlnv": "xilinx.com:interface:bscan_rtl:1.0"
           }
         }
       },
       "dfx_decoupler": {
         "vlnv": "xilinx.com:ip:dfx_decoupler:1.0",
-        "xci_name": "shell_dfx_decoupler_1",
-        "xci_path": "ip/shell_dfx_decoupler_1/shell_dfx_decoupler_1.xci",
+        "xci_name": "shell_dfx_decoupler_0",
+        "xci_path": "ip/shell_dfx_decoupler_0/shell_dfx_decoupler_0.xci",
         "inst_hier_path": "dfx_decoupler",
         "parameters": {
           "ALL_PARAMS": {
@@ -1370,8 +1433,8 @@
       },
       "dma_firewall": {
         "vlnv": "xilinx.com:ip:axi_firewall:1.2",
-        "xci_name": "shell_dma_firewall_1",
-        "xci_path": "ip/shell_dma_firewall_1/shell_dma_firewall_1.xci",
+        "xci_name": "shell_dma_firewall_0",
+        "xci_path": "ip/shell_dma_firewall_0/shell_dma_firewall_0.xci",
         "inst_hier_path": "dma_firewall",
         "parameters": {
           "ADDR_WIDTH": {
@@ -1462,8 +1525,8 @@
       },
       "hbicap": {
         "vlnv": "xilinx.com:ip:axi_hbicap:1.0",
-        "xci_name": "shell_hbicap_1",
-        "xci_path": "ip/shell_hbicap_1/shell_hbicap_1.xci",
+        "xci_name": "shell_hbicap_0",
+        "xci_path": "ip/shell_hbicap_0/shell_hbicap_0.xci",
         "inst_hier_path": "hbicap",
         "parameters": {
           "C_ICAP_EXTERNAL": {
@@ -1482,8 +1545,8 @@
       },
       "inv_decouple_status": {
         "vlnv": "xilinx.com:ip:util_vector_logic:2.0",
-        "xci_name": "shell_inv_decouple_status_1",
-        "xci_path": "ip/shell_inv_decouple_status_1/shell_inv_decouple_status_1.xci",
+        "xci_name": "shell_inv_decouple_status_0",
+        "xci_path": "ip/shell_inv_decouple_status_0/shell_inv_decouple_status_0.xci",
         "inst_hier_path": "inv_decouple_status",
         "parameters": {
           "C_OPERATION": {
@@ -1496,8 +1559,8 @@
       },
       "mgmt_clk_wiz": {
         "vlnv": "xilinx.com:ip:clk_wiz:6.0",
-        "xci_name": "shell_mgmt_clk_wiz_1",
-        "xci_path": "ip/shell_mgmt_clk_wiz_1/shell_mgmt_clk_wiz_1.xci",
+        "xci_name": "shell_mgmt_clk_wiz_0",
+        "xci_path": "ip/shell_mgmt_clk_wiz_0/shell_mgmt_clk_wiz_0.xci",
         "inst_hier_path": "mgmt_clk_wiz",
         "parameters": {
           "AXI_DRP": {
@@ -1561,8 +1624,8 @@
       },
       "mgmt_ram": {
         "vlnv": "xilinx.com:ip:axi_bram_ctrl:4.1",
-        "xci_name": "shell_mgmt_ram_1",
-        "xci_path": "ip/shell_mgmt_ram_1/shell_mgmt_ram_1.xci",
+        "xci_name": "shell_mgmt_ram_0",
+        "xci_path": "ip/shell_mgmt_ram_0/shell_mgmt_ram_0.xci",
         "inst_hier_path": "mgmt_ram",
         "parameters": {
           "PROTOCOL": {
@@ -1575,14 +1638,14 @@
       },
       "mgmt_ram_bram": {
         "vlnv": "xilinx.com:ip:blk_mem_gen:8.4",
-        "xci_name": "shell_mgmt_ram_bram_1",
-        "xci_path": "ip/shell_mgmt_ram_bram_1/shell_mgmt_ram_bram_1.xci",
+        "xci_name": "shell_mgmt_ram_bram_0",
+        "xci_path": "ip/shell_mgmt_ram_bram_0/shell_mgmt_ram_bram_0.xci",
         "inst_hier_path": "mgmt_ram_bram"
       },
       "pcie_refclk_buf": {
         "vlnv": "xilinx.com:ip:util_ds_buf:2.2",
-        "xci_name": "shell_pcie_refclk_buf_1",
-        "xci_path": "ip/shell_pcie_refclk_buf_1/shell_pcie_refclk_buf_1.xci",
+        "xci_name": "shell_pcie_refclk_buf_0",
+        "xci_path": "ip/shell_pcie_refclk_buf_0/shell_pcie_refclk_buf_0.xci",
         "inst_hier_path": "pcie_refclk_buf",
         "parameters": {
           "C_BUF_TYPE": {
@@ -1592,8 +1655,8 @@
       },
       "qspi": {
         "vlnv": "xilinx.com:ip:axi_quad_spi:3.2",
-        "xci_name": "shell_qspi_1",
-        "xci_path": "ip/shell_qspi_1/shell_qspi_1.xci",
+        "xci_name": "shell_qspi_0",
+        "xci_path": "ip/shell_qspi_0/shell_qspi_0.xci",
         "inst_hier_path": "qspi",
         "parameters": {
           "C_FIFO_DEPTH": {
@@ -1615,14 +1678,14 @@
       },
       "shell_resetn": {
         "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
-        "xci_name": "shell_shell_resetn_1",
-        "xci_path": "ip/shell_shell_resetn_1/shell_shell_resetn_1.xci",
+        "xci_name": "shell_shell_resetn_0",
+        "xci_path": "ip/shell_shell_resetn_0/shell_shell_resetn_0.xci",
         "inst_hier_path": "shell_resetn"
       },
       "smartconnect_ctrl": {
         "vlnv": "xilinx.com:ip:smartconnect:1.0",
-        "xci_name": "shell_smartconnect_ctrl_1",
-        "xci_path": "ip/shell_smartconnect_ctrl_1/shell_smartconnect_ctrl_1.xci",
+        "xci_name": "shell_smartconnect_ctrl_0",
+        "xci_path": "ip/shell_smartconnect_ctrl_0/shell_smartconnect_ctrl_0.xci",
         "inst_hier_path": "smartconnect_ctrl",
         "parameters": {
           "NUM_MI": {
@@ -1908,8 +1971,8 @@
       },
       "smartconnect_dma": {
         "vlnv": "xilinx.com:ip:smartconnect:1.0",
-        "xci_name": "shell_smartconnect_dma_1",
-        "xci_path": "ip/shell_smartconnect_dma_1/shell_smartconnect_dma_1.xci",
+        "xci_name": "shell_smartconnect_dma_0",
+        "xci_path": "ip/shell_smartconnect_dma_0/shell_smartconnect_dma_0.xci",
         "inst_hier_path": "smartconnect_dma",
         "parameters": {
           "NUM_MI": {
@@ -2003,14 +2066,14 @@
       },
       "sys_refclk_0_buf": {
         "vlnv": "xilinx.com:ip:util_ds_buf:2.2",
-        "xci_name": "shell_sys_refclk_0_buf_1",
-        "xci_path": "ip/shell_sys_refclk_0_buf_1/shell_sys_refclk_0_buf_1.xci",
+        "xci_name": "shell_sys_refclk_0_buf_0",
+        "xci_path": "ip/shell_sys_refclk_0_buf_0/shell_sys_refclk_0_buf_0.xci",
         "inst_hier_path": "sys_refclk_0_buf"
       },
       "xdma": {
         "vlnv": "xilinx.com:ip:xdma:4.1",
-        "xci_name": "shell_xdma_1",
-        "xci_path": "ip/shell_xdma_1/shell_xdma_1.xci",
+        "xci_name": "shell_xdma_0",
+        "xci_path": "ip/shell_xdma_0/shell_xdma_0.xci",
         "inst_hier_path": "xdma",
         "parameters": {
           "axi_data_width": {
@@ -2095,6 +2158,12 @@
         "interface_ports": [
           "pcie_refclk",
           "pcie_refclk_buf/CLK_IN_D"
+        ]
+      },
+      "bscan": {
+        "interface_ports": [
+          "bscan",
+          "debug_bridge/m0_bscan"
         ]
       },
       "cms_satellite_uart": {
