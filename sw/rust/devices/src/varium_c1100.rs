@@ -12,7 +12,7 @@ pub struct VariumC1100 {
 }
 
 impl CardMgmtSysParam for VariumC1100 {
-    const BASE_ADDR: u64 = 0;
+    const BASE_ADDR: u64 = 0x0400_0000;
 }
 
 impl XdmaOps for VariumC1100 {
