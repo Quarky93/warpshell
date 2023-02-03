@@ -53,12 +53,14 @@ fn read(c: &mut Criterion) {
 
 #[inline]
 fn write_payload(varium: &VariumC1100, buf: &DmaBuffer) {
-    varium.dma_write(buf, HBM_BASE_ADDR).expect("write failed");
+    varium
+        .dma_write(0, buf, HBM_BASE_ADDR)
+        .expect("write failed");
 }
 
 #[inline]
 fn read_payload(varium: &VariumC1100, buf: &mut DmaBuffer) {
-    varium.dma_read(buf, HBM_BASE_ADDR).expect("read failed");
+    varium.dma_read(0, buf, HBM_BASE_ADDR).expect("read failed");
 }
 
 fn get_fpga_temp_inst(c: &mut Criterion) {

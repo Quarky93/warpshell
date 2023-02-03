@@ -17,23 +17,23 @@ impl CardMgmtSysParam for VariumC1100 {
 
 impl XdmaOps for VariumC1100 {
     #[inline]
-    fn shell_read(&self, buf: &mut [u8], offset: u64) -> XdmaResult<()> {
-        self.xdma.shell_read(buf, offset)
+    fn user_read(&self, buf: &mut [u8], offset: u64) -> XdmaResult<()> {
+        self.xdma.user_read(buf, offset)
     }
 
     #[inline]
-    fn shell_write(&self, buf: &[u8], offset: u64) -> XdmaResult<()> {
-        self.xdma.shell_write(buf, offset)
+    fn user_write(&self, buf: &[u8], offset: u64) -> XdmaResult<()> {
+        self.xdma.user_write(buf, offset)
     }
 
     #[inline]
-    fn dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> XdmaResult<()> {
-        self.xdma.dma_read(buf, offset)
+    fn dma_read(&self, n_channel: usize, buf: &mut DmaBuffer, offset: u64) -> XdmaResult<()> {
+        self.xdma.dma_read(n_channel, buf, offset)
     }
 
     #[inline]
-    fn dma_write(&self, buf: &DmaBuffer, offset: u64) -> XdmaResult<()> {
-        self.xdma.dma_write(buf, offset)
+    fn dma_write(&self, n_channel: usize, buf: &DmaBuffer, offset: u64) -> XdmaResult<()> {
+        self.xdma.dma_write(n_channel, buf, offset)
     }
 }
 
@@ -47,14 +47,7 @@ impl VariumC1100 {
         let h2c_cdev = File::create("/dev/xdma0_h2c_0")?;
         let c2h_cdev = File::open("/dev/xdma0_c2h_0")?;
         Ok(Self {
-            xdma: XdmaDevice {
-                id: 0,
-                user_cdev,
-                h2c_cdev,
-                c2h_cdev,
-                intc_base_addr: 0x1_0000,
-                hbicap_base_addr: 0x10_0000,
-            },
+            xdma: XdmaDevice::new_one_dma_channel(user_cdev, h2c_cdev, c2h_cdev),
         })
     }
 }

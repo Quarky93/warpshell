@@ -682,14 +682,14 @@ where
 {
     fn get_cms_addr(&self, addr: u64) -> Result<u32> {
         let mut data = [0u8; 4];
-        self.shell_read(&mut data, T::BASE_ADDR + addr)
+        self.user_read(&mut data, T::BASE_ADDR + addr)
             .map_err(Error::XdmaFailed)?;
         Ok(u32::from_le_bytes(data))
     }
 
     fn set_cms_addr(&self, addr: u64, value: u32) -> Result<()> {
         let data = value.to_le_bytes();
-        self.shell_write(&data, T::BASE_ADDR + addr)
+        self.user_write(&data, T::BASE_ADDR + addr)
             .map_err(Error::XdmaFailed)
     }
 }
