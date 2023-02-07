@@ -9,6 +9,7 @@ readme = "README.md"
 edition = "2021"
 
 [dependencies]
+arrayvec = "0.7.2"
 enum-iterator = "1.2"
 log = "0.4"
 num_enum = "0.5"

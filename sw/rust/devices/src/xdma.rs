@@ -1,3 +1,4 @@
+use arrayvec::ArrayVec;
 use std::fs::File;
 use std::io::Error as IoError;
 use std::mem;
@@ -77,98 +78,53 @@ pub struct DmaChannel {
     pub c2h_cdev: File,
 }
 
-/// Useful XDMA channels in one struct
-#[derive(Debug)]
-pub struct XdmaChannels {
-    /// User channel
-    pub user_channel: UserChannel,
-    /// DMA channels
-    pub dma_channels: Vec<DmaChannel>,
+/// All available DMA channels for a given shell
+pub struct DmaChannels<const N: usize> {
+    pub inner: ArrayVec<DmaChannel, N>,
 }
 
-/// Constructor helper for XDMA device interfaces with any number of DMA channels
-#[derive(Debug)]
-pub struct XdmaChannelsBuilder {
-    /// User channel
-    user_channel: UserChannel,
-    /// DMA channels
-    dma_channels: Vec<DmaChannel>,
-}
-
-impl XdmaChannelsBuilder {
-    /// New builder, just the user channel
-    pub fn new(user_cdev: File) -> Self {
+impl<const N: usize> From<[DmaChannel; N]> for DmaChannels<N> {
+    fn from(channels: [DmaChannel; N]) -> Self {
         Self {
-            user_channel: UserChannel(user_cdev),
-            dma_channels: vec![],
-        }
-    }
-
-    /// Adds the next DMA channel
-    pub fn add_dma_channel(&mut self, h2c_cdev: File, c2h_cdev: File) -> &mut Self {
-        self.dma_channels.push(DmaChannel { h2c_cdev, c2h_cdev });
-        self
-    }
-
-    /// Consumes the builder and outputs the desired struct
-    pub fn build(self) -> XdmaChannels {
-        XdmaChannels {
-            user_channel: self.user_channel,
-            dma_channels: self.dma_channels,
+            inner: ArrayVec::from(channels),
         }
     }
 }
 
-/// Reasonably abstract XDMA device IO interface
-#[derive(Debug)]
-pub struct XdmaDevice {
-    pub channels: XdmaChannels,
-}
-
-impl XdmaDevice {
-    pub fn new_one_dma_channel(user_cdev: File, h2c_cdev: File, c2h_cdev: File) -> Self {
-        Self {
-            channels: XdmaChannels {
-                user_channel: UserChannel(user_cdev),
-                dma_channels: vec![DmaChannel { h2c_cdev, c2h_cdev }],
-            },
-        }
-    }
-}
-
-pub trait XdmaOps {
+pub trait UserOps {
     fn user_read(&self, buf: &mut [u8], offset: u64) -> Result<()>;
     fn user_write(&self, buf: &[u8], offset: u64) -> Result<()>;
-    fn dma_read(&self, n_channel: usize, buf: &mut DmaBuffer, offset: u64) -> Result<()>;
-    fn dma_write(&self, n_channel: usize, buf: &DmaBuffer, offset: u64) -> Result<()>;
 }
 
-impl XdmaOps for XdmaDevice {
+impl UserOps for UserChannel {
     fn user_read(&self, buf: &mut [u8], offset: u64) -> Result<()> {
-        self.channels
-            .user_channel
-            .0
+        self.0
             .read_exact_at(buf, offset)
             .map_err(Error::ShellReadFailed)
     }
 
     fn user_write(&self, buf: &[u8], offset: u64) -> Result<()> {
-        self.channels
-            .user_channel
-            .0
+        self.0
             .write_all_at(buf, offset)
             .map_err(Error::ShellWriteFailed)
     }
+}
 
+pub trait DmaOps {
+    fn dma_read(&self, n_channel: usize, buf: &mut DmaBuffer, offset: u64) -> Result<()>;
+    fn dma_write(&self, n_channel: usize, buf: &DmaBuffer, offset: u64) -> Result<()>;
+}
+
+impl<const N: usize> DmaOps for DmaChannels<N> {
     fn dma_read(&self, n_channel: usize, buf: &mut DmaBuffer, offset: u64) -> Result<()> {
-        self.channels.dma_channels[n_channel]
+        self.inner[n_channel]
             .c2h_cdev
             .read_exact_at(buf.as_mut_slice(), offset)
             .map_err(|err| Error::DmaReadFailed { n_channel, err })
     }
 
     fn dma_write(&self, n_channel: usize, buf: &DmaBuffer, offset: u64) -> Result<()> {
-        self.channels.dma_channels[n_channel]
+        self.inner[n_channel]
             .h2c_cdev
             .write_all_at(buf.as_slice(), offset)
             .map_err(|err| Error::DmaWriteFailed { n_channel, err })

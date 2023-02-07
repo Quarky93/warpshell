@@ -3,7 +3,7 @@ use packed_simd::Simd;
 use std::time::Duration;
 use warp_devices::cms::{CardMgmtOps, CardMgmtSys, CmsReg};
 use warp_devices::varium_c1100::{VariumC1100, HBM_BASE_ADDR};
-use warp_devices::xdma::{DmaBuffer, XdmaOps};
+use warp_devices::xdma::{DmaBuffer, DmaOps};
 
 const PAYLOAD_LEN: usize = 1 * 1024 * 1024 * 1024;
 const CHUNK_LEN: usize = 64;

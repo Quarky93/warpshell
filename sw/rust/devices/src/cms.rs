@@ -1,4 +1,4 @@
-use crate::xdma::{Error as XdmaError, XdmaOps};
+use crate::xdma::{Error as XdmaError, UserOps};
 use enum_iterator::Sequence;
 use log::debug;
 use num_enum::TryFromPrimitive;
@@ -601,7 +601,7 @@ pub trait CardMgmtOps {
 
 impl<T> CardMgmtOps for T
 where
-    T: XdmaOps + CardMgmtSysParam,
+    T: UserOps + CardMgmtSysParam,
 {
     fn init_cms(&self) -> Result<()> {
         self.set_cms_reg(CmsReg::MicroblazeResetN, 1)
@@ -678,7 +678,7 @@ where
 
 impl<T> CardMgmtSys for T
 where
-    T: XdmaOps + CardMgmtSysParam,
+    T: UserOps + CardMgmtSysParam,
 {
     fn get_cms_addr(&self, addr: u64) -> Result<u32> {
         let mut data = [0u8; 4];
