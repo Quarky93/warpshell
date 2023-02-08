@@ -11,8 +11,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-    ShellReadFailed(IoError),
-    ShellWriteFailed(IoError),
+    UserReadFailed(IoError),
+    UserWriteFailed(IoError),
     DmaReadFailed { n_channel: usize, err: IoError },
     DmaWriteFailed { n_channel: usize, err: IoError },
 }
@@ -100,13 +100,13 @@ impl UserOps for UserChannel {
     fn user_read(&self, buf: &mut [u8], offset: u64) -> Result<()> {
         self.0
             .read_exact_at(buf, offset)
-            .map_err(Error::ShellReadFailed)
+            .map_err(Error::UserReadFailed)
     }
 
     fn user_write(&self, buf: &[u8], offset: u64) -> Result<()> {
         self.0
             .write_all_at(buf, offset)
-            .map_err(Error::ShellWriteFailed)
+            .map_err(Error::UserWriteFailed)
     }
 }
 
