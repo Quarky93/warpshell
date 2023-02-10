@@ -1,8 +1,7 @@
-use crate::xdma::{Error as XdmaError, UserOps};
+use crate::xdma::{BasedUserOps, Error as XdmaError};
 use enum_iterator::Sequence;
 use log::debug;
-use num_enum::TryFromPrimitive;
-use num_enum::TryFromPrimitiveError;
+use num_enum::{TryFromPrimitive, TryFromPrimitiveError};
 use std::collections::BTreeSet;
 use std::convert::TryFrom;
 use std::iter;
@@ -501,22 +500,28 @@ impl TryFrom<&[u8]> for CardInfo {
     }
 }
 
-/// Card Management Solution subsystem
-pub trait CardMgmtSys {
-    /// Reads the value at a raw CMS address
-    fn get_cms_addr(&self, addr: u64) -> Result<u32>;
+// /// Base address of a memory-mapped core
+// pub trait CmsParam {
+//     /// Base address in bytes
+//     const BASE_ADDR: u64;
+// }
 
-    /// Writes the value at a raw CMS address
-    fn set_cms_addr(&self, addr: u64, value: u32) -> Result<()>;
+/// Card Management Solution subsystem
+pub trait CmsOps {
+    /// Reads the value at a CMS register offset
+    fn get_cms_offset(&self, offset: u64) -> Result<u32>;
+
+    /// Writes the value at a CMS register offset
+    fn set_cms_offset(&self, offset: u64, value: u32) -> Result<()>;
 
     /// Reads the value in a given CMS register
     fn get_cms_reg(&self, reg: CmsReg) -> Result<u32> {
-        self.get_cms_addr(reg as u64)
+        self.get_cms_offset(reg as u64)
     }
 
     /// Writes the value in a given CMS register
     fn set_cms_reg(&self, reg: CmsReg, value: u32) -> Result<()> {
-        self.set_cms_addr(reg as u64, value)
+        self.set_cms_offset(reg as u64, value)
     }
 
     /// Reads the value in the CMS control register
@@ -571,52 +576,26 @@ pub trait CardMgmtSys {
     fn poll_cms_reg_set(&self, reg: CmsReg, mask: u32, n: usize) -> Result<()> {
         self.poll_cms_reg_mask(reg, mask, mask, n)
     }
-}
 
-/// CMS parameters
-pub trait CardMgmtSysParam {
-    const BASE_ADDR: u64;
-}
-
-pub trait CardMgmtOps {
     /// Initialises the Card Management System
-    fn init_cms(&self) -> Result<()>;
-
-    // Waits roughly `ms` milliseconds to allow readings to be populated while polling the status
-    // register every 1ms. Returns the elapsed milliseconds.
-    fn expect_ready_host_status(&self, ms: usize) -> Result<usize>;
-
-    /// Enables HBM temperature monitoring
-    fn enable_hbm_temp_monitoring(&self) -> Result<()>;
-
-    /// Gets the mailbox offset from the base address
-    fn get_mailbox_offset(&self) -> Result<u64>;
-
-    // /// Issues a reboot of the satellite controller
-    // fn sc_fw_reboot(&mut self) -> Result<()>;
-
-    /// Gets the card information
-    fn get_card_info(&self) -> Result<CardInfo>;
-}
-
-impl<T> CardMgmtOps for T
-where
-    T: UserOps + CardMgmtSysParam,
-{
-    fn init_cms(&self) -> Result<()> {
+    fn init(&self) -> Result<()> {
         self.set_cms_reg(CmsReg::MicroblazeResetN, 1)
     }
 
+    /// Waits roughly `ms` milliseconds to allow readings to be populated while polling the status
+    /// register every 1ms. Returns the elapsed milliseconds.
     fn expect_ready_host_status(&self, ms: usize) -> Result<usize> {
         self.poll_cms_reg_mask_sleep(CmsReg::HostStatus, 1, 1, ms, Duration::from_millis(1))
             .map_err(|_| Error::HostStatusNotReady)
     }
 
+    /// Enables HBM temperature monitoring
     fn enable_hbm_temp_monitoring(&self) -> Result<()> {
         let v = self.get_cms_control_reg()?;
         self.set_cms_control_reg(v | ControlRegBit::HbmTempMonitorEnable as u32)
     }
 
+    /// Gets the mailbox offset from the base address
     fn get_mailbox_offset(&self) -> Result<u64> {
         let control = self.get_cms_control_reg()?;
         if 0 != control & ControlRegBit::MailboxStatus as u32 {
@@ -626,24 +605,11 @@ where
         Ok(0x2_8000u64 + v as u64)
     }
 
-    // fn sc_fw_reboot(&mut self) -> Result<()> {
-    //     let mbox_offset = self.get_mailbox_offset()?;
-    //     self.set_cms_addr(mbox_offset, (MailboxMsgOpcode::ScFwReboot as u32) << 24)?;
-    //     self.set_cms_addr(mbox_offset + 4, 0x00000201)?;
-    //     let control = self.get_cms_control_reg()?;
-    //     self.set_cms_control_reg(control | ControlRegBit::MailboxStatus as u32)?;
-    //     let error = self.get_cms_reg(CmsReg::HostMsgError)?;
-    //     if error != 0 {
-    //         Err(Error::HostMsgError(error))
-    //     } else {
-    //         Ok(())
-    //     }
-    // }
-
+    /// Gets the card information
     fn get_card_info(&self) -> Result<CardInfo> {
         let mbox_offset = self.get_mailbox_offset()?;
         debug!("mbox_offset 0x{:x}", mbox_offset);
-        self.set_cms_addr(mbox_offset, (MailboxMsgOpcode::CardInfo as u32) << 24)?;
+        self.set_cms_offset(mbox_offset, (MailboxMsgOpcode::CardInfo as u32) << 24)?;
         let control = self.get_cms_control_reg()?;
         self.set_cms_control_reg(control | ControlRegBit::MailboxStatus as u32)?;
         // Wait for at most 1s.
@@ -660,12 +626,12 @@ where
             return Err(Error::HostMsgError(error));
         }
 
-        let len = self.get_cms_addr(mbox_offset)? & 0xfff;
+        let len = self.get_cms_offset(mbox_offset)? & 0xfff;
         let mut info_bytes = Vec::with_capacity(len as usize);
         let mut data_offset = 4;
         let mut remaining = len as isize;
         while remaining > 0 {
-            let w = self.get_cms_addr(mbox_offset + data_offset as u64)?;
+            let w = self.get_cms_offset(mbox_offset + data_offset as u64)?;
             let bytes = w.to_le_bytes();
             let num_bytes = remaining.min(4) as usize;
             info_bytes.extend_from_slice(&bytes[..num_bytes]);
@@ -676,20 +642,16 @@ where
     }
 }
 
-impl<T> CardMgmtSys for T
+impl<T> CmsOps for T
 where
-    T: UserOps + CardMgmtSysParam,
+    T: BasedUserOps,
 {
-    fn get_cms_addr(&self, addr: u64) -> Result<u32> {
-        let mut data = [0u8; 4];
-        self.user_read(&mut data, T::BASE_ADDR + addr)
-            .map_err(Error::XdmaFailed)?;
-        Ok(u32::from_le_bytes(data))
+    fn get_cms_offset(&self, offset: u64) -> Result<u32> {
+        self.based_user_read_u32(offset).map_err(Error::XdmaFailed)
     }
 
-    fn set_cms_addr(&self, addr: u64, value: u32) -> Result<()> {
-        let data = value.to_le_bytes();
-        self.user_write(&data, T::BASE_ADDR + addr)
+    fn set_cms_offset(&self, offset: u64, value: u32) -> Result<()> {
+        self.based_user_write_u32(offset, value)
             .map_err(Error::XdmaFailed)
     }
 }

@@ -1,5 +1,7 @@
+use crate::BaseParam;
 use arrayvec::ArrayVec;
-use std::fs::File;
+use once_cell::sync::OnceCell;
+use std::fs::{File, OpenOptions};
 use std::io::Error as IoError;
 use std::mem;
 use std::os::unix::fs::FileExt;
@@ -15,6 +17,7 @@ pub enum Error {
     UserWriteFailed(IoError),
     DmaReadFailed { n_channel: usize, err: IoError },
     DmaWriteFailed { n_channel: usize, err: IoError },
+    DevNode(std::io::Error),
 }
 
 #[repr(C, align(4096))]
@@ -79,12 +82,12 @@ pub struct DmaChannel {
 }
 
 /// All available DMA channels for a given shell
-pub struct DmaChannels<const N: usize> {
-    pub inner: ArrayVec<DmaChannel, N>,
+pub struct DmaChannels<'a, const N: usize> {
+    pub inner: ArrayVec<&'a DmaChannel, N>,
 }
 
-impl<const N: usize> From<[DmaChannel; N]> for DmaChannels<N> {
-    fn from(channels: [DmaChannel; N]) -> Self {
+impl<'a, const N: usize> From<[&'a DmaChannel; N]> for DmaChannels<'a, N> {
+    fn from(channels: [&'a DmaChannel; N]) -> Self {
         Self {
             inner: ArrayVec::from(channels),
         }
@@ -97,12 +100,14 @@ pub trait UserOps {
 }
 
 impl UserOps for UserChannel {
+    #[inline]
     fn user_read(&self, buf: &mut [u8], offset: u64) -> Result<()> {
         self.0
             .read_exact_at(buf, offset)
             .map_err(Error::UserReadFailed)
     }
 
+    #[inline]
     fn user_write(&self, buf: &[u8], offset: u64) -> Result<()> {
         self.0
             .write_all_at(buf, offset)
@@ -110,12 +115,58 @@ impl UserOps for UserChannel {
     }
 }
 
+/// IO operations on an offset memory-mapped component via a user channel
+pub trait BasedUserOps {
+    fn based_user_read_u32(&self, offset: u64) -> Result<u32>;
+    fn based_user_write_u32(&self, offset: u64, value: u32) -> Result<()>;
+}
+
+pub trait GetUserChannel {
+    fn get_user_channel(&self) -> &UserChannel;
+}
+
+impl<T> BasedUserOps for T
+where
+    T: GetUserChannel + BaseParam,
+{
+    #[inline]
+    fn based_user_read_u32(&self, offset: u64) -> Result<u32> {
+        let mut data = [0u8; 4];
+        self.get_user_channel()
+            .user_read(&mut data, T::BASE_ADDR + offset)?;
+        Ok(u32::from_le_bytes(data))
+    }
+
+    #[inline]
+    fn based_user_write_u32(&self, offset: u64, value: u32) -> Result<()> {
+        let data = value.to_le_bytes();
+        self.get_user_channel()
+            .user_write(&data, T::BASE_ADDR + offset)
+    }
+}
+
+// impl<'a, T> BasedUserOps for &'a T
+// where
+//     T: BasedUserOps,
+// {
+//     fn based_user_read_u32(&self, offset: u64) -> Result<u32> {
+//         let mut data = [0u8; 4];
+//         self.user_read(&mut data, T::BASE_ADDR + offset)?;
+//         Ok(u32::from_le_bytes(data))
+//     }
+
+//     fn based_user_write_u32(&self, offset: u64, value: u32) -> Result<()> {
+//         let data = value.to_le_bytes();
+//         self.user_write(&data, T::BASE_ADDR + offset)
+//     }
+// }
+
 pub trait DmaOps {
     fn dma_read(&self, n_channel: usize, buf: &mut DmaBuffer, offset: u64) -> Result<()>;
     fn dma_write(&self, n_channel: usize, buf: &DmaBuffer, offset: u64) -> Result<()>;
 }
 
-impl<const N: usize> DmaOps for DmaChannels<N> {
+impl<'a, const N: usize> DmaOps for DmaChannels<'a, N> {
     fn dma_read(&self, n_channel: usize, buf: &mut DmaBuffer, offset: u64) -> Result<()> {
         self.inner[n_channel]
             .c2h_cdev
@@ -128,6 +179,39 @@ impl<const N: usize> DmaOps for DmaChannels<N> {
             .h2c_cdev
             .write_all_at(buf.as_slice(), offset)
             .map_err(|err| Error::DmaWriteFailed { n_channel, err })
+    }
+}
+
+pub struct OnceCellUserChannel {
+    pub cdev_path: &'static str,
+    pub channel: OnceCell<UserChannel>,
+}
+
+impl OnceCellUserChannel {
+    pub fn get_or_init(&self) -> Result<&UserChannel> {
+        let cdev = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(&self.cdev_path)
+            .map_err(Error::DevNode)?;
+        Ok(self.channel.get_or_init(|| UserChannel(cdev)))
+    }
+}
+
+pub struct OnceCellDmaChannel {
+    pub h2c_cdev_path: &'static str,
+    pub c2h_cdev_path: &'static str,
+    pub channel: OnceCell<DmaChannel>,
+}
+
+impl OnceCellDmaChannel {
+    pub fn get_or_init(&self) -> Result<&DmaChannel> {
+        // For some reason `File::open` doesn't return a valid descriptor.
+        let h2c_cdev = File::create(self.h2c_cdev_path).map_err(Error::DevNode)?;
+        let c2h_cdev = File::open(self.c2h_cdev_path).map_err(Error::DevNode)?;
+        Ok(self
+            .channel
+            .get_or_init(|| DmaChannel { h2c_cdev, c2h_cdev }))
     }
 }
 

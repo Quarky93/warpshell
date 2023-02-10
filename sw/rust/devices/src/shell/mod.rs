@@ -1,6 +1,6 @@
 mod xilinx_u55n_xdma_std;
 
-use crate::cores::cms::Error as CmsError;
+use crate::{cores::cms::Error as CmsError, xdma::Error as XdmaError};
 
 pub use xilinx_u55n_xdma_std::*;
 
@@ -8,13 +8,19 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-    DevNode(std::io::Error),
+    Xdma(XdmaError),
     Cms(CmsError),
 }
 
 impl From<CmsError> for Error {
     fn from(e: CmsError) -> Error {
         Error::Cms(e)
+    }
+}
+
+impl From<XdmaError> for Error {
+    fn from(e: XdmaError) -> Error {
+        Error::Xdma(e)
     }
 }
 

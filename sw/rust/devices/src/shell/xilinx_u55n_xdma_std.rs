@@ -1,39 +1,51 @@
-use super::{Error, Result, Shell};
+use super::{Result, Shell};
 use crate::{
-    cores::cms::{CardMgmtOps, CardMgmtSysParam},
+    cores::cms::CmsOps,
     xdma::{
-        DmaBuffer, DmaChannel, DmaChannels, DmaOps, Result as XdmaResult, UserChannel, UserOps,
+        DmaBuffer, DmaChannels, DmaOps, GetUserChannel, OnceCellDmaChannel, OnceCellUserChannel,
+        Result as XdmaResult, UserChannel,
     },
+    BaseParam,
 };
-use std::fs::{File, OpenOptions};
+use once_cell::sync::OnceCell;
+
+static USER_CHANNEL: OnceCellUserChannel = OnceCellUserChannel {
+    cdev_path: "/dev/xdma0_user",
+    channel: OnceCell::new(),
+};
+static DMA_CHANNEL: OnceCellDmaChannel = OnceCellDmaChannel {
+    h2c_cdev_path: "/dev/xdma0_h2c_0",
+    c2h_cdev_path: "/dev/xdma0_c2h_0",
+    channel: OnceCell::new(),
+};
 
 // pub const HBM_BASE_ADDR: u64 = 0;
 // pub const HBM_SIZE: u64 = 8 * 1024 * 1024 * 1024;
 
-pub struct XilinxU55nXdmaStd {
-    /// User channel
-    user_channel: UserChannel,
+pub struct XilinxU55nXdmaStd<'a> {
     /// DMA channel
-    dma_channels: DmaChannels<1>,
+    dma_channels: DmaChannels<'a, 1>,
+    /// CMS core instance
+    cms: Cms<'a>,
 }
 
-impl CardMgmtSysParam for XilinxU55nXdmaStd {
+pub struct Cms<'a> {
+    /// User channel
+    user_channel: &'a UserChannel,
+}
+
+impl<'a> BaseParam for Cms<'a> {
     const BASE_ADDR: u64 = 0x0400_0000;
 }
 
-impl UserOps for XilinxU55nXdmaStd {
-    #[inline]
-    fn user_read(&self, buf: &mut [u8], offset: u64) -> XdmaResult<()> {
-        self.user_channel.user_read(buf, offset)
-    }
-
-    #[inline]
-    fn user_write(&self, buf: &[u8], offset: u64) -> XdmaResult<()> {
-        self.user_channel.user_write(buf, offset)
+impl<'a> GetUserChannel for Cms<'a> {
+    fn get_user_channel(&self) -> &UserChannel {
+        self.user_channel
     }
 }
 
-impl DmaOps for XilinxU55nXdmaStd {
+// TODO: refactor DmaOps to derive it from BaseParam + GetDmaChannel.
+impl<'a> DmaOps for XilinxU55nXdmaStd<'a> {
     #[inline]
     fn dma_read(&self, _n_channel: usize, buf: &mut DmaBuffer, offset: u64) -> XdmaResult<()> {
         self.dma_channels.dma_read(0, buf, offset)
@@ -45,26 +57,21 @@ impl DmaOps for XilinxU55nXdmaStd {
     }
 }
 
-impl XilinxU55nXdmaStd {
+impl<'a> XilinxU55nXdmaStd<'a> {
     pub fn new() -> Result<Self> {
-        // For some reason `File::open` doesn't return a valid descriptor.
-        let user_cdev = OpenOptions::new()
-            .read(true)
-            .write(true)
-            .open("/dev/xdma0_user")
-            .map_err(Error::DevNode)?;
-        let h2c_cdev = File::create("/dev/xdma0_h2c_0").map_err(Error::DevNode)?;
-        let c2h_cdev = File::open("/dev/xdma0_c2h_0").map_err(Error::DevNode)?;
+        let user_channel = USER_CHANNEL.get_or_init()?;
+        let dma_channel = DMA_CHANNEL.get_or_init()?;
+        let cms = Cms { user_channel };
         Ok(Self {
-            user_channel: UserChannel(user_cdev),
-            dma_channels: DmaChannels::from([DmaChannel { h2c_cdev, c2h_cdev }]),
+            dma_channels: DmaChannels::from([dma_channel]),
+            cms,
         })
     }
 }
 
-impl Shell for XilinxU55nXdmaStd {
+impl<'a> Shell for XilinxU55nXdmaStd<'a> {
     fn init(&self) -> Result<()> {
-        Ok(self.init_cms()?)
+        Ok(self.cms.init()?)
     }
 
     fn load_raw_user_image(&self, _image: &[u8]) -> Result<()> {
