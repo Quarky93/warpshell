@@ -2,8 +2,8 @@ use super::{Result, Shell};
 use crate::{
     cores::cms::CmsOps,
     xdma::{
-        DmaBuffer, DmaChannels, DmaOps, GetUserChannel, OnceCellDmaChannel, OnceCellUserChannel,
-        Result as XdmaResult, UserChannel,
+        DmaChannel, GetDmaChannel, GetUserChannel, OnceCellDmaChannel, OnceCellUserChannel,
+        UserChannel,
     },
     BaseParam,
 };
@@ -23,10 +23,10 @@ static DMA_CHANNEL: OnceCellDmaChannel = OnceCellDmaChannel {
 // pub const HBM_SIZE: u64 = 8 * 1024 * 1024 * 1024;
 
 pub struct XilinxU55nXdmaStd<'a> {
-    /// DMA channel
-    dma_channels: DmaChannels<'a, 1>,
     /// CMS core instance
     cms: Cms<'a>,
+    /// HBM core instance
+    hbm: Hbm<'a>,
 }
 
 pub struct Cms<'a> {
@@ -34,26 +34,28 @@ pub struct Cms<'a> {
     user_channel: &'a UserChannel,
 }
 
+pub struct Hbm<'a> {
+    /// DMA channel
+    dma_channel: &'a DmaChannel,
+}
+
 impl<'a> BaseParam for Cms<'a> {
     const BASE_ADDR: u64 = 0x0400_0000;
 }
 
-impl<'a> GetUserChannel for Cms<'a> {
+impl GetUserChannel for Cms<'_> {
     fn get_user_channel(&self) -> &UserChannel {
         self.user_channel
     }
 }
 
-// TODO: refactor DmaOps to derive it from BaseParam + GetDmaChannel.
-impl<'a> DmaOps for XilinxU55nXdmaStd<'a> {
-    #[inline]
-    fn dma_read(&self, _n_channel: usize, buf: &mut DmaBuffer, offset: u64) -> XdmaResult<()> {
-        self.dma_channels.dma_read(0, buf, offset)
-    }
+impl<'a> BaseParam for Hbm<'a> {
+    const BASE_ADDR: u64 = 0;
+}
 
-    #[inline]
-    fn dma_write(&self, _n_channel: usize, buf: &DmaBuffer, offset: u64) -> XdmaResult<()> {
-        self.dma_channels.dma_write(0, buf, offset)
+impl<'a> GetDmaChannel for Hbm<'a> {
+    fn get_dma_channel(&self) -> &DmaChannel {
+        self.dma_channel
     }
 }
 
@@ -62,10 +64,8 @@ impl<'a> XilinxU55nXdmaStd<'a> {
         let user_channel = USER_CHANNEL.get_or_init()?;
         let dma_channel = DMA_CHANNEL.get_or_init()?;
         let cms = Cms { user_channel };
-        Ok(Self {
-            dma_channels: DmaChannels::from([dma_channel]),
-            cms,
-        })
+        let hbm = Hbm { dma_channel };
+        Ok(Self { cms, hbm })
     }
 }
 

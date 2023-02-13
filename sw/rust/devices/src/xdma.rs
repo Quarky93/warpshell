@@ -17,7 +17,7 @@ pub enum Error {
     UserWriteFailed(IoError),
     DmaReadFailed { n_channel: usize, err: IoError },
     DmaWriteFailed { n_channel: usize, err: IoError },
-    DevNode(std::io::Error),
+    DevNode(IoError),
 }
 
 #[repr(C, align(4096))]
@@ -145,42 +145,70 @@ where
     }
 }
 
-// impl<'a, T> BasedUserOps for &'a T
-// where
-//     T: BasedUserOps,
-// {
-//     fn based_user_read_u32(&self, offset: u64) -> Result<u32> {
-//         let mut data = [0u8; 4];
-//         self.user_read(&mut data, T::BASE_ADDR + offset)?;
-//         Ok(u32::from_le_bytes(data))
-//     }
+pub trait DmaOps {
+    fn dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<()>;
+    fn dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<()>;
+}
 
-//     fn based_user_write_u32(&self, offset: u64, value: u32) -> Result<()> {
-//         let data = value.to_le_bytes();
-//         self.user_write(&data, T::BASE_ADDR + offset)
-//     }
+impl DmaOps for DmaChannel {
+    fn dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<()> {
+        self.c2h_cdev
+            .read_exact_at(buf.as_mut_slice(), offset)
+            .map_err(|err| Error::DmaReadFailed { n_channel: 0, err })
+    }
+
+    fn dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<()> {
+        self.h2c_cdev
+            .write_all_at(buf.as_slice(), offset)
+            .map_err(|err| Error::DmaWriteFailed { n_channel: 0, err })
+    }
+}
+
+impl<T> BasedDmaOps for T
+where
+    T: GetDmaChannel + BaseParam,
+{
+    #[inline]
+    fn based_dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<()> {
+        self.get_dma_channel().dma_read(buf, T::BASE_ADDR + offset)
+    }
+
+    #[inline]
+    fn based_dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<()> {
+        self.get_dma_channel().dma_write(buf, T::BASE_ADDR + offset)
+    }
+}
+
+/// IO operations on an offset memory-mapped component via a DMA channel
+pub trait BasedDmaOps {
+    fn based_dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<()>;
+    fn based_dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<()>;
+}
+
+pub trait GetDmaChannel {
+    fn get_dma_channel(&self) -> &DmaChannel;
+}
+
+// pub trait DmaOps {
+//     fn dma_read(&self, n_channel: usize, buf: &mut DmaBuffer, offset: u64) -> Result<()>;
+//     fn dma_write(&self, n_channel: usize, buf: &DmaBuffer, offset: u64) -> Result<()>;
 // }
 
-pub trait DmaOps {
-    fn dma_read(&self, n_channel: usize, buf: &mut DmaBuffer, offset: u64) -> Result<()>;
-    fn dma_write(&self, n_channel: usize, buf: &DmaBuffer, offset: u64) -> Result<()>;
-}
+// impl<'a, const N: usize> DmaOps for DmaChannels<'a, N> {
+//     fn dma_read(&self, n_channel: usize, buf: &mut DmaBuffer, offset: u64) -> Result<()> {
+//         self.inner[n_channel]
+//             .c2h_cdev
+//             .read_exact_at(buf.as_mut_slice(), offset)
+//             .map_err(|err| Error::DmaReadFailed { n_channel, err })
+//     }
 
-impl<'a, const N: usize> DmaOps for DmaChannels<'a, N> {
-    fn dma_read(&self, n_channel: usize, buf: &mut DmaBuffer, offset: u64) -> Result<()> {
-        self.inner[n_channel]
-            .c2h_cdev
-            .read_exact_at(buf.as_mut_slice(), offset)
-            .map_err(|err| Error::DmaReadFailed { n_channel, err })
-    }
-
-    fn dma_write(&self, n_channel: usize, buf: &DmaBuffer, offset: u64) -> Result<()> {
-        self.inner[n_channel]
-            .h2c_cdev
-            .write_all_at(buf.as_slice(), offset)
-            .map_err(|err| Error::DmaWriteFailed { n_channel, err })
-    }
-}
+//     fn dma_write(&self, n_channel: usize, buf: &DmaBuffer, offset: u64) -> Result<()> {
+//         self.inner[n_channel]
+//             .h2c_cdev
+//             .write_all_at(buf.as_slice(), offset)
+//             .map_err(|err| Error::DmaWriteFailed { n_channel, err })
+//     }
+// }
 
 pub struct OnceCellUserChannel {
     pub cdev_path: &'static str,
@@ -192,7 +220,7 @@ impl OnceCellUserChannel {
         let cdev = OpenOptions::new()
             .read(true)
             .write(true)
-            .open(&self.cdev_path)
+            .open(self.cdev_path)
             .map_err(Error::DevNode)?;
         Ok(self.channel.get_or_init(|| UserChannel(cdev)))
     }
@@ -224,7 +252,7 @@ mod test {
         const BUF_LEN: usize = 42;
 
         let mut buf = DmaBuffer::new(BUF_LEN);
-        buf.get_mut().extend_from_slice(&vec![0u8; BUF_LEN]);
+        buf.get_mut().extend_from_slice(&[0u8; BUF_LEN]);
 
         let ptr = buf.as_mut_slice().as_mut_ptr();
         let len = buf.get().len();
@@ -238,7 +266,7 @@ mod test {
     #[test]
     fn file_write_all_at() {
         let n: u64 = rand::random();
-        let f = File::create(format!("/tmp/xdma-test-{:x}", n)).expect("cannot create file");
+        let f = File::create(format!("/tmp/xdma-test-{n}")).expect("cannot create file");
         let buf = vec![b'A', b'B', b'C'];
         f.write_all_at(buf.as_slice(), 0)
             .expect("write test failed");
