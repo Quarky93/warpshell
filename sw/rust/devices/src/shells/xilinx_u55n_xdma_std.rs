@@ -24,9 +24,9 @@ static DMA_CHANNEL: OnceCellDmaChannel = OnceCellDmaChannel {
 
 pub struct XilinxU55nXdmaStd<'a> {
     /// CMS core instance
-    cms: Cms<'a>,
+    pub cms: Cms<'a>,
     /// HBM core instance
-    hbm: Hbm<'a>,
+    pub hbm: Hbm<'a>,
 }
 
 pub struct Cms<'a> {

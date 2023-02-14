@@ -1,5 +1,5 @@
 pub mod cores;
-pub mod shell;
+pub mod shells;
 pub mod xdma;
 
 /// Base address of a memory-mapped core

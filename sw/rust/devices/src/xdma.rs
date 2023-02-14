@@ -164,6 +164,16 @@ impl DmaOps for DmaChannel {
     }
 }
 
+/// IO operations on an offset memory-mapped component via a DMA channel
+pub trait BasedDmaOps {
+    fn based_dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<()>;
+    fn based_dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<()>;
+}
+
+pub trait GetDmaChannel {
+    fn get_dma_channel(&self) -> &DmaChannel;
+}
+
 impl<T> BasedDmaOps for T
 where
     T: GetDmaChannel + BaseParam,
@@ -177,16 +187,6 @@ where
     fn based_dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<()> {
         self.get_dma_channel().dma_write(buf, T::BASE_ADDR + offset)
     }
-}
-
-/// IO operations on an offset memory-mapped component via a DMA channel
-pub trait BasedDmaOps {
-    fn based_dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<()>;
-    fn based_dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<()>;
-}
-
-pub trait GetDmaChannel {
-    fn get_dma_channel(&self) -> &DmaChannel;
 }
 
 // pub trait DmaOps {

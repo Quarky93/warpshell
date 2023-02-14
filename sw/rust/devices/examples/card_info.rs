@@ -1,16 +1,19 @@
 extern crate warp_devices;
 
 use log::{error, info};
-use warp_devices::{cms::CardMgmtOps, varium_c1100::VariumC1100};
+use warp_devices::{
+    cores::cms::CmsOps,
+    shells::{Shell, XilinxU55nXdmaStd},
+};
 
 fn main() {
     env_logger::init();
 
-    let varium = VariumC1100::new().expect("cannot construct device");
-    varium.init_cms().expect("cannot initialise CMS");
+    let shell = XilinxU55nXdmaStd::new().expect("cannot construct shell");
+    shell.init().expect("cannot initialise shell");
 
     // Expect to wait up to at least 1s.
-    match varium.expect_ready_host_status(1000) {
+    match shell.cms.expect_ready_host_status(1000) {
         Ok(ms) => info!("CMS became ready after {}ms", ms),
         Err(e) => {
             error!("CMS is not ready: {:?}", e);
@@ -18,6 +21,6 @@ fn main() {
         }
     }
 
-    let info = varium.get_card_info().expect("cannot get card info");
+    let info = shell.cms.get_card_info().expect("cannot get card info");
     println!("Card info: {:?}", info);
 }

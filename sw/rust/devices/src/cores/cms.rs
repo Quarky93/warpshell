@@ -500,12 +500,6 @@ impl TryFrom<&[u8]> for CardInfo {
     }
 }
 
-// /// Base address of a memory-mapped core
-// pub trait CmsParam {
-//     /// Base address in bytes
-//     const BASE_ADDR: u64;
-// }
-
 /// Card Management Solution subsystem
 pub trait CmsOps {
     /// Reads the value at a CMS register offset

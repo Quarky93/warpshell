@@ -5,20 +5,18 @@ use log::{error, info};
 use std::thread::sleep;
 use std::time::Duration;
 use warp_devices::{
-    cms::{CardMgmtOps, CardMgmtSys, CmsReg},
-    varium_c1100::VariumC1100,
+    cores::cms::{CmsOps, CmsReg},
+    shells::{Shell, XilinxU55nXdmaStd},
 };
 
 fn main() {
     env_logger::init();
 
-    let varium = VariumC1100::new().expect("cannot construct device");
-    varium.init_cms().expect("cannot initialise CMS");
-
-    // sleep(Duration::from_millis(100));
+    let shell = XilinxU55nXdmaStd::new().expect("cannot construct shell");
+    shell.init().expect("cannot initialise shell");
 
     // Expect to wait up to at least 1s.
-    match varium.expect_ready_host_status(1000) {
+    match shell.cms.expect_ready_host_status(1000) {
         Ok(ms) => info!("CMS became ready after {}ms", ms),
         Err(e) => {
             error!("CMS is not ready: {:?}", e);
@@ -26,7 +24,8 @@ fn main() {
         }
     }
 
-    varium
+    shell
+        .cms
         .enable_hbm_temp_monitoring()
         .expect("cannot enable HBM temp monitor");
 
@@ -37,7 +36,7 @@ fn main() {
         println!(
             "{:?} = {}",
             reg,
-            varium.get_cms_reg(reg).expect("no reading")
+            shell.cms.get_cms_reg(reg).expect("no reading")
         );
     }
 }
