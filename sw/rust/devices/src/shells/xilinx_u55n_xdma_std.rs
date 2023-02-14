@@ -1,7 +1,7 @@
 use super::{Result, Shell};
 use crate::{
     cores::cms::CmsOps,
-    xdma::{DmaChannel, GetDmaChannel, GetUserChannel, UserChannel, DMA_CHANNEL0, USER_CHANNEL},
+    xdma::{CtrlChannel, DmaChannel, GetCtrlChannel, GetDmaChannel, CTRL_CHANNEL, DMA_CHANNEL0},
     BaseParam,
 };
 
@@ -10,24 +10,24 @@ pub struct XilinxU55nXdmaStd<'a> {
     pub cms: Cms<'a>,
     /// HBM core instance
     pub hbm: Hbm<'a>,
-    /// User channel AXI firewall instance
+    /// Control channel AXI firewall instance
     pub ctrl_axi_firewall: CtrlAxiFirewall<'a>,
-    /// User channel AXI firewall instance
+    /// DMA channel AXI firewall instance
     pub dma_axi_firewall: DmaAxiFirewall<'a>,
 }
 
 pub struct Cms<'a> {
     /// User channel
-    user_channel: &'a UserChannel,
+    ctrl_channel: &'a CtrlChannel,
 }
 
 impl<'a> BaseParam for Cms<'a> {
     const BASE_ADDR: u64 = 0x0400_0000;
 }
 
-impl GetUserChannel for Cms<'_> {
-    fn get_user_channel(&self) -> &UserChannel {
-        self.user_channel
+impl GetCtrlChannel for Cms<'_> {
+    fn get_ctrl_channel(&self) -> &CtrlChannel {
+        self.ctrl_channel
     }
 }
 
@@ -47,43 +47,43 @@ impl<'a> GetDmaChannel for Hbm<'a> {
 }
 
 pub struct CtrlAxiFirewall<'a> {
-    /// User channel
-    user_channel: &'a UserChannel,
+    /// Control channel
+    ctrl_channel: &'a CtrlChannel,
 }
 
 impl<'a> BaseParam for CtrlAxiFirewall<'a> {
     const BASE_ADDR: u64 = 0x0407_0000;
 }
 
-impl GetUserChannel for CtrlAxiFirewall<'_> {
-    fn get_user_channel(&self) -> &UserChannel {
-        self.user_channel
+impl GetCtrlChannel for CtrlAxiFirewall<'_> {
+    fn get_ctrl_channel(&self) -> &CtrlChannel {
+        self.ctrl_channel
     }
 }
 
 pub struct DmaAxiFirewall<'a> {
-    /// User channel
-    user_channel: &'a UserChannel,
+    /// Control channel
+    ctrl_channel: &'a CtrlChannel,
 }
 
 impl<'a> BaseParam for DmaAxiFirewall<'a> {
     const BASE_ADDR: u64 = 0x0408_0000;
 }
 
-impl GetUserChannel for DmaAxiFirewall<'_> {
-    fn get_user_channel(&self) -> &UserChannel {
-        self.user_channel
+impl GetCtrlChannel for DmaAxiFirewall<'_> {
+    fn get_ctrl_channel(&self) -> &CtrlChannel {
+        self.ctrl_channel
     }
 }
 
 impl<'a> XilinxU55nXdmaStd<'a> {
     pub fn new() -> Result<Self> {
-        let user_channel = USER_CHANNEL.get_or_init()?;
+        let ctrl_channel = CTRL_CHANNEL.get_or_init()?;
         let dma_channel = DMA_CHANNEL0.get_or_init()?;
-        let cms = Cms { user_channel };
+        let cms = Cms { ctrl_channel };
         let hbm = Hbm { dma_channel };
-        let ctrl_axi_firewall = CtrlAxiFirewall { user_channel };
-        let dma_axi_firewall = DmaAxiFirewall { user_channel };
+        let ctrl_axi_firewall = CtrlAxiFirewall { ctrl_channel };
+        let dma_axi_firewall = DmaAxiFirewall { ctrl_channel };
         Ok(Self {
             cms,
             hbm,

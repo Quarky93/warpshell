@@ -6,7 +6,7 @@ use std::io::Error as IoError;
 use std::mem;
 use std::os::unix::fs::FileExt;
 
-pub static USER_CHANNEL: OnceCellUserChannel = OnceCellUserChannel {
+pub static CTRL_CHANNEL: OnceCellCtrlChannel = OnceCellCtrlChannel {
     cdev_path: "/dev/xdma0_user",
     channel: OnceCell::new(),
 };
@@ -24,8 +24,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-    UserReadFailed(IoError),
-    UserWriteFailed(IoError),
+    CtrlReadFailed(IoError),
+    CtrlWriteFailed(IoError),
     DmaReadFailed { n_channel: usize, err: IoError },
     DmaWriteFailed { n_channel: usize, err: IoError },
     DevNode(IoError),
@@ -81,7 +81,7 @@ unsafe fn aligned_vec(n_bytes: usize) -> Vec<u8> {
 
 /// Readable and writable user channel represented by a single file
 #[derive(Debug)]
-pub struct UserChannel(pub File);
+pub struct CtrlChannel(pub File);
 
 /// DMA channel represented by a couple files, one for reading and another for writing
 #[derive(Debug)]
@@ -105,54 +105,54 @@ impl<'a, const N: usize> From<[&'a DmaChannel; N]> for DmaChannels<'a, N> {
     }
 }
 
-pub trait UserOps {
-    fn user_read(&self, buf: &mut [u8], offset: u64) -> Result<()>;
-    fn user_write(&self, buf: &[u8], offset: u64) -> Result<()>;
+pub trait CtrlOps {
+    fn ctrl_read(&self, buf: &mut [u8], offset: u64) -> Result<()>;
+    fn ctrl_write(&self, buf: &[u8], offset: u64) -> Result<()>;
 }
 
-impl UserOps for UserChannel {
+impl CtrlOps for CtrlChannel {
     #[inline]
-    fn user_read(&self, buf: &mut [u8], offset: u64) -> Result<()> {
+    fn ctrl_read(&self, buf: &mut [u8], offset: u64) -> Result<()> {
         self.0
             .read_exact_at(buf, offset)
-            .map_err(Error::UserReadFailed)
+            .map_err(Error::CtrlReadFailed)
     }
 
     #[inline]
-    fn user_write(&self, buf: &[u8], offset: u64) -> Result<()> {
+    fn ctrl_write(&self, buf: &[u8], offset: u64) -> Result<()> {
         self.0
             .write_all_at(buf, offset)
-            .map_err(Error::UserWriteFailed)
+            .map_err(Error::CtrlWriteFailed)
     }
 }
 
 /// IO operations on an offset memory-mapped component via a user channel
-pub trait BasedUserOps {
-    fn based_user_read_u32(&self, offset: u64) -> Result<u32>;
-    fn based_user_write_u32(&self, offset: u64, value: u32) -> Result<()>;
+pub trait BasedCtrlOps {
+    fn based_ctrl_read_u32(&self, offset: u64) -> Result<u32>;
+    fn based_ctrl_write_u32(&self, offset: u64, value: u32) -> Result<()>;
 }
 
-pub trait GetUserChannel {
-    fn get_user_channel(&self) -> &UserChannel;
+pub trait GetCtrlChannel {
+    fn get_ctrl_channel(&self) -> &CtrlChannel;
 }
 
-impl<T> BasedUserOps for T
+impl<T> BasedCtrlOps for T
 where
-    T: GetUserChannel + BaseParam,
+    T: GetCtrlChannel + BaseParam,
 {
     #[inline]
-    fn based_user_read_u32(&self, offset: u64) -> Result<u32> {
+    fn based_ctrl_read_u32(&self, offset: u64) -> Result<u32> {
         let mut data = [0u8; 4];
-        self.get_user_channel()
-            .user_read(&mut data, T::BASE_ADDR + offset)?;
+        self.get_ctrl_channel()
+            .ctrl_read(&mut data, T::BASE_ADDR + offset)?;
         Ok(u32::from_le_bytes(data))
     }
 
     #[inline]
-    fn based_user_write_u32(&self, offset: u64, value: u32) -> Result<()> {
+    fn based_ctrl_write_u32(&self, offset: u64, value: u32) -> Result<()> {
         let data = value.to_le_bytes();
-        self.get_user_channel()
-            .user_write(&data, T::BASE_ADDR + offset)
+        self.get_ctrl_channel()
+            .ctrl_write(&data, T::BASE_ADDR + offset)
     }
 }
 
@@ -221,19 +221,19 @@ where
 //     }
 // }
 
-pub struct OnceCellUserChannel {
+pub struct OnceCellCtrlChannel {
     pub cdev_path: &'static str,
-    pub channel: OnceCell<UserChannel>,
+    pub channel: OnceCell<CtrlChannel>,
 }
 
-impl OnceCellUserChannel {
-    pub fn get_or_init(&self) -> Result<&UserChannel> {
+impl OnceCellCtrlChannel {
+    pub fn get_or_init(&self) -> Result<&CtrlChannel> {
         let cdev = OpenOptions::new()
             .read(true)
             .write(true)
             .open(self.cdev_path)
             .map_err(Error::DevNode)?;
-        Ok(self.channel.get_or_init(|| UserChannel(cdev)))
+        Ok(self.channel.get_or_init(|| CtrlChannel(cdev)))
     }
 }
 

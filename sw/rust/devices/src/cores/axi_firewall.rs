@@ -1,4 +1,4 @@
-use crate::xdma::{BasedUserOps, Error as XdmaError};
+use crate::xdma::{BasedCtrlOps, Error as XdmaError};
 use enum_iterator::Sequence;
 
 const MI_BLOCK_MASK: u32 = 0x0100_0100;
@@ -54,15 +54,15 @@ pub trait AxiFirewallOps {
 
 impl<T> AxiFirewallOps for T
 where
-    T: BasedUserOps,
+    T: BasedCtrlOps,
 {
     fn get_axi_firewall_reg(&self, reg: AxiFirewallReg) -> Result<u32> {
-        self.based_user_read_u32(reg as u64)
+        self.based_ctrl_read_u32(reg as u64)
             .map_err(Error::XdmaFailed)
     }
 
     fn set_axi_firewall_reg(&self, reg: AxiFirewallReg, value: u32) -> Result<()> {
-        self.based_user_write_u32(reg as u64, value)
+        self.based_ctrl_write_u32(reg as u64, value)
             .map_err(Error::XdmaFailed)
     }
 }

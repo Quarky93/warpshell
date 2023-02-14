@@ -1,4 +1,4 @@
-use crate::xdma::{BasedUserOps, Error as XdmaError};
+use crate::xdma::{BasedCtrlOps, Error as XdmaError};
 use enum_iterator::Sequence;
 use log::debug;
 use num_enum::{TryFromPrimitive, TryFromPrimitiveError};
@@ -638,14 +638,14 @@ pub trait CmsOps {
 
 impl<T> CmsOps for T
 where
-    T: BasedUserOps,
+    T: BasedCtrlOps,
 {
     fn get_cms_offset(&self, offset: u64) -> Result<u32> {
-        self.based_user_read_u32(offset).map_err(Error::XdmaFailed)
+        self.based_ctrl_read_u32(offset).map_err(Error::XdmaFailed)
     }
 
     fn set_cms_offset(&self, offset: u64, value: u32) -> Result<()> {
-        self.based_user_write_u32(offset, value)
+        self.based_ctrl_write_u32(offset, value)
             .map_err(Error::XdmaFailed)
     }
 }
