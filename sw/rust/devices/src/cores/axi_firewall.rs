@@ -18,6 +18,9 @@ pub enum AxiFirewallReg {
     MiSideSoftFaultControl = 0x4,
     MiSideUnblockControl = 0x8,
     IpVersion = 0x10,
+    SiSideFaultStatus = 0x100,
+    SiSideSoftFaultControl = 0x104,
+    SiSideUnblockControl = 0x108,
 }
 
 pub trait AxiFirewallOps {

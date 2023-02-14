@@ -24,6 +24,8 @@ impl From<XdmaError> for Error {
     }
 }
 
+/// A shell is a collection of cores, for example, [`XilinxU55nXdmaStd`]. This trait provides
+/// methods that may involve multiple cores.
 pub trait Shell {
     fn init(&self) -> Result<()>;
     fn load_raw_user_image(&self, image: &[u8]) -> Result<()>;

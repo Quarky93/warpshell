@@ -6,6 +6,17 @@ use std::io::Error as IoError;
 use std::mem;
 use std::os::unix::fs::FileExt;
 
+pub static USER_CHANNEL: OnceCellUserChannel = OnceCellUserChannel {
+    cdev_path: "/dev/xdma0_user",
+    channel: OnceCell::new(),
+};
+
+pub static DMA_CHANNEL0: OnceCellDmaChannel = OnceCellDmaChannel {
+    h2c_cdev_path: "/dev/xdma0_h2c_0",
+    c2h_cdev_path: "/dev/xdma0_c2h_0",
+    channel: OnceCell::new(),
+};
+
 /// Memory alignment for optimal performance of DMA reads and writes.
 pub const DMA_ALIGNMENT: u64 = 4096;
 

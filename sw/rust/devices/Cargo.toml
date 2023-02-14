@@ -28,7 +28,7 @@ name = "varium_c1100"
 harness = false
 
 [[example]]
-name = "cms_regs"
+name = "u55n_regs"
 
 [[example]]
 name = "card_info"
