@@ -57,11 +57,7 @@ fn read_payload(shell: &XilinxU55nXdmaStd, buf: &mut DmaBuffer) {
 
 fn get_fpga_temp_inst(c: &mut Criterion) {
     let shell = XilinxU55nXdmaStd::new().expect("cannot construct shell");
-    shell.init().expect("cannot initialise CMS");
-    shell
-        .cms
-        .expect_ready_host_status(1000)
-        .expect("CMS is not ready");
+    shell.init().expect("cannot initialise shell");
     c.bench_function("get instant FPGA temperature", |b| {
         b.iter(|| shell.cms.get_cms_reg(CmsReg::FpgaTempInst))
     });

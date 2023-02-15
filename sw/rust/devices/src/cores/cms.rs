@@ -9,6 +9,8 @@ use std::thread;
 use std::time::Duration;
 use thiserror::Error;
 
+const SUPPORTED_REG_MAP_ID: u32 = 0x74736574;
+
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug, Error)]
@@ -17,6 +19,8 @@ pub enum Error {
     XdmaFailed(XdmaError),
     #[error("Host status not ready")]
     HostStatusNotReady,
+    #[error("Unsupported register map id {0:x}")]
+    UnsupportedRegMapId(u32),
     #[error("Mailbox not available")]
     MailboxNotAvailable,
     #[error("CMS register mask not as expected")]
@@ -33,6 +37,7 @@ pub enum Error {
 pub enum CmsReg {
     /// Microblaze reset register. Active-Low. Default 0, reset active.
     MicroblazeResetN = 0x2_0000,
+    RegMapId = 0x2_8000,
     FwVersion = 0x2_8004,
     CmsStatus = 0x2_8008,
     Error = 0x2_800c,
@@ -553,7 +558,20 @@ pub trait CmsOps {
 
     /// Initialises the Card Management System
     fn init(&self) -> Result<()> {
-        self.set_cms_reg(CmsReg::MicroblazeResetN, 1)
+        self.set_cms_reg(CmsReg::MicroblazeResetN, 1)?;
+        // Expect to wait up to at least 1s.
+        self.expect_ready_host_status(1000)?;
+
+        // TODO: version check
+        let v = self.get_reg_map_id()?;
+        if v != SUPPORTED_REG_MAP_ID {
+            return Err(Error::UnsupportedRegMapId(v));
+        };
+
+        // For consideration: this would delete any previous readings...
+        // self.reset_sensor_max_avg()?;
+
+        self.enable_hbm_temp_monitoring()
     }
 
     /// Waits roughly `ms` milliseconds to allow readings to be populated while polling the status
@@ -563,10 +581,20 @@ pub trait CmsOps {
             .map_err(|_| Error::HostStatusNotReady)
     }
 
+    fn get_reg_map_id(&self) -> Result<u32> {
+        self.get_cms_reg(CmsReg::RegMapId)
+    }
+
     /// Enables HBM temperature monitoring
     fn enable_hbm_temp_monitoring(&self) -> Result<()> {
         let v = self.get_cms_control_reg()?;
         self.set_cms_control_reg(v | ControlRegBit::HbmTempMonitorEnable as u32)
+    }
+
+    /// Resets stored max and average sensor readings
+    fn reset_sensor_max_avg(&self) -> Result<()> {
+        let v = self.get_cms_control_reg()?;
+        self.set_cms_control_reg(v | ControlRegBit::MaxAgvValuesReset as u32)
     }
 
     /// Gets the mailbox offset from the base address
