@@ -5,6 +5,8 @@ use crate::{
     BaseParam,
 };
 
+/// Standard shell for Xilinx U55N also known as [Varium C1100 blockchain accelerator
+/// card](https://www.xilinx.com/products/accelerators/varium/c1100.html)
 pub struct XilinxU55nXdmaStd<'a> {
     /// CMS core instance
     pub cms: Cms<'a>,

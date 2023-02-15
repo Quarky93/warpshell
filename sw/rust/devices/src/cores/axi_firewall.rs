@@ -1,12 +1,14 @@
-use crate::xdma::{BasedCtrlOps, Error as XdmaError};
+use crate::{xdma::Error as XdmaError, BasedCtrlOps};
 use enum_iterator::Sequence;
+use thiserror::Error;
 
 const MI_BLOCK_MASK: u32 = 0x0100_0100;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum Error {
+    #[error("XDMA failed: {0}")]
     XdmaFailed(XdmaError),
 }
 
@@ -54,7 +56,7 @@ pub trait AxiFirewallOps {
 
 impl<T> AxiFirewallOps for T
 where
-    T: BasedCtrlOps,
+    T: BasedCtrlOps<XdmaError>,
 {
     fn get_axi_firewall_reg(&self, reg: AxiFirewallReg) -> Result<u32> {
         self.based_ctrl_read_u32(reg as u64)

@@ -3,9 +3,9 @@ use packed_simd::Simd;
 use std::time::Duration;
 use warp_devices::cores::cms::{CmsOps, CmsReg};
 use warp_devices::shells::{Shell, XilinxU55nXdmaStd};
-use warp_devices::xdma::{BasedDmaOps, DmaBuffer};
+use warp_devices::{BasedDmaOps, DmaBuffer};
 
-const PAYLOAD_LEN: usize = 1 * 1024 * 1024 * 1024;
+const PAYLOAD_LEN: usize = 1024 * 1024 * 1024;
 const CHUNK_LEN: usize = 64;
 
 fn random_payload() -> DmaBuffer {
@@ -22,17 +22,14 @@ fn random_payload() -> DmaBuffer {
 }
 
 fn write(c: &mut Criterion) {
-    let mut shell = XilinxU55nXdmaStd::new().expect("cannot construct shell");
+    let shell = XilinxU55nXdmaStd::new().expect("cannot construct shell");
     let buf = random_payload();
     let bench_name = format!("write {} bytes", buf.get().len());
     let target_time = Duration::from_secs(12);
-    let mut group = c.benchmark_group(&format!(
-        "{} with target time {:?}",
-        bench_name, target_time
-    ));
+    let mut group = c.benchmark_group(&format!("{bench_name} with target time {target_time:?}",));
     group.measurement_time(target_time);
     group.sample_size(50);
-    group.bench_function(&bench_name, |b| b.iter(|| write_payload(&mut shell, &buf)));
+    group.bench_function(&bench_name, |b| b.iter(|| write_payload(&shell, &buf)));
     group.finish();
 }
 
@@ -41,10 +38,7 @@ fn read(c: &mut Criterion) {
     let mut buf = random_payload();
     let bench_name = format!("read {} bytes", buf.get().len());
     let target_time = Duration::from_secs(12);
-    let mut group = c.benchmark_group(&format!(
-        "{} with target time {:?}",
-        bench_name, target_time
-    ));
+    let mut group = c.benchmark_group(&format!("{bench_name} with target time {target_time:?}",));
     group.measurement_time(target_time);
     group.sample_size(50);
     group.bench_function(&bench_name, |b| b.iter(|| read_payload(&shell, &mut buf)));

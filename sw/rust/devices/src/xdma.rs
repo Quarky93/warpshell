@@ -1,10 +1,10 @@
-use crate::BaseParam;
+use crate::{BaseParam, BasedCtrlOps, BasedDmaOps, DmaBuffer};
 use arrayvec::ArrayVec;
 use once_cell::sync::OnceCell;
 use std::fs::{File, OpenOptions};
 use std::io::Error as IoError;
-use std::mem;
 use std::os::unix::fs::FileExt;
+use thiserror::Error;
 
 pub static CTRL_CHANNEL: OnceCellCtrlChannel = OnceCellCtrlChannel {
     cdev_path: "/dev/xdma0_user",
@@ -22,61 +22,18 @@ pub const DMA_ALIGNMENT: u64 = 4096;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum Error {
+    #[error("Control read failed: {0}")]
     CtrlReadFailed(IoError),
+    #[error("Control write failed: {0}")]
     CtrlWriteFailed(IoError),
+    #[error("DMA read failed on channel {n_channel}: {err}")]
     DmaReadFailed { n_channel: usize, err: IoError },
+    #[error("DMA write failed on channel {n_channel}: {err}")]
     DmaWriteFailed { n_channel: usize, err: IoError },
+    #[error("Device node error: {0}")]
     DevNode(IoError),
-}
-
-#[repr(C, align(4096))]
-struct Align4K([u8; 4096]);
-
-/// DMA-engine aligned buffer. Non-reallocatable since reallocations do not preserve alignment. The
-/// size has to be known before creation.
-#[derive(Debug)]
-pub struct DmaBuffer(Vec<u8>);
-
-impl DmaBuffer {
-    pub fn new(n_bytes: usize) -> Self {
-        Self(unsafe { aligned_vec(n_bytes) })
-    }
-
-    pub fn as_slice(&self) -> &[u8] {
-        self.0.as_slice()
-    }
-
-    pub fn as_mut_slice(&mut self) -> &mut [u8] {
-        self.0.as_mut_slice()
-    }
-
-    pub fn get(&self) -> &Vec<u8> {
-        &self.0
-    }
-
-    pub fn get_mut(&mut self) -> &mut Vec<u8> {
-        &mut self.0
-    }
-}
-
-unsafe fn aligned_vec(n_bytes: usize) -> Vec<u8> {
-    let n_units = (n_bytes / mem::size_of::<Align4K>()) + 1;
-
-    let mut aligned: Vec<Align4K> = Vec::with_capacity(n_units);
-
-    let ptr = aligned.as_mut_ptr();
-    let len_units = aligned.len();
-    let cap_units = aligned.capacity();
-
-    mem::forget(aligned);
-
-    Vec::from_raw_parts(
-        ptr as *mut u8,
-        len_units * mem::size_of::<Align4K>(),
-        cap_units * mem::size_of::<Align4K>(),
-    )
 }
 
 /// Readable and writable user channel represented by a single file
@@ -126,17 +83,11 @@ impl CtrlOps for CtrlChannel {
     }
 }
 
-/// IO operations on an offset memory-mapped component via a user channel
-pub trait BasedCtrlOps {
-    fn based_ctrl_read_u32(&self, offset: u64) -> Result<u32>;
-    fn based_ctrl_write_u32(&self, offset: u64, value: u32) -> Result<()>;
-}
-
 pub trait GetCtrlChannel {
     fn get_ctrl_channel(&self) -> &CtrlChannel;
 }
 
-impl<T> BasedCtrlOps for T
+impl<T> BasedCtrlOps<Error> for T
 where
     T: GetCtrlChannel + BaseParam,
 {
@@ -175,17 +126,11 @@ impl DmaOps for DmaChannel {
     }
 }
 
-/// IO operations on an offset memory-mapped component via a DMA channel
-pub trait BasedDmaOps {
-    fn based_dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<()>;
-    fn based_dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<()>;
-}
-
 pub trait GetDmaChannel {
     fn get_dma_channel(&self) -> &DmaChannel;
 }
 
-impl<T> BasedDmaOps for T
+impl<T> BasedDmaOps<Error> for T
 where
     T: GetDmaChannel + BaseParam,
 {
@@ -199,27 +144,6 @@ where
         self.get_dma_channel().dma_write(buf, T::BASE_ADDR + offset)
     }
 }
-
-// pub trait DmaOps {
-//     fn dma_read(&self, n_channel: usize, buf: &mut DmaBuffer, offset: u64) -> Result<()>;
-//     fn dma_write(&self, n_channel: usize, buf: &DmaBuffer, offset: u64) -> Result<()>;
-// }
-
-// impl<'a, const N: usize> DmaOps for DmaChannels<'a, N> {
-//     fn dma_read(&self, n_channel: usize, buf: &mut DmaBuffer, offset: u64) -> Result<()> {
-//         self.inner[n_channel]
-//             .c2h_cdev
-//             .read_exact_at(buf.as_mut_slice(), offset)
-//             .map_err(|err| Error::DmaReadFailed { n_channel, err })
-//     }
-
-//     fn dma_write(&self, n_channel: usize, buf: &DmaBuffer, offset: u64) -> Result<()> {
-//         self.inner[n_channel]
-//             .h2c_cdev
-//             .write_all_at(buf.as_slice(), offset)
-//             .map_err(|err| Error::DmaWriteFailed { n_channel, err })
-//     }
-// }
 
 pub struct OnceCellCtrlChannel {
     pub cdev_path: &'static str,
@@ -257,6 +181,7 @@ impl OnceCellDmaChannel {
 #[cfg(test)]
 mod test {
     use super::*;
+    use assert_matches::assert_matches;
 
     #[test]
     fn dma_buffer_alignment() {
@@ -281,5 +206,26 @@ mod test {
         let buf = vec![b'A', b'B', b'C'];
         f.write_all_at(buf.as_slice(), 0)
             .expect("write test failed");
+    }
+
+    #[test]
+    fn one_cell_ctrl_absent() {
+        let absent_ctrl_channel = OnceCellCtrlChannel {
+            cdev_path: "/a/file/that/doesnt/exist",
+            channel: OnceCell::new(),
+        };
+
+        assert_matches!(absent_ctrl_channel.get_or_init(), Err(Error::DevNode(_)));
+    }
+
+    #[test]
+    fn one_cell_dma_absent() {
+        let absent_dma_channel = OnceCellDmaChannel {
+            h2c_cdev_path: "/a/file/that/doesnt/exist/1",
+            c2h_cdev_path: "/a/file/that/doesnt/exist/2",
+            channel: OnceCell::new(),
+        };
+
+        assert_matches!(absent_dma_channel.get_or_init(), Err(Error::DevNode(_)));
     }
 }

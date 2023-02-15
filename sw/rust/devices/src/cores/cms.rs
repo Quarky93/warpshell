@@ -1,4 +1,4 @@
-use crate::xdma::{BasedCtrlOps, Error as XdmaError};
+use crate::{xdma::Error as XdmaError, BasedCtrlOps};
 use enum_iterator::Sequence;
 use log::debug;
 use num_enum::{TryFromPrimitive, TryFromPrimitiveError};
@@ -7,23 +7,24 @@ use std::convert::TryFrom;
 use std::iter;
 use std::thread;
 use std::time::Duration;
+use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum Error {
+    #[error("XDMA failed: {0}")]
     XdmaFailed(XdmaError),
+    #[error("Host status not ready")]
     HostStatusNotReady,
+    #[error("Mailbox not available")]
     MailboxNotAvailable,
+    #[error("CMS register mask not as expected")]
     CmsRegMaskNotAsExpected,
+    #[error("Host message error {0}")]
     HostMsgError(u32),
-    CardInfoParseError(CardInfoParseError),
-}
-
-impl From<CardInfoParseError> for Error {
-    fn from(e: CardInfoParseError) -> Self {
-        Self::CardInfoParseError(e)
-    }
+    #[error("CardInfo parsing error: {0}")]
+    CardInfoParseError(#[from] CardInfoParseError),
 }
 
 /// CMS register offsets
@@ -236,39 +237,22 @@ pub enum CardInfoItem {
     CageType3(CageType),
 }
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Error, Copy, Clone, Debug, PartialEq)]
 pub enum CardInfoItemParseError {
+    #[error("Incomplete input for CardInfoItem")]
     IncompleteInput,
+    #[error("Incorrect length of CardInfoItem")]
     IncorrectLength,
+    #[error("Non-null terminator of CardInfoItem")]
     NonNullTerminator,
-    CardInfoKey(TryFromPrimitiveError<CardInfoKey>),
-    TotalPowerAvail(TryFromPrimitiveError<TotalPowerAvail>),
-    ConfigMode(TryFromPrimitiveError<ConfigMode>),
-    CageType(TryFromPrimitiveError<CageType>),
-}
-
-impl From<TryFromPrimitiveError<CardInfoKey>> for CardInfoItemParseError {
-    fn from(e: TryFromPrimitiveError<CardInfoKey>) -> Self {
-        Self::CardInfoKey(e)
-    }
-}
-
-impl From<TryFromPrimitiveError<TotalPowerAvail>> for CardInfoItemParseError {
-    fn from(e: TryFromPrimitiveError<TotalPowerAvail>) -> Self {
-        Self::TotalPowerAvail(e)
-    }
-}
-
-impl From<TryFromPrimitiveError<ConfigMode>> for CardInfoItemParseError {
-    fn from(e: TryFromPrimitiveError<ConfigMode>) -> Self {
-        Self::ConfigMode(e)
-    }
-}
-
-impl From<TryFromPrimitiveError<CageType>> for CardInfoItemParseError {
-    fn from(e: TryFromPrimitiveError<CageType>) -> Self {
-        Self::CageType(e)
-    }
+    #[error("CardInfoKey error")]
+    CardInfoKey(#[from] TryFromPrimitiveError<CardInfoKey>),
+    #[error("TotalPowerAvail error")]
+    TotalPowerAvail(#[from] TryFromPrimitiveError<TotalPowerAvail>),
+    #[error("ConfigMode error")]
+    ConfigMode(#[from] TryFromPrimitiveError<ConfigMode>),
+    #[error("CageType error")]
+    CageType(#[from] TryFromPrimitiveError<CageType>),
 }
 
 impl TryFrom<&[u8]> for CardInfoItem {
@@ -463,16 +447,12 @@ impl TryFrom<&[u8]> for CardInfoItem {
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct CardInfo(pub BTreeSet<CardInfoItem>);
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Error, Copy, Clone, Debug, PartialEq)]
 pub enum CardInfoParseError {
-    CardInfoItem(CardInfoItemParseError),
+    #[error("CardInfoItem parsing error")]
+    CardInfoItem(#[from] CardInfoItemParseError),
+    #[error("CardInfoItem length out of bounds")]
     ItemLengthOutOfBounds,
-}
-
-impl From<CardInfoItemParseError> for CardInfoParseError {
-    fn from(e: CardInfoItemParseError) -> Self {
-        Self::CardInfoItem(e)
-    }
 }
 
 impl TryFrom<&[u8]> for CardInfo {
@@ -638,7 +618,7 @@ pub trait CmsOps {
 
 impl<T> CmsOps for T
 where
-    T: BasedCtrlOps,
+    T: BasedCtrlOps<XdmaError>,
 {
     fn get_cms_offset(&self, offset: u64) -> Result<u32> {
         self.based_ctrl_read_u32(offset).map_err(Error::XdmaFailed)
