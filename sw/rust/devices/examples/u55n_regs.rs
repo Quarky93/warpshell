@@ -1,7 +1,6 @@
 extern crate warp_devices;
 
 use enum_iterator::all;
-use log::info;
 use std::thread::sleep;
 use std::time::Duration;
 use warp_devices::{
@@ -21,18 +20,18 @@ fn main() {
     // Wait 1ms to allow readings to be populated.
     sleep(Duration::from_millis(100));
 
-    info!(" ### CMS registers:");
+    println!(" ### CMS registers:");
     for reg in all::<CmsReg>() {
-        info!(
+        println!(
             "{:?} = {}",
             reg,
             shell.cms.get_cms_reg(reg).expect("no reading")
         );
     }
 
-    info!(" ### Control AXI firewall registers:");
+    println!(" ### Control AXI firewall registers:");
     for reg in all::<AxiFirewallReg>() {
-        info!(
+        println!(
             "{:?} = 0x{:08x}",
             reg,
             shell
@@ -42,9 +41,9 @@ fn main() {
         );
     }
 
-    info!(" ### DMA AXI firewall registers:");
+    println!(" ### DMA AXI firewall registers:");
     for reg in all::<AxiFirewallReg>() {
-        info!(
+        println!(
             "{:?} = 0x{:08x}",
             reg,
             shell

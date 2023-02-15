@@ -19,7 +19,7 @@ pub enum Error {
     XdmaFailed(XdmaError),
     #[error("Host status not ready")]
     HostStatusNotReady,
-    #[error("Unsupported register map id {0:x}")]
+    #[error("Unsupported register map id 0x{0:x}")]
     UnsupportedRegMapId(u32),
     #[error("Mailbox not available")]
     MailboxNotAvailable,

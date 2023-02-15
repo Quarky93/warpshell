@@ -1,6 +1,5 @@
 extern crate warp_devices;
 
-use log::info;
 use warp_devices::{
     cores::cms::CmsOps,
     shells::{Shell, XilinxU55nXdmaStd},
@@ -13,5 +12,5 @@ fn main() {
     shell.init().expect("cannot initialise shell");
 
     let info = shell.cms.get_card_info().expect("cannot get card info");
-    info!("Card info: {info:?}");
+    println!("Card info: {info:?}");
 }
