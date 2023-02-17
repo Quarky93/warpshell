@@ -9,7 +9,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("XDMA failed: {0}")]
-    XdmaFailed(XdmaError),
+    XdmaFailed(#[from] XdmaError),
 }
 
 /// AXI firewall registers
@@ -59,12 +59,10 @@ where
     T: BasedCtrlOps<XdmaError>,
 {
     fn get_axi_firewall_reg(&self, reg: AxiFirewallReg) -> Result<u32> {
-        self.based_ctrl_read_u32(reg as u64)
-            .map_err(Error::XdmaFailed)
+        Ok(self.based_ctrl_read_u32(reg as u64)?)
     }
 
     fn set_axi_firewall_reg(&self, reg: AxiFirewallReg, value: u32) -> Result<()> {
-        self.based_ctrl_write_u32(reg as u64, value)
-            .map_err(Error::XdmaFailed)
+        Ok(self.based_ctrl_write_u32(reg as u64, value)?)
     }
 }

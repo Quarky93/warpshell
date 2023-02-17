@@ -113,12 +113,14 @@ pub trait DmaOps {
 }
 
 impl DmaOps for DmaChannel {
+    #[inline]
     fn dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<()> {
         self.c2h_cdev
             .read_exact_at(buf.as_mut_slice(), offset)
             .map_err(|err| Error::DmaReadFailed { n_channel: 0, err })
     }
 
+    #[inline]
     fn dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<()> {
         self.h2c_cdev
             .write_all_at(buf.as_slice(), offset)

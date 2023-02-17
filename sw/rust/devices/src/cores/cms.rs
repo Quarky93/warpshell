@@ -16,7 +16,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Debug, Error)]
 pub enum Error {
     #[error("XDMA failed: {0}")]
-    XdmaFailed(XdmaError),
+    XdmaFailed(#[from] XdmaError),
     #[error("Host status not ready")]
     HostStatusNotReady,
     #[error("Unsupported register map id 0x{0:x}")]
@@ -649,12 +649,11 @@ where
     T: BasedCtrlOps<XdmaError>,
 {
     fn get_cms_offset(&self, offset: u64) -> Result<u32> {
-        self.based_ctrl_read_u32(offset).map_err(Error::XdmaFailed)
+        Ok(self.based_ctrl_read_u32(offset)?)
     }
 
     fn set_cms_offset(&self, offset: u64, value: u32) -> Result<()> {
-        self.based_ctrl_write_u32(offset, value)
-            .map_err(Error::XdmaFailed)
+        Ok(self.based_ctrl_write_u32(offset, value)?)
     }
 }
 
