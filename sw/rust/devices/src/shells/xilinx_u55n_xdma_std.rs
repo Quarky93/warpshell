@@ -1,6 +1,6 @@
 use super::{Result, Shell};
 use crate::{
-    cores::cms::CmsOps,
+    cores::{cms::CmsOps, hbicap::HbicapIfs},
     xdma::{CtrlChannel, DmaChannel, GetCtrlChannel, GetDmaChannel, CTRL_CHANNEL, DMA_CHANNEL0},
     BaseParam,
 };
@@ -16,6 +16,8 @@ pub struct XilinxU55nXdmaStd<'a> {
     pub ctrl_axi_firewall: CtrlAxiFirewall<'a>,
     /// DMA channel AXI firewall instance
     pub dma_axi_firewall: DmaAxiFirewall<'a>,
+    /// HBICAP instance
+    pub hbicap: Hbicap<'a>,
 }
 
 pub struct Cms<'a> {
@@ -78,6 +80,41 @@ impl GetCtrlChannel for DmaAxiFirewall<'_> {
     }
 }
 
+pub struct Hbicap<'a> {
+    /// Interfaces for which `HbicapOps` is implemented.
+    ifs: HbicapIfs<HbicapCtrlIf<'a>, HbicapDmaIf<'a>>,
+}
+
+pub struct HbicapCtrlIf<'a> {
+    /// Control channel
+    ctrl_channel: &'a CtrlChannel,
+}
+
+impl<'a> BaseParam for HbicapCtrlIf<'a> {
+    const BASE_ADDR: u64 = todo!();
+}
+
+impl GetCtrlChannel for HbicapCtrlIf<'_> {
+    fn get_ctrl_channel(&self) -> &CtrlChannel {
+        self.ctrl_channel
+    }
+}
+
+pub struct HbicapDmaIf<'a> {
+    /// DMA channel
+    dma_channel: &'a DmaChannel,
+}
+
+impl<'a> BaseParam for HbicapDmaIf<'a> {
+    const BASE_ADDR: u64 = todo!();
+}
+
+impl GetDmaChannel for HbicapDmaIf<'_> {
+    fn get_dma_channel(&self) -> &DmaChannel {
+        self.dma_channel
+    }
+}
+
 impl<'a> XilinxU55nXdmaStd<'a> {
     pub fn new() -> Result<Self> {
         let ctrl_channel = CTRL_CHANNEL.get_or_init()?;
@@ -86,11 +123,18 @@ impl<'a> XilinxU55nXdmaStd<'a> {
         let hbm = Hbm { dma_channel };
         let ctrl_axi_firewall = CtrlAxiFirewall { ctrl_channel };
         let dma_axi_firewall = DmaAxiFirewall { ctrl_channel };
+        let hbicap = Hbicap {
+            ifs: HbicapIfs {
+                ctrl_if: HbicapCtrlIf { ctrl_channel },
+                dma_if: HbicapDmaIf { dma_channel },
+            },
+        };
         Ok(Self {
             cms,
             hbm,
             ctrl_axi_firewall,
             dma_axi_firewall,
+            hbicap,
         })
     }
 }

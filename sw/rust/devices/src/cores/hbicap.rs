@@ -4,10 +4,11 @@
 
 use crate::{xdma::Error as XdmaError, BasedCtrlOps, BasedDmaOps, DmaBuffer};
 use enum_iterator::Sequence;
+use std::mem::size_of;
 use thiserror::Error;
 
 const MAX_BURST_SIZE: u32 = 256;
-const AXI_MM_WORD_BYTES: usize = 4;
+// const AXI_MM_WORD_BYTES: usize = 4;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -23,10 +24,25 @@ pub enum HbicapReg {
     GlobalIntEn = 0x1c,
     IntStatus = 0x20,
     IpIntEn = 0x28,
+    /// 30-bit write-only register that determines the number of 32-bit words to be transferred from
+    /// the ICAPEn to the read FIFO and from the write FIFO to the ICAP. This signifies the number
+    /// of 32-bit data beats that are expected.
     Size = 0x108,
+    /// 32-bit read/write register that determines the direction of the data transfer. It controls
+    /// whether a configuration or a readback occurs. Writing to this register initiates the
+    /// transfer.
     Control = 0x10c,
+    /// 32-bit read register that contains the ICAPEn status bits.
     Status = 0x110,
+    /// 32-bit read only register that indicates the vacancy of the write FIFO. The actual depth of
+    /// the write FIFO is one less than the value specified during customization. For example, if
+    /// the write FIFO depth is set to 1024 during customization, the actual FIFO depth is
+    /// 1023. This register reports the actual write FIFO vacancy.
     WriteFifoVacancy = 0x114,
+    /// 32-bit read-only register that indicates occupancy of the read FIFO. The actual depth of the
+    /// read FIFO is one less than the value specified during customization. For example, if the
+    /// read FIFO depth is set to 256 during customization, the actual FIFO depth is 255. This
+    /// register reports the actual read FIFO occupancy.
     ReadFifoOccupancy = 0x118,
     AbortStatus = 0x11c,
 }
@@ -47,9 +63,12 @@ pub enum StatusRegBit {
     Read = 1 << 2,
 }
 
+/// AXI interfaces to the HBICAP core.
 pub struct HbicapIfs<C, D> {
-    ctrl_if: C,
-    dma_if: D,
+    /// Control AXI-Lite interface.
+    pub ctrl_if: C,
+    /// DMA AXI interface.
+    pub dma_if: D,
 }
 
 pub trait HbicapOps {
@@ -67,9 +86,9 @@ pub trait HbicapOps {
     fn write_axi(&self, buf: &DmaBuffer) -> Result<()>;
 
     /// Read programming sequence.
-    fn read_programming(&self, bitstream: &[u8]) -> Result<()> {
+    fn read_programming(&self, bytes: &[u8]) -> Result<()> {
         // Program the Size register with the number of words you want to write.
-        let size = todo!();
+        let size = (bytes.len() / size_of::<u32>()) as u32;
         self.set_hbicap_reg(HbicapReg::Size, size)?;
 
         // Send the first set of words you want to write to the ICAPEn using the memory mapped AXI4
@@ -110,8 +129,8 @@ pub trait HbicapOps {
     }
 
     /// Write programming sequence.
-    fn write_programming(&self, bitstream: &[u8]) -> Result<()> {
-        let mut len = bitstream.len() as u32;
+    fn write_programming(&self, bytes: &[u8]) -> Result<()> {
+        let mut len = (bytes.len() / size_of::<u32>()) as u32;
 
         while len > 0 {
             // Program the number of words to be transferred to the Size register.
