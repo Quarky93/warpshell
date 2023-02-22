@@ -701,8 +701,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "warp-devices"
-version = "0.3.1"
+name = "warpshell"
+version = "0.1.0"
 dependencies = [
  "arrayvec",
  "assert_matches",

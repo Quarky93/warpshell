@@ -1,6 +1,6 @@
-extern crate warp_devices;
+extern crate warpshell;
 
-use warp_devices::{
+use warpshell::{
     cores::cms::CmsOps,
     shells::{Shell, XilinxU55nXdmaStd},
 };

@@ -1,9 +1,11 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use packed_simd::Simd;
 use std::time::Duration;
-use warp_devices::cores::cms::{CmsOps, CmsReg};
-use warp_devices::shells::{Shell, XilinxU55nXdmaStd};
-use warp_devices::{BasedDmaOps, DmaBuffer};
+use warpshell::{
+    cores::cms::{CmsOps, CmsReg},
+    shells::{Shell, XilinxU55nXdmaStd},
+    BasedDmaOps, DmaBuffer,
+};
 
 const PAYLOAD_LEN: usize = 1024 * 1024 * 1024;
 const CHUNK_LEN: usize = 64;

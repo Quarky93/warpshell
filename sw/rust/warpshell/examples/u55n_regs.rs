@@ -1,9 +1,9 @@
-extern crate warp_devices;
+extern crate warpshell;
 
 use enum_iterator::all;
 use std::thread::sleep;
 use std::time::Duration;
-use warp_devices::{
+use warpshell::{
     cores::{
         axi_firewall::{AxiFirewallOps, AxiFirewallReg},
         cms::{CmsOps, CmsReg},
