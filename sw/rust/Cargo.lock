@@ -717,6 +717,16 @@ dependencies = [
  "rand",
  "test-log",
  "thiserror",
+ "warpshell-derive",
+]
+
+[[package]]
+name = "warpshell-derive"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

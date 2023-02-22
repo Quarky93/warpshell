@@ -4,6 +4,7 @@ use crate::{
     xdma::{CtrlChannel, DmaChannel, GetCtrlChannel, GetDmaChannel, CTRL_CHANNEL, DMA_CHANNEL0},
     BaseParam,
 };
+use warpshell_derive::{GetCtrlChannel, GetDmaChannel};
 
 /// Standard shell for Xilinx U55N also known as [Varium C1100 blockchain accelerator
 /// card](https://www.xilinx.com/products/accelerators/varium/c1100.html)
@@ -20,6 +21,7 @@ pub struct XilinxU55nXdmaStd<'a> {
     pub hbicap: Hbicap<'a>,
 }
 
+#[derive(GetCtrlChannel)]
 pub struct Cms<'a> {
     /// User channel
     ctrl_channel: &'a CtrlChannel,
@@ -29,12 +31,7 @@ impl<'a> BaseParam for Cms<'a> {
     const BASE_ADDR: u64 = 0x0400_0000;
 }
 
-impl GetCtrlChannel for Cms<'_> {
-    fn get_ctrl_channel(&self) -> &CtrlChannel {
-        self.ctrl_channel
-    }
-}
-
+#[derive(GetDmaChannel)]
 pub struct Hbm<'a> {
     /// DMA channel
     dma_channel: &'a DmaChannel,
@@ -44,12 +41,7 @@ impl<'a> BaseParam for Hbm<'a> {
     const BASE_ADDR: u64 = 0;
 }
 
-impl<'a> GetDmaChannel for Hbm<'a> {
-    fn get_dma_channel(&self) -> &DmaChannel {
-        self.dma_channel
-    }
-}
-
+#[derive(GetCtrlChannel)]
 pub struct CtrlAxiFirewall<'a> {
     /// Control channel
     ctrl_channel: &'a CtrlChannel,
@@ -59,12 +51,7 @@ impl<'a> BaseParam for CtrlAxiFirewall<'a> {
     const BASE_ADDR: u64 = 0x0407_0000;
 }
 
-impl GetCtrlChannel for CtrlAxiFirewall<'_> {
-    fn get_ctrl_channel(&self) -> &CtrlChannel {
-        self.ctrl_channel
-    }
-}
-
+#[derive(GetCtrlChannel)]
 pub struct DmaAxiFirewall<'a> {
     /// Control channel
     ctrl_channel: &'a CtrlChannel,
@@ -74,17 +61,12 @@ impl<'a> BaseParam for DmaAxiFirewall<'a> {
     const BASE_ADDR: u64 = 0x0408_0000;
 }
 
-impl GetCtrlChannel for DmaAxiFirewall<'_> {
-    fn get_ctrl_channel(&self) -> &CtrlChannel {
-        self.ctrl_channel
-    }
-}
-
 pub struct Hbicap<'a> {
     /// Interfaces for which `HbicapOps` is implemented.
-    ifs: HbicapIfs<HbicapCtrlIf<'a>, HbicapDmaIf<'a>>,
+    pub ifs: HbicapIfs<HbicapCtrlIf<'a>, HbicapDmaIf<'a>>,
 }
 
+#[derive(GetCtrlChannel)]
 pub struct HbicapCtrlIf<'a> {
     /// Control channel
     ctrl_channel: &'a CtrlChannel,
@@ -94,12 +76,7 @@ impl<'a> BaseParam for HbicapCtrlIf<'a> {
     const BASE_ADDR: u64 = todo!();
 }
 
-impl GetCtrlChannel for HbicapCtrlIf<'_> {
-    fn get_ctrl_channel(&self) -> &CtrlChannel {
-        self.ctrl_channel
-    }
-}
-
+#[derive(GetDmaChannel)]
 pub struct HbicapDmaIf<'a> {
     /// DMA channel
     dma_channel: &'a DmaChannel,
@@ -107,12 +84,6 @@ pub struct HbicapDmaIf<'a> {
 
 impl<'a> BaseParam for HbicapDmaIf<'a> {
     const BASE_ADDR: u64 = todo!();
-}
-
-impl GetDmaChannel for HbicapDmaIf<'_> {
-    fn get_dma_channel(&self) -> &DmaChannel {
-        self.dma_channel
-    }
 }
 
 impl<'a> XilinxU55nXdmaStd<'a> {
