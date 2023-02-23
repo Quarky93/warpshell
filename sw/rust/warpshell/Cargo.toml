@@ -4,7 +4,7 @@ description = "Library for interfacing with Xilinx FPGAs"
 version = "0.1.0"
 authors = [
     "Vladimir Komendantskiy <komendantsky@gmail.com>",
-    "Tong Wu"
+    "Tony Wu"
 ]
 repository = "https://github.com/Quarky93/warpshell"
 license = "Apache-2.0"
