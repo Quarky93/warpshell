@@ -12,6 +12,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "amplify"
+version = "3.14.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "af87bda25a5d87be1b9aedb1516eba82b4b4ad930a595916afc8bb39bf84a851"
+dependencies = [
+ "amplify_derive",
+ "amplify_num",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "amplify_derive"
 version = "2.11.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -22,6 +33,12 @@ dependencies = [
  "quote",
  "syn",
 ]
+
+[[package]]
+name = "amplify_num"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f27d3d00d3d115395a7a8a4dc045feb7aa82b641e485f7e15f4e67ac16f4f56d"
 
 [[package]]
 name = "amplify_syn"
@@ -51,6 +68,12 @@ name = "arrayvec"
 version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8da52d66c7071e2e3fa2a1e5c6d088fec47b593032b254f5e980de8ea54454d6"
+
+[[package]]
+name = "ascii"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d92bec98840b8f03a5ff5413de5293bfcd8bf96467cf5452609f939ec6f5de16"
 
 [[package]]
 name = "assert_matches"
@@ -900,7 +923,9 @@ dependencies = [
 name = "warpshell"
 version = "0.1.0"
 dependencies = [
+ "amplify",
  "arrayvec",
+ "ascii",
  "assert_matches",
  "criterion",
  "enum-iterator",
@@ -920,7 +945,7 @@ dependencies = [
 name = "warpshell-cli"
 version = "0.1.0"
 dependencies = [
- "amplify_derive",
+ "amplify",
  "anyhow",
  "clap 4.1.6",
  "env_logger 0.10.0",

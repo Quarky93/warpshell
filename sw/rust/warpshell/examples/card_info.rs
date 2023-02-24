@@ -12,5 +12,5 @@ fn main() {
     shell.init().expect("cannot initialise shell");
 
     let info = shell.cms.get_card_info().expect("cannot get card info");
-    println!("Card info: {info:?}");
+    println!("{info}");
 }

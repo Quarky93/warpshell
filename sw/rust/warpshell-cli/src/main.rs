@@ -1,5 +1,5 @@
 #[macro_use]
-extern crate amplify_derive;
+extern crate amplify;
 
 use anyhow::Context;
 use clap::{Parser, Subcommand};
@@ -7,7 +7,7 @@ use log::warn;
 use std::path::PathBuf;
 use warpshell::{
     cores::cms::{CardInfo, CmsOps, CmsReg},
-    shells::XilinxU55nXdmaStd,
+    shells::{Shell, XilinxU55nXdmaStd},
 };
 
 /// Interface to Warpshell on an FPGA
@@ -50,12 +50,12 @@ enum MgmtReading {
     /// Board power
     BoardPower,
 }
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Display)]
-#[display(doc_comments)]
 enum MgmtValue {
-    /// Card info
+    #[display("{0}")]
     CardInfo(CardInfo),
-    /// Measurement
+    #[display("{0} {1}")]
     Measurement(u32, MeasurementUnit),
 }
 
@@ -85,7 +85,9 @@ fn main() -> anyhow::Result<()> {
 
         Some(Command::Get { reading }) => {
             // TODO: initialise it using a OnceCell and abstract it away from the board
-            let shell = XilinxU55nXdmaStd::new().context("failed to initialise shell")?;
+            let shell = XilinxU55nXdmaStd::new().context("failed to connect to shell")?;
+            shell.init().context("cannot initialise shell")?;
+
             let value = match reading {
                 MgmtReading::CardInfo => MgmtValue::CardInfo(shell.cms.get_card_info()?),
                 MgmtReading::FpgaTemp => MgmtValue::Measurement(
@@ -111,7 +113,7 @@ fn main() -> anyhow::Result<()> {
 
             match value {
                 // TODO: add a Display instance for CardInfo
-                MgmtValue::CardInfo(info) => println!("{info:?}"),
+                MgmtValue::CardInfo(info) => println!("{info}"),
                 MgmtValue::Measurement(v, u) => println!("{v} {u}"),
             }
         }

@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate amplify;
+
 use std::mem;
 use std::result::Result;
 
@@ -69,4 +72,27 @@ unsafe fn aligned_vec(n_bytes: usize) -> Vec<u8> {
         len_units * mem::size_of::<Align4K>(),
         cap_units * mem::size_of::<Align4K>(),
     )
+}
+
+/// Lightly standardised byte strings with convenience methods.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Display)]
+#[display(ByteString::as_string)]
+pub struct ByteString(Vec<u8>);
+
+impl ByteString {
+    pub fn as_string(&self) -> String {
+        self.0.iter().map(|b| *b as char).collect()
+    }
+}
+
+impl From<Vec<u8>> for ByteString {
+    fn from(vec: Vec<u8>) -> Self {
+        Self(vec)
+    }
+}
+
+impl Into<Vec<u8>> for ByteString {
+    fn into(self) -> Vec<u8> {
+        self.0
+    }
 }

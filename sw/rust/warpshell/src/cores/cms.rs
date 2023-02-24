@@ -1,8 +1,7 @@
-use crate::{xdma::Error as XdmaError, BasedCtrlOps};
+use crate::{xdma::Error as XdmaError, BasedCtrlOps, ByteString};
 use enum_iterator::Sequence;
 use log::debug;
 use num_enum::{TryFromPrimitive, TryFromPrimitiveError};
-use std::collections::BTreeSet;
 use std::convert::TryFrom;
 use std::iter;
 use std::thread;
@@ -163,7 +162,8 @@ pub enum MailboxMsgOpcode {
     CardInfo = 4,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive, Display)]
+#[display(Debug)]
 #[repr(u8)]
 pub enum CardInfoKey {
     SerialNumber = 0x21,
@@ -184,19 +184,42 @@ pub enum CardInfoKey {
     CageType3 = 0x53,
 }
 
-pub type OldMacAddress = [u8; 16];
-pub type MacAddress = [u8; 6];
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Display)]
+#[display(OldMacAddress::as_string)]
+pub struct OldMacAddress(pub [u8; 16]);
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
+impl OldMacAddress {
+    pub fn as_string(&self) -> String {
+        self.0.iter().map(|b| *b as char).collect()
+    }
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Display)]
+#[display(MacAddress::as_string)]
+pub struct MacAddress(pub [u8; 6]);
+
+impl MacAddress {
+    pub fn as_string(&self) -> String {
+        let octets: Vec<_> = self.0.iter().map(|b| format!("{:02x}", *b)).collect();
+        octets.join(":")
+    }
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive, Display)]
 #[repr(u8)]
 pub enum TotalPowerAvail {
+    #[display("75W")]
     Power75W,
+    #[display("150W")]
     Power150W,
+    #[display("225W")]
     Power225W,
+    #[display("300W")]
     Power300W,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive, Display)]
+#[display(Debug)]
 #[repr(u8)]
 pub enum ConfigMode {
     SlaveSerialX1,
@@ -214,7 +237,8 @@ pub enum ConfigMode {
     MasterSelectMapX16,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive, Display)]
+#[display(uppercase)]
 #[repr(u8)]
 pub enum CageType {
     Qsfp,
@@ -222,23 +246,39 @@ pub enum CageType {
     Sfp,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Display)]
 pub enum CardInfoItem {
-    SerialNumber(Vec<u8>),
+    #[display("serial number: {0}")]
+    SerialNumber(ByteString),
+    #[display("MAC address 0: {0}")]
     MacAddress0(OldMacAddress),
+    #[display("MAC address 1: {0}")]
     MacAddress1(OldMacAddress),
+    #[display("MAC address 2: {0}")]
     MacAddress2(OldMacAddress),
+    #[display("MAC address 3: {0}")]
     MacAddress3(OldMacAddress),
-    CardRev(Vec<u8>),
-    CardName(Vec<u8>),
-    SatelliteVersion(Vec<u8>),
+    #[display("card revision: {0}")]
+    CardRev(ByteString),
+    #[display("card name: {0}")]
+    CardName(ByteString),
+    #[display("satellite controller version: {0}")]
+    SatelliteVersion(ByteString),
+    #[display("total power available: {0}")]
     TotalPowerAvail(TotalPowerAvail),
-    FanPresence(u8),
+    #[display("fan presence: {0}")]
+    FanPresence(char),
+    #[display("config mode: {0}")]
     ConfigMode(ConfigMode),
+    #[display("new MAC scheme: {0} addresses starting from {1}")]
     NewMacScheme(u8, MacAddress),
+    #[display("cage 0 type: {0}")]
     CageType0(CageType),
+    #[display("cage 1 type: {0}")]
     CageType1(CageType),
+    #[display("cage 2 type: {0}")]
     CageType2(CageType),
+    #[display("cage 3 type: {0}")]
     CageType3(CageType),
 }
 
@@ -280,7 +320,7 @@ impl TryFrom<&[u8]> for CardInfoItem {
                 if *next()? != 0 {
                     return Err(CardInfoItemParseError::NonNullTerminator);
                 }
-                Ok(Self::SerialNumber(v))
+                Ok(Self::SerialNumber(v.into()))
             }
             CardInfoKey::MacAddress0 => {
                 if len != 18 {
@@ -296,7 +336,7 @@ impl TryFrom<&[u8]> for CardInfoItem {
                 let old_mac = v
                     .try_into()
                     .map_err(|_| CardInfoItemParseError::IncorrectLength)?;
-                Ok(Self::MacAddress0(old_mac))
+                Ok(Self::MacAddress0(OldMacAddress(old_mac)))
             }
             CardInfoKey::MacAddress1 => {
                 if len != 18 {
@@ -312,7 +352,7 @@ impl TryFrom<&[u8]> for CardInfoItem {
                 let old_mac = v
                     .try_into()
                     .map_err(|_| CardInfoItemParseError::IncorrectLength)?;
-                Ok(Self::MacAddress1(old_mac))
+                Ok(Self::MacAddress1(OldMacAddress(old_mac)))
             }
             CardInfoKey::MacAddress2 => {
                 if len != 18 {
@@ -328,7 +368,7 @@ impl TryFrom<&[u8]> for CardInfoItem {
                 let old_mac = v
                     .try_into()
                     .map_err(|_| CardInfoItemParseError::IncorrectLength)?;
-                Ok(Self::MacAddress2(old_mac))
+                Ok(Self::MacAddress2(OldMacAddress(old_mac)))
             }
             CardInfoKey::MacAddress3 => {
                 if len != 18 {
@@ -344,7 +384,7 @@ impl TryFrom<&[u8]> for CardInfoItem {
                 let old_mac = v
                     .try_into()
                     .map_err(|_| CardInfoItemParseError::IncorrectLength)?;
-                Ok(Self::MacAddress3(old_mac))
+                Ok(Self::MacAddress3(OldMacAddress(old_mac)))
             }
             CardInfoKey::CardRev => {
                 if len == 0 {
@@ -357,7 +397,7 @@ impl TryFrom<&[u8]> for CardInfoItem {
                 if *next()? != 0 {
                     return Err(CardInfoItemParseError::NonNullTerminator);
                 }
-                Ok(Self::CardRev(v))
+                Ok(Self::CardRev(v.into()))
             }
             CardInfoKey::CardName => {
                 if len == 0 {
@@ -370,7 +410,7 @@ impl TryFrom<&[u8]> for CardInfoItem {
                 if *next()? != 0 {
                     return Err(CardInfoItemParseError::NonNullTerminator);
                 }
-                Ok(Self::CardName(v))
+                Ok(Self::CardName(v.into()))
             }
             CardInfoKey::SatelliteVersion => {
                 if len == 0 {
@@ -383,7 +423,7 @@ impl TryFrom<&[u8]> for CardInfoItem {
                 if *next()? != 0 {
                     return Err(CardInfoItemParseError::NonNullTerminator);
                 }
-                Ok(Self::SatelliteVersion(v))
+                Ok(Self::SatelliteVersion(v.into()))
             }
             CardInfoKey::TotalPowerAvail => {
                 if len != 1 {
@@ -397,7 +437,7 @@ impl TryFrom<&[u8]> for CardInfoItem {
                 if len != 1 {
                     return Err(CardInfoItemParseError::IncorrectLength);
                 }
-                Ok(Self::FanPresence(*next()?))
+                Ok(Self::FanPresence(*next()? as char))
             }
             CardInfoKey::ConfigMode => {
                 if len != 1 {
@@ -416,9 +456,10 @@ impl TryFrom<&[u8]> for CardInfoItem {
                 for _ in 0..6 {
                     v.push(*next()?);
                 }
-                let mac = v
-                    .try_into()
-                    .map_err(|_| CardInfoItemParseError::IncorrectLength)?;
+                let mac = MacAddress(
+                    v.try_into()
+                        .map_err(|_| CardInfoItemParseError::IncorrectLength)?,
+                );
                 Ok(Self::NewMacScheme(num_addresses, mac))
             }
             CardInfoKey::CageType0 => {
@@ -449,8 +490,19 @@ impl TryFrom<&[u8]> for CardInfoItem {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub struct CardInfo(pub BTreeSet<CardInfoItem>);
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Display)]
+#[display(CardInfo::as_string)]
+pub struct CardInfo(pub Vec<CardInfoItem>);
+
+impl CardInfo {
+    pub fn as_string(&self) -> String {
+        let mut s = String::new();
+        for item in &self.0 {
+            s.push_str(&format!("{item}\n"));
+        }
+        s
+    }
+}
 
 #[derive(Error, Copy, Clone, Debug, PartialEq)]
 pub enum CardInfoParseError {
@@ -464,7 +516,7 @@ impl TryFrom<&[u8]> for CardInfo {
     type Error = CardInfoParseError;
 
     fn try_from(input: &[u8]) -> std::result::Result<Self, Self::Error> {
-        let mut set = BTreeSet::new();
+        let mut items = Vec::new();
         let mut parsed_len = 0;
         while parsed_len + 2 < input.len() {
             let item_len = input[parsed_len + 1];
@@ -478,10 +530,10 @@ impl TryFrom<&[u8]> for CardInfo {
                 return Err(CardInfoParseError::ItemLengthOutOfBounds);
             }
             let item = CardInfoItem::try_from(&input[parsed_len..next_item_pos])?;
-            set.insert(item);
+            items.push(item);
             parsed_len += to_parse_len;
         }
-        Ok(Self(set))
+        Ok(Self(items))
     }
 }
 
@@ -671,20 +723,16 @@ mod test {
             0x0f, 0xd8, 0x2a, 0x01, 0x50, 0x2b, 0x01, 0x07, 0x29, 0x01, 0x00, 0x28, 0x04, 0x35,
             0x2e, 0x30, 0x00,
         ];
-        let expected_card_info = CardInfo(
-            vec![
-                CardInfoItem::SerialNumber(b"50121119CSPM".to_vec()),
-                CardInfoItem::CardRev(b"1".to_vec()),
-                CardInfoItem::CardName(b"ALVEO U50 PQ".to_vec()),
-                CardInfoItem::SatelliteVersion(b"5.0".to_vec()),
-                CardInfoItem::TotalPowerAvail(TotalPowerAvail::Power75W),
-                CardInfoItem::FanPresence(b'P'),
-                CardInfoItem::ConfigMode(ConfigMode::MasterSpiX4),
-                CardInfoItem::NewMacScheme(4, [0x00, 0x0a, 0x35, 0x05, 0x0f, 0xd8]),
-            ]
-            .into_iter()
-            .collect(),
-        );
+        let expected_card_info = CardInfo(vec![
+            CardInfoItem::CardName(b"ALVEO U50 PQ".to_vec().into()),
+            CardInfoItem::CardRev(b"1".to_vec().into()),
+            CardInfoItem::SerialNumber(b"50121119CSPM".to_vec().into()),
+            CardInfoItem::NewMacScheme(4, MacAddress([0x00, 0x0a, 0x35, 0x05, 0x0f, 0xd8])),
+            CardInfoItem::FanPresence(b'P'),
+            CardInfoItem::ConfigMode(ConfigMode::MasterSpiX4),
+            CardInfoItem::TotalPowerAvail(TotalPowerAvail::Power75W),
+            CardInfoItem::SatelliteVersion(b"5.0".to_vec().into()),
+        ]);
         assert_eq!(
             CardInfo::try_from(card_info_bytes.as_slice()),
             Ok(expected_card_info)
