@@ -728,7 +728,7 @@ mod test {
             CardInfoItem::CardRev(b"1".to_vec().into()),
             CardInfoItem::SerialNumber(b"50121119CSPM".to_vec().into()),
             CardInfoItem::NewMacScheme(4, MacAddress([0x00, 0x0a, 0x35, 0x05, 0x0f, 0xd8])),
-            CardInfoItem::FanPresence(b'P'),
+            CardInfoItem::FanPresence(b'P' as char),
             CardInfoItem::ConfigMode(ConfigMode::MasterSpiX4),
             CardInfoItem::TotalPowerAvail(TotalPowerAvail::Power75W),
             CardInfoItem::SatelliteVersion(b"5.0".to_vec().into()),
