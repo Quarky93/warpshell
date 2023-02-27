@@ -18,6 +18,7 @@ pub enum Error {
     XdmaFailed(#[from] XdmaError),
 }
 
+/// HBICAP core register memory offsets.
 #[derive(Copy, Clone, Debug, Sequence, PartialEq)]
 #[repr(u64)]
 pub enum HbicapReg {
@@ -44,23 +45,36 @@ pub enum HbicapReg {
     /// read FIFO depth is set to 256 during customization, the actual FIFO depth is 255. This
     /// register reports the actual read FIFO occupancy.
     ReadFifoOccupancy = 0x118,
+    /// Abort status of the ICAPEn during the configuration or reading the configuration.
     AbortStatus = 0x11c,
 }
 
+/// Control register R/W bits.
 #[repr(u32)]
 pub enum ControlRegBit {
+    /// 1 = Initiate ICAPEn Read.
     Read = 1 << 1,
+    /// 1 = Clears the FIFOs.
     FifoClear = 1 << 2,
+    /// 1 = Resets all the registers.
     SwReset = 1 << 3,
+    /// 1 = Aborts the read or write of the ICAPEn and clears the FIFOs.
     Abort = 1 << 4,
+    /// 0 = Unlock, cap_req does not depend on this bit. 1 = Lock, cap_req output is ORed with
+    /// this bit, which locks the access to the ICAP.
     Lock = 1 << 5,
+    /// Setting this bit to 1 loads the value in bits 6..10.
     SetAdditionalReadDelay = 1 << 11,
 }
 
+/// Read-only status register bits.
 #[repr(u32)]
 pub enum StatusRegBit {
+    /// 1 = Idle / Done with previous operation (configuration or read), 0 = Busy.
     Idle = 1 << 0,
-    Read = 1 << 2,
+    /// End-of-startup bit: Indicates that the EOS is complete. The ICAPEn can be accessed only when
+    /// this bit is 1.
+    Eos = 1 << 2,
 }
 
 /// AXI interfaces to the HBICAP core.

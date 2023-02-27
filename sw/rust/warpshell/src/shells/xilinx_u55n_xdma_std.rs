@@ -73,7 +73,7 @@ pub struct HbicapCtrlIf<'a> {
 }
 
 impl<'a> BaseParam for HbicapCtrlIf<'a> {
-    const BASE_ADDR: u64 = todo!();
+    const BASE_ADDR: u64 = 0x0405_0000;
 }
 
 #[derive(GetDmaChannel)]
@@ -83,7 +83,7 @@ pub struct HbicapDmaIf<'a> {
 }
 
 impl<'a> BaseParam for HbicapDmaIf<'a> {
-    const BASE_ADDR: u64 = todo!();
+    const BASE_ADDR: u64 = 0x1000_0000_0000_0000;
 }
 
 impl<'a> XilinxU55nXdmaStd<'a> {

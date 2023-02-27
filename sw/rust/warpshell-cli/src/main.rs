@@ -112,7 +112,6 @@ fn main() -> anyhow::Result<()> {
             };
 
             match value {
-                // TODO: add a Display instance for CardInfo
                 MgmtValue::CardInfo(info) => println!("{info}"),
                 MgmtValue::Measurement(v, u) => println!("{v} {u}"),
             }

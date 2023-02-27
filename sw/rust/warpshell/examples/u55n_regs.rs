@@ -7,6 +7,7 @@ use warpshell::{
     cores::{
         axi_firewall::{AxiFirewallOps, AxiFirewallReg},
         cms::{CmsOps, CmsReg},
+        hbicap::{HbicapOps, HbicapReg},
     },
     shells::{Shell, XilinxU55nXdmaStd},
 };
@@ -50,6 +51,15 @@ fn main() {
                 .dma_axi_firewall
                 .get_axi_firewall_reg(reg)
                 .expect("no reading")
+        );
+    }
+
+    println!(" ### HBICAP registers:");
+    for reg in all::<HbicapReg>() {
+        println!(
+            "{:?} = 0x{:08x}",
+            reg,
+            shell.hbicap.ifs.get_hbicap_reg(reg).expect("no reading")
         );
     }
 }
