@@ -1,4 +1,4 @@
-use crate::{xdma::Error as XdmaError, BasedCtrlOps};
+use crate::{BasedCtrlOps, Error as BasedError};
 use enum_iterator::Sequence;
 use thiserror::Error;
 
@@ -8,8 +8,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("XDMA failed: {0}")]
-    XdmaFailed(#[from] XdmaError),
+    #[error("Based access error: {0}")]
+    BasedError(#[from] BasedError),
 }
 
 /// AXI firewall registers
@@ -25,12 +25,16 @@ pub enum AxiFirewallReg {
     SiSideUnblockControl = 0x108,
 }
 
-pub trait AxiFirewallOps {
+pub trait AxiFirewallOps: BasedCtrlOps {
     /// Reads the value of an AXI firewall register
-    fn get_axi_firewall_reg(&self, reg: AxiFirewallReg) -> Result<u32>;
+    fn get_axi_firewall_reg(&self, reg: AxiFirewallReg) -> Result<u32> {
+        Ok(self.based_ctrl_read_u32(reg as u64)?)
+    }
 
     /// Writes the value of an AXI firewall register
-    fn set_axi_firewall_reg(&self, reg: AxiFirewallReg, value: u32) -> Result<()>;
+    fn set_axi_firewall_reg(&self, reg: AxiFirewallReg, value: u32) -> Result<()> {
+        Ok(self.based_ctrl_write_u32(reg as u64, value)?)
+    }
 
     fn get_mi_fault_status(&self) -> Result<u32> {
         self.get_axi_firewall_reg(AxiFirewallReg::MiSideFaultStatus)
@@ -51,18 +55,5 @@ pub trait AxiFirewallOps {
 
     fn get_ip_version(&self) -> Result<u32> {
         self.get_axi_firewall_reg(AxiFirewallReg::IpVersion)
-    }
-}
-
-impl<T> AxiFirewallOps for T
-where
-    T: BasedCtrlOps<XdmaError>,
-{
-    fn get_axi_firewall_reg(&self, reg: AxiFirewallReg) -> Result<u32> {
-        Ok(self.based_ctrl_read_u32(reg as u64)?)
-    }
-
-    fn set_axi_firewall_reg(&self, reg: AxiFirewallReg, value: u32) -> Result<()> {
-        Ok(self.based_ctrl_write_u32(reg as u64, value)?)
     }
 }

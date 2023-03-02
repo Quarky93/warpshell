@@ -1,10 +1,8 @@
-use crate::{xdma::Error as XdmaError, BasedCtrlOps, ByteString};
+use crate::{BasedCtrlOps, ByteString, Error as BasedError};
 use enum_iterator::Sequence;
 use log::debug;
 use num_enum::{TryFromPrimitive, TryFromPrimitiveError};
 use std::convert::TryFrom;
-use std::iter;
-use std::thread;
 use std::time::Duration;
 use thiserror::Error;
 
@@ -14,8 +12,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug, Error)]
 pub enum Error {
-    #[error("XDMA failed: {0}")]
-    XdmaFailed(#[from] XdmaError),
+    #[error("Based access error: {0}")]
+    BasedError(#[from] BasedError),
     #[error("Host status not ready")]
     HostStatusNotReady,
     #[error("Unsupported register map id 0x{0:x}")]
@@ -538,21 +536,17 @@ impl TryFrom<&[u8]> for CardInfo {
 }
 
 /// Card Management Solution subsystem
-pub trait CmsOps {
-    /// Reads the value at a CMS register offset
-    fn get_cms_offset(&self, offset: u64) -> Result<u32>;
-
-    /// Writes the value at a CMS register offset
-    fn set_cms_offset(&self, offset: u64, value: u32) -> Result<()>;
-
+pub trait CmsOps: BasedCtrlOps {
     /// Reads the value in a given CMS register
     fn get_cms_reg(&self, reg: CmsReg) -> Result<u32> {
-        self.get_cms_offset(reg as u64)
+        Ok(self.based_ctrl_read_u32(reg as u64)?)
+        //        Ok(self.get_cms_offset(reg as u64)?)
     }
 
     /// Writes the value in a given CMS register
     fn set_cms_reg(&self, reg: CmsReg, value: u32) -> Result<()> {
-        self.set_cms_offset(reg as u64, value)
+        Ok(self.based_ctrl_write_u32(reg as u64, value)?)
+        //        Ok(self.set_cms_offset(reg as u64, value)?)
     }
 
     /// Reads the value in the CMS control register
@@ -565,56 +559,12 @@ pub trait CmsOps {
         self.set_cms_reg(CmsReg::Control, value)
     }
 
-    /// Polls a given `mask` in a given CMS register `reg` continuously at least `n` times until the
-    /// mask is equal to the expected value.
-    fn poll_cms_reg_mask(&self, reg: CmsReg, mask: u32, expected: u32, n: usize) -> Result<()> {
-        iter::repeat_with(|| self.get_cms_reg(reg).ok())
-            .take(n)
-            .position(|ready| ready.map(|ready| ready & mask) == Some(expected))
-            .map(|_| ())
-            .ok_or(Error::CmsRegMaskNotAsExpected)
-    }
-
-    /// Polls a given `mask` in a given CMS register `reg` continuously at least `n` times until the
-    /// mask is equal to the expected value, sleeping for `duration` in between tries. Returns the
-    /// number of elapsed tries.
-    fn poll_cms_reg_mask_sleep(
-        &self,
-        reg: CmsReg,
-        mask: u32,
-        expected: u32,
-        n: usize,
-        duration: Duration,
-    ) -> Result<usize> {
-        iter::repeat_with(|| {
-            thread::sleep(duration);
-            self.get_cms_reg(reg).ok()
-        })
-        .take(n)
-        .position(|ready| ready.map(|ready| ready & mask) == Some(expected))
-        .map(|pos| pos + 1)
-        .ok_or(Error::CmsRegMaskNotAsExpected)
-    }
-
-    /// Polls a given `mask` in a given CMS register `reg` continuously at least `n` times until the
-    /// mask clears.
-    fn poll_cms_reg_clear(&self, reg: CmsReg, mask: u32, n: usize) -> Result<()> {
-        self.poll_cms_reg_mask(reg, mask, 0, n)
-    }
-
-    /// Polls a given `mask` in a given CMS register `reg` continuously at least `n` times until the
-    /// mask is set.
-    fn poll_cms_reg_set(&self, reg: CmsReg, mask: u32, n: usize) -> Result<()> {
-        self.poll_cms_reg_mask(reg, mask, mask, n)
-    }
-
     /// Initialises the Card Management System
     fn init(&self) -> Result<()> {
         self.set_cms_reg(CmsReg::MicroblazeResetN, 1)?;
         // Expect to wait up to at least 1s.
         self.expect_ready_host_status(1000)?;
 
-        // TODO: version check
         let v = self.get_reg_map_id()?;
         if v != SUPPORTED_REG_MAP_ID {
             return Err(Error::UnsupportedRegMapId(v));
@@ -629,8 +579,14 @@ pub trait CmsOps {
     /// Waits roughly `ms` milliseconds to allow readings to be populated while polling the status
     /// register every 1ms. Returns the elapsed milliseconds.
     fn expect_ready_host_status(&self, ms: usize) -> Result<usize> {
-        self.poll_cms_reg_mask_sleep(CmsReg::HostStatus, 1, 1, ms, Duration::from_millis(1))
-            .map_err(|_| Error::HostStatusNotReady)
+        self.poll_reg_mask_sleep(
+            CmsReg::HostStatus as u64,
+            1,
+            1,
+            ms,
+            Duration::from_millis(1),
+        )
+        .map_err(|_| Error::HostStatusNotReady)
     }
 
     fn get_reg_map_id(&self) -> Result<u32> {
@@ -663,12 +619,12 @@ pub trait CmsOps {
     fn get_card_info(&self) -> Result<CardInfo> {
         let mbox_offset = self.get_mailbox_offset()?;
         debug!("mbox_offset 0x{:x}", mbox_offset);
-        self.set_cms_offset(mbox_offset, (MailboxMsgOpcode::CardInfo as u32) << 24)?;
+        self.based_ctrl_write_u32(mbox_offset, (MailboxMsgOpcode::CardInfo as u32) << 24)?;
         let control = self.get_cms_control_reg()?;
         self.set_cms_control_reg(control | ControlRegBit::MailboxStatus as u32)?;
         // Wait for at most 1s.
-        self.poll_cms_reg_mask_sleep(
-            CmsReg::Control,
+        self.poll_reg_mask_sleep(
+            CmsReg::Control as u64,
             ControlRegBit::MailboxStatus as u32,
             0,
             100,
@@ -680,12 +636,12 @@ pub trait CmsOps {
             return Err(Error::HostMsgError(error));
         }
 
-        let len = self.get_cms_offset(mbox_offset)? & 0xfff;
+        let len = self.based_ctrl_read_u32(mbox_offset)? & 0xfff;
         let mut info_bytes = Vec::with_capacity(len as usize);
         let mut data_offset = 4;
         let mut remaining = len as isize;
         while remaining > 0 {
-            let w = self.get_cms_offset(mbox_offset + data_offset as u64)?;
+            let w = self.based_ctrl_read_u32(mbox_offset + data_offset as u64)?;
             let bytes = w.to_le_bytes();
             let num_bytes = remaining.min(4) as usize;
             info_bytes.extend_from_slice(&bytes[..num_bytes]);
@@ -693,19 +649,6 @@ pub trait CmsOps {
             remaining -= 4;
         }
         Ok(CardInfo::try_from(info_bytes.as_slice())?)
-    }
-}
-
-impl<T> CmsOps for T
-where
-    T: BasedCtrlOps<XdmaError>,
-{
-    fn get_cms_offset(&self, offset: u64) -> Result<u32> {
-        Ok(self.based_ctrl_read_u32(offset)?)
-    }
-
-    fn set_cms_offset(&self, offset: u64, value: u32) -> Result<()> {
-        Ok(self.based_ctrl_write_u32(offset, value)?)
     }
 }
 

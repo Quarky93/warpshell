@@ -1,12 +1,26 @@
 #[macro_use]
 extern crate amplify;
 
+use crate::xdma::Error as XdmaError;
+use std::iter;
 use std::mem;
-use std::result::Result;
+use std::thread;
+use std::time::Duration;
+use thiserror::Error;
 
 pub mod cores;
 pub mod shells;
 pub mod xdma;
+
+pub type Result<T> = std::result::Result<T, Error>;
+
+#[derive(Error, Debug)]
+pub enum Error {
+    #[error("XDMA error: {0}")]
+    XdmaError(#[from] XdmaError),
+    #[error("Register mask not as expected")]
+    RegMaskNotAsExpected,
+}
 
 /// Base address of a memory-mapped core
 pub trait BaseParam {
@@ -15,15 +29,71 @@ pub trait BaseParam {
 }
 
 /// IO operations on an offset memory-mapped component via a user channel
-pub trait BasedCtrlOps<E> {
-    fn based_ctrl_read_u32(&self, offset: u64) -> Result<u32, E>;
-    fn based_ctrl_write_u32(&self, offset: u64, value: u32) -> Result<(), E>;
+pub trait BasedCtrlOps {
+    /// Reads a `u32` register at `offset`.
+    fn based_ctrl_read_u32(&self, offset: u64) -> Result<u32>;
+
+    /// Writes `value` into a `u32` register at `offset`.
+    fn based_ctrl_write_u32(&self, offset: u64, value: u32) -> Result<()>;
+
+    /// Polls a given `mask` in a given `u32` register at `offset` continuously at least `n` times
+    /// until the mask is equal to the expected value.
+    fn poll_reg_mask(&self, offset: u64, mask: u32, expected: u32, n: usize) -> Result<()> {
+        iter::repeat_with(|| self.based_ctrl_read_u32(offset).ok())
+            .take(n)
+            .position(|ready| ready.map(|ready| ready & mask) == Some(expected))
+            .map(|_| ())
+            .ok_or(Error::RegMaskNotAsExpected)
+    }
+
+    /// Polls a given `mask` in a given `u32` register at `offset` continuously at least `n` times
+    /// until the mask is equal to the expected value, sleeping for `duration` in between
+    /// tries. Returns the number of elapsed tries.
+    fn poll_reg_mask_sleep(
+        &self,
+        offset: u64,
+        mask: u32,
+        expected: u32,
+        n: usize,
+        duration: Duration,
+    ) -> Result<usize> {
+        iter::repeat_with(|| {
+            thread::sleep(duration);
+            self.based_ctrl_read_u32(offset).ok()
+        })
+        .take(n)
+        .position(|ready| ready.map(|ready| ready & mask) == Some(expected))
+        .map(|pos| pos + 1)
+        .ok_or(Error::RegMaskNotAsExpected)
+    }
+
+    /// Polls a given `mask` in a given `u32` register at `offset` continuously at least `n` times
+    /// until the mask clears.
+    fn poll_reg_mask_clear(&self, offset: u64, mask: u32, n: usize) -> Result<()> {
+        self.poll_reg_mask(offset, mask, 0, n)
+    }
+
+    /// Polls a given `mask` in a given `u32` register at `offset` continuously at least `n` times
+    /// until the mask is set.
+    fn poll_reg_mask_set(&self, offset: u64, mask: u32, n: usize) -> Result<()> {
+        self.poll_reg_mask(offset, mask, mask, n)
+    }
+}
+
+pub trait GetBasedCtrlIf<C: BasedCtrlOps> {
+    /// Returns an abstract memory-mapped control interface.
+    fn get_based_ctrl_if(&self) -> &C;
 }
 
 /// IO operations on an offset memory-mapped component via a DMA channel
-pub trait BasedDmaOps<E> {
-    fn based_dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<(), E>;
-    fn based_dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<(), E>;
+pub trait BasedDmaOps {
+    fn based_dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<()>;
+    fn based_dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<()>;
+}
+
+pub trait GetBasedDmaIf<D: BasedDmaOps> {
+    /// Returns an abstract memory-mapped DMA interface.
+    fn get_based_dma_if(&self) -> &D;
 }
 
 #[repr(C, align(4096))]

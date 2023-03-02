@@ -59,7 +59,7 @@ fn main() {
         println!(
             "{:?} = 0x{:08x}",
             reg,
-            shell.hbicap.ifs.get_hbicap_reg(reg).expect("no reading")
+            shell.hbicap.get_hbicap_reg(reg).expect("no reading")
         );
     }
 }

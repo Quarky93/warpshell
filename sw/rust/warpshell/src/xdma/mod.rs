@@ -1,4 +1,4 @@
-use crate::{BaseParam, BasedCtrlOps, BasedDmaOps, DmaBuffer};
+use crate::{BaseParam, BasedCtrlOps, BasedDmaOps, DmaBuffer, Result as BasedResult};
 use arrayvec::ArrayVec;
 use once_cell::sync::OnceCell;
 use std::fs::{File, OpenOptions};
@@ -87,12 +87,12 @@ pub trait GetCtrlChannel {
     fn get_ctrl_channel(&self) -> &CtrlChannel;
 }
 
-impl<T> BasedCtrlOps<Error> for T
+impl<T> BasedCtrlOps for T
 where
     T: GetCtrlChannel + BaseParam,
 {
     #[inline]
-    fn based_ctrl_read_u32(&self, offset: u64) -> Result<u32> {
+    fn based_ctrl_read_u32(&self, offset: u64) -> BasedResult<u32> {
         let mut data = [0u8; 4];
         self.get_ctrl_channel()
             .ctrl_read(&mut data, T::BASE_ADDR + offset)?;
@@ -100,10 +100,11 @@ where
     }
 
     #[inline]
-    fn based_ctrl_write_u32(&self, offset: u64, value: u32) -> Result<()> {
+    fn based_ctrl_write_u32(&self, offset: u64, value: u32) -> BasedResult<()> {
         let data = value.to_le_bytes();
-        self.get_ctrl_channel()
-            .ctrl_write(&data, T::BASE_ADDR + offset)
+        Ok(self
+            .get_ctrl_channel()
+            .ctrl_write(&data, T::BASE_ADDR + offset)?)
     }
 }
 
@@ -132,18 +133,22 @@ pub trait GetDmaChannel {
     fn get_dma_channel(&self) -> &DmaChannel;
 }
 
-impl<T> BasedDmaOps<Error> for T
+impl<T> BasedDmaOps for T
 where
     T: GetDmaChannel + BaseParam,
 {
     #[inline]
-    fn based_dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<()> {
-        self.get_dma_channel().dma_read(buf, T::BASE_ADDR + offset)
+    fn based_dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> BasedResult<()> {
+        Ok(self
+            .get_dma_channel()
+            .dma_read(buf, T::BASE_ADDR + offset)?)
     }
 
     #[inline]
-    fn based_dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<()> {
-        self.get_dma_channel().dma_write(buf, T::BASE_ADDR + offset)
+    fn based_dma_write(&self, buf: &DmaBuffer, offset: u64) -> BasedResult<()> {
+        Ok(self
+            .get_dma_channel()
+            .dma_write(buf, T::BASE_ADDR + offset)?)
     }
 }
 

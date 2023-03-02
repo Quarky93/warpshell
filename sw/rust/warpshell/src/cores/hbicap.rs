@@ -2,7 +2,7 @@
 //!
 //! **WARNING: NOT TESTED!!!**
 
-use crate::{xdma::Error as XdmaError, BasedCtrlOps, BasedDmaOps, DmaBuffer};
+use crate::{BasedCtrlOps, BasedDmaOps, DmaBuffer, Error as BasedError};
 use enum_iterator::Sequence;
 use std::mem::size_of;
 use thiserror::Error;
@@ -14,8 +14,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("XDMA failed: {0}")]
-    XdmaFailed(#[from] XdmaError),
+    #[error("Based access error: {0}")]
+    BasedError(#[from] BasedError),
 }
 
 /// HBICAP core register memory offsets.
@@ -77,27 +77,38 @@ pub enum StatusRegBit {
     Eos = 1 << 2,
 }
 
-/// AXI interfaces to the HBICAP core.
-pub struct HbicapIfs<C, D> {
-    /// Control AXI-Lite interface.
-    pub ctrl_if: C,
-    /// DMA AXI interface.
-    pub dma_if: D,
+pub trait GetHbicapIf<C: BasedCtrlOps, D: BasedDmaOps> {
+    fn get_ctrl_if(&self) -> &C;
+    fn get_dma_if(&self) -> &D;
 }
 
-pub trait HbicapOps {
+pub trait HbicapOps<C, D>: GetHbicapIf<C, D>
+where
+    C: BasedCtrlOps,
+    D: BasedDmaOps,
+{
     /// Reads the value of an HBICAP register.
-    fn get_hbicap_reg(&self, reg: HbicapReg) -> Result<u32>;
+    fn get_hbicap_reg(&self, reg: HbicapReg) -> Result<u32> {
+        Ok(self.get_ctrl_if().based_ctrl_read_u32(reg as u64)?)
+    }
 
     /// Writes a value to an HBICAP register.
-    fn set_hbicap_reg(&self, reg: HbicapReg, value: u32) -> Result<()>;
+    fn set_hbicap_reg(&self, reg: HbicapReg, value: u32) -> Result<()> {
+        Ok(self.get_ctrl_if().based_ctrl_write_u32(reg as u64, value)?)
+    }
 
     /// Read `n_bytes` from the configured AXI interface into `buf`. The size read from the
     /// interface is `n_bytes` rounded up to the nearest multiple of `AXI_MM_WORD_BYTES`.
-    fn read_axi(&self, buf: &mut DmaBuffer, n_bytes: usize) -> Result<()>;
+    fn read_axi(&self, buf: &mut DmaBuffer, _n_bytes: usize) -> Result<()> {
+        // TODO
+
+        Ok(self.get_dma_if().based_dma_read(buf, 0)?)
+    }
 
     /// Write the entire `buf` to configured AXI interface: MM or Stream.
-    fn write_axi(&self, buf: &DmaBuffer) -> Result<()>;
+    fn write_axi(&self, buf: &DmaBuffer) -> Result<()> {
+        Ok(self.get_dma_if().based_dma_write(buf, 0)?)
+    }
 
     /// Read programming sequence.
     fn read_programming(&self, bytes: &[u8]) -> Result<()> {
@@ -182,29 +193,5 @@ pub trait HbicapOps {
         // abort bit in the Control register is cleared.
 
         todo!()
-    }
-}
-
-impl<C, D> HbicapOps for HbicapIfs<C, D>
-where
-    C: BasedCtrlOps<XdmaError>,
-    D: BasedDmaOps<XdmaError>,
-{
-    fn get_hbicap_reg(&self, reg: HbicapReg) -> Result<u32> {
-        Ok(self.ctrl_if.based_ctrl_read_u32(reg as u64)?)
-    }
-
-    fn set_hbicap_reg(&self, reg: HbicapReg, value: u32) -> Result<()> {
-        Ok(self.ctrl_if.based_ctrl_write_u32(reg as u64, value)?)
-    }
-
-    fn read_axi(&self, buf: &mut DmaBuffer, _n_bytes: usize) -> Result<()> {
-        // TODO
-
-        Ok(self.dma_if.based_dma_read(buf, 0)?)
-    }
-
-    fn write_axi(&self, buf: &DmaBuffer) -> Result<()> {
-        Ok(self.dma_if.based_dma_write(buf, 0)?)
     }
 }
