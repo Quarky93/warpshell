@@ -170,3 +170,24 @@ impl Into<Vec<u8>> for ByteString {
         self.0
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use test_log::test;
+
+    #[test]
+    fn dma_buffer_capacity_len() {
+        const PAYLOAD_LEN: usize = 64;
+        let mut buf: DmaBuffer = DmaBuffer::new(PAYLOAD_LEN);
+
+        assert_eq!(buf.0.capacity(), 4096);
+        assert_eq!(buf.0.len(), 0);
+
+        let payload: [u8; PAYLOAD_LEN] = [42; PAYLOAD_LEN];
+        buf.0.extend_from_slice(&payload);
+
+        assert_eq!(buf.0.capacity(), 4096);
+        assert_eq!(buf.0.len(), PAYLOAD_LEN);
+    }
+}

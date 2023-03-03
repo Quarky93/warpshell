@@ -4,11 +4,11 @@
 
 use crate::{BasedCtrlOps, BasedDmaOps, DmaBuffer, Error as BasedError};
 use enum_iterator::Sequence;
-use std::mem::size_of;
+use std::{mem::size_of, time::Duration};
 use thiserror::Error;
 
 const MAX_BURST_SIZE: u32 = 256;
-// const AXI_MM_WORD_BYTES: usize = 4;
+const AXI_WORD_BYTES: usize = 4;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -107,17 +107,37 @@ where
         Ok(self.get_ctrl_if().based_ctrl_write_u32(reg as u64, value)?)
     }
 
-    /// Read `n_bytes` from the configured AXI interface into `buf`. The size read from the
-    /// interface is `n_bytes` rounded up to the nearest multiple of `AXI_MM_WORD_BYTES`.
-    fn read_axi(&self, buf: &mut DmaBuffer, _n_bytes: usize) -> Result<()> {
-        // TODO
-
-        Ok(self.get_dma_if().based_dma_read(buf, 0)?)
+    /// Checks if the core is in ready state.
+    fn is_ready(&self) -> Result<bool> {
+        let mask = StatusRegBit::Idle as u32 | StatusRegBit::Eos as u32;
+        Ok(self.get_hbicap_reg(HbicapReg::Status)? & mask == mask)
     }
 
-    /// Write the entire `buf` to configured AXI interface: MM or Stream.
-    fn write_axi(&self, buf: &DmaBuffer) -> Result<()> {
-        Ok(self.get_dma_if().based_dma_write(buf, 0)?)
+    /// Resets the core.
+    fn reset(&self) -> Result<()> {
+        let v = self.get_hbicap_reg(HbicapReg::Control)?
+            | ControlRegBit::FifoClear as u32
+            | ControlRegBit::SwReset as u32;
+        self.set_hbicap_reg(HbicapReg::Control, v)
+    }
+
+    /// Writes the entire bitstream in one iteration.
+    fn write_bitstream(&self, buf: DmaBuffer) -> Result<()> {
+        let n_words = ((buf.0.len() + (AXI_WORD_BYTES - 1)) / AXI_WORD_BYTES) as u32;
+        self.set_hbicap_reg(HbicapReg::Size, n_words)?;
+        Ok(self.get_dma_if().based_dma_write(&buf, 0)?)
+    }
+
+    /// Polls for the ready status at 10 ms intervals for at 10 seconds, returning the elapsed number of polls.
+    fn poll_ready_every_10ms(&self) -> Result<usize> {
+        let mask = StatusRegBit::Idle as u32 | StatusRegBit::Eos as u32;
+        Ok(self.get_ctrl_if().poll_reg_mask_sleep(
+            HbicapReg::Status as u64,
+            mask,
+            mask,
+            1_000,
+            Duration::from_millis(10),
+        )?)
     }
 
     /// Read programming sequence.

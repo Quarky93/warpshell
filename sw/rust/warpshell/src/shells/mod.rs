@@ -2,7 +2,14 @@
 
 mod xilinx_u55n_xdma_std;
 
-use crate::{cores::cms::Error as CmsError, xdma::Error as XdmaError, Error as BasedError};
+use crate::{
+    cores::{
+        cms::Error as CmsError, dfx_decoupler::Error as DfxDecouplerError,
+        hbicap::Error as HbicapError,
+    },
+    xdma::Error as XdmaError,
+    Error as BasedError,
+};
 use thiserror::Error;
 
 pub use xilinx_u55n_xdma_std::*;
@@ -17,11 +24,17 @@ pub enum Error {
     BasedError(#[from] BasedError),
     #[error("CMS error")]
     Cms(#[from] CmsError),
+    #[error("HBICAP is not ready")]
+    HbicapNotReady,
+    #[error("HBICAP error")]
+    Hbicap(#[from] HbicapError),
+    #[error("DFX decoupler error")]
+    DfxDecoupler(#[from] DfxDecouplerError),
 }
 
 /// A shell is a collection of cores with host interfaces to them, for example,
 /// [`XilinxU55nXdmaStd`]. This trait provides methods that may involve multiple cores.
 pub trait Shell {
     fn init(&self) -> Result<()>;
-    fn load_raw_user_image(&self, image: &[u8]) -> Result<()>;
+    fn program_user_image(&self, image: &[u8]) -> Result<()>;
 }
