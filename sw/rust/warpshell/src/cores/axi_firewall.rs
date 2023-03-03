@@ -1,3 +1,5 @@
+//! # AXI firewall
+
 use crate::{BasedCtrlOps, Error as BasedError};
 use enum_iterator::Sequence;
 use thiserror::Error;

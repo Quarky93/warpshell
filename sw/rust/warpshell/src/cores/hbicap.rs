@@ -1,4 +1,4 @@
-//! Xilinx AXI High Bandwidth Internal Configuration Access Port (HBICAP)
+//! # Xilinx AXI High Bandwidth Internal Configuration Access Port (HBICAP)
 //!
 //! **WARNING: NOT TESTED!!!**
 
@@ -77,9 +77,19 @@ pub enum StatusRegBit {
     Eos = 1 << 2,
 }
 
+/// Memory-mapped interface to an HBICAP core. Instantiating this trait suffices as a definition of
+/// `HbicapOps` which is implemented automatically in that case.
 pub trait GetHbicapIf<C: BasedCtrlOps, D: BasedDmaOps> {
     fn get_ctrl_if(&self) -> &C;
     fn get_dma_if(&self) -> &D;
+}
+
+impl<C, D, T> HbicapOps<C, D> for T
+where
+    C: BasedCtrlOps,
+    D: BasedDmaOps,
+    T: GetHbicapIf<C, D>,
+{
 }
 
 pub trait HbicapOps<C, D>: GetHbicapIf<C, D>

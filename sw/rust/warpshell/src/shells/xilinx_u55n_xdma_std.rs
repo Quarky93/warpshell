@@ -1,10 +1,6 @@
 use super::{Result, Shell};
 use crate::{
-    cores::{
-        axi_firewall::AxiFirewallOps,
-        cms::CmsOps,
-        hbicap::{GetHbicapIf, HbicapOps},
-    },
+    cores::{axi_firewall::AxiFirewallOps, cms::CmsOps, hbicap::GetHbicapIf},
     xdma::{CtrlChannel, DmaChannel, GetCtrlChannel, GetDmaChannel, CTRL_CHANNEL, DMA_CHANNEL0},
     BaseParam,
 };
@@ -107,8 +103,6 @@ pub struct HbicapDmaIf<'a> {
 impl<'a> BaseParam for HbicapDmaIf<'a> {
     const BASE_ADDR: u64 = 0x1000_0000_0000_0000;
 }
-
-impl<'a> HbicapOps<HbicapCtrlIf<'a>, HbicapDmaIf<'a>> for Hbicap<'a> {}
 
 impl<'a> XilinxU55nXdmaStd<'a> {
     pub fn new() -> Result<Self> {

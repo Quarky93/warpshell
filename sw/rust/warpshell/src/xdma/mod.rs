@@ -1,3 +1,5 @@
+//! # XDMA transport
+
 use crate::{BaseParam, BasedCtrlOps, BasedDmaOps, DmaBuffer, Result as BasedResult};
 use arrayvec::ArrayVec;
 use once_cell::sync::OnceCell;

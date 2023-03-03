@@ -1,3 +1,5 @@
+//! # Warpshell library
+
 #[macro_use]
 extern crate amplify;
 
@@ -28,7 +30,7 @@ pub trait BaseParam {
     const BASE_ADDR: u64;
 }
 
-/// IO operations on an offset memory-mapped component via a user channel
+/// IO operations on a memory-mapped component via a control channel
 pub trait BasedCtrlOps {
     /// Reads a `u32` register at `offset`.
     fn based_ctrl_read_u32(&self, offset: u64) -> Result<u32>;
@@ -80,19 +82,21 @@ pub trait BasedCtrlOps {
     }
 }
 
+/// Getter trait for a control interface.
 pub trait GetBasedCtrlIf<C: BasedCtrlOps> {
-    /// Returns an abstract memory-mapped control interface.
+    /// Returns an abstract control interface.
     fn get_based_ctrl_if(&self) -> &C;
 }
 
-/// IO operations on an offset memory-mapped component via a DMA channel
+/// IO operations on a memory-mapped component via a DMA channel
 pub trait BasedDmaOps {
     fn based_dma_read(&self, buf: &mut DmaBuffer, offset: u64) -> Result<()>;
     fn based_dma_write(&self, buf: &DmaBuffer, offset: u64) -> Result<()>;
 }
 
+/// Getter trait for a DMA interface.
 pub trait GetBasedDmaIf<D: BasedDmaOps> {
-    /// Returns an abstract memory-mapped DMA interface.
+    /// Returns an abstract DMA interface.
     fn get_based_dma_if(&self) -> &D;
 }
 

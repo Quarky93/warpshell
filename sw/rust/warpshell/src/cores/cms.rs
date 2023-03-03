@@ -1,3 +1,5 @@
+//! # Card Management System
+
 use crate::{BasedCtrlOps, ByteString, Error as BasedError};
 use enum_iterator::Sequence;
 use log::debug;

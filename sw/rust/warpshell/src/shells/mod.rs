@@ -1,3 +1,5 @@
+//! # User-space interfaces to shells
+
 mod xilinx_u55n_xdma_std;
 
 use crate::{cores::cms::Error as CmsError, xdma::Error as XdmaError, Error as BasedError};
@@ -17,8 +19,8 @@ pub enum Error {
     Cms(#[from] CmsError),
 }
 
-/// A shell is a collection of cores, for example, [`XilinxU55nXdmaStd`]. This trait provides
-/// methods that may involve multiple cores.
+/// A shell is a collection of cores with host interfaces to them, for example,
+/// [`XilinxU55nXdmaStd`]. This trait provides methods that may involve multiple cores.
 pub trait Shell {
     fn init(&self) -> Result<()>;
     fn load_raw_user_image(&self, image: &[u8]) -> Result<()>;
