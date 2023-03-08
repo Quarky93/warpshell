@@ -152,6 +152,10 @@ impl<'a> Shell for XilinxU55nXdmaStd<'a> {
         Ok(self.cms.init()?)
     }
 
+    fn read_back_user_image(&self) -> Result<Vec<u8>> {
+        todo!()
+    }
+
     fn program_user_image(&self, image: &[u8]) -> Result<()> {
         if self.hbicap.is_ready()? {
             return Err(Error::HbicapNotReady);
@@ -162,7 +166,7 @@ impl<'a> Shell for XilinxU55nXdmaStd<'a> {
 
         let mut buf = DmaBuffer::new(image.len());
         buf.0.extend_from_slice(image);
-        self.hbicap.write_bitstream(buf)?;
+        self.hbicap.write_bitstream(&buf)?;
 
         self.hbicap.poll_ready_every_10ms()?;
         self.dfx_decoupler.disable()?;

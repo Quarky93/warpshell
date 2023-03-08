@@ -3,8 +3,8 @@ extern crate amplify;
 
 use anyhow::Context;
 use clap::{Parser, Subcommand};
-use log::warn;
-use std::path::PathBuf;
+use std::time::Instant;
+use std::{fs::File, io::Read, path::PathBuf};
 use warpshell::{
     cores::cms::{CardInfo, CmsOps, CmsReg},
     shells::{Shell, XilinxU55nXdmaStd},
@@ -76,18 +76,25 @@ fn main() -> anyhow::Result<()> {
         println!("Config file: {}", config.display());
     }
 
+    // TODO: initialise it using a OnceCell and abstract it away from the board
+    let shell = XilinxU55nXdmaStd::new().context("failed to connect to shell")?;
+    shell.init().context("cannot initialise shell")?;
+
     match &cli.command {
         Some(Command::Program { file }) => {
-            println!("Programming bitstream file {}", file.display());
+            let mut fop = File::open(file).context("cannot open bitstream file")?;
+            let mut bitstream = Vec::new();
+            fop.read_to_end(&mut bitstream)
+                .context("cannot read bitstream from file")?;
 
-            warn!("program subcommand is not implemented yet");
+            println!("Programming bitstream file {}", file.display());
+            let start = Instant::now();
+            shell.program_user_image(&bitstream)?;
+            let elapsed = start.elapsed();
+            println!("Programming finished in {:?}", elapsed);
         }
 
         Some(Command::Get { reading }) => {
-            // TODO: initialise it using a OnceCell and abstract it away from the board
-            let shell = XilinxU55nXdmaStd::new().context("failed to connect to shell")?;
-            shell.init().context("cannot initialise shell")?;
-
             let value = match reading {
                 MgmtReading::CardInfo => MgmtValue::CardInfo(shell.cms.get_card_info()?),
                 MgmtReading::FpgaTemp => MgmtValue::Measurement(

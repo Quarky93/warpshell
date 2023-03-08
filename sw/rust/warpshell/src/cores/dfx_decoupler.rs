@@ -12,7 +12,7 @@ pub enum Error {
     BasedError(#[from] BasedError),
 }
 
-/// CMS register offsets
+/// DFX decoupler register offsets
 #[derive(Copy, Clone, Debug, Sequence, PartialEq)]
 #[repr(u64)]
 pub enum DfxDecouplerReg {

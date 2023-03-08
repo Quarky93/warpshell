@@ -36,5 +36,6 @@ pub enum Error {
 /// [`XilinxU55nXdmaStd`]. This trait provides methods that may involve multiple cores.
 pub trait Shell {
     fn init(&self) -> Result<()>;
+    fn read_back_user_image(&self) -> Result<Vec<u8>>;
     fn program_user_image(&self, image: &[u8]) -> Result<()>;
 }

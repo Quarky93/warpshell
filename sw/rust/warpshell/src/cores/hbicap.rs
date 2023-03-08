@@ -10,6 +10,15 @@ use thiserror::Error;
 const MAX_BURST_SIZE: u32 = 256;
 const AXI_WORD_BYTES: usize = 4;
 
+/// ICAP commands
+const DUMMY_CMD: u32 = 0xffff_ffff;
+const BUS_WIDTH_SYNC_CMD: u32 = 0x0000_00bb;
+const BUS_WIDTH_DETECT_CMD: u32 = 0x1122_0044;
+const SYNC_CMD: u32 = 0xaa99_5566;
+
+const TYPE1_N_WORDS_MASK: u32 = 0x0000_07ff;
+const TYPE2_N_WORDS_MASK: u32 = 0x07ff_ffff;
+
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Error, Debug)]
@@ -77,6 +86,127 @@ pub enum StatusRegBit {
     Eos = 1 << 2,
 }
 
+#[repr(u32)]
+pub enum PacketType {
+    Type1 = 0b001,
+    Type2 = 0b010,
+}
+
+#[repr(u32)]
+pub enum Opcode {
+    Noop = 0b00,
+    Read = 0b01,
+    Write = 0b10,
+}
+
+/// Xilinx 7/US/US+ FPGA configuration control logic registers. Bits `[26:13]` of a type 1 packet
+/// header word.
+#[repr(u32)]
+pub enum FpgaConfigReg {
+    /// [R/W] CRC register
+    Crc = 0b00000,
+    /// [R/W] Frame address register
+    Far = 0b00001,
+    /// [W] Frame data register, input register (write configuration data)
+    Fdri = 0b00010,
+    /// [R] Frame data register, output register (read configuration data)
+    Fdro = 0b00011,
+    /// [R/W] Command register
+    Cmd = 0b00100,
+    /// [R/W] Control register 0
+    Ctl0 = 0b00101,
+    /// [R/W] Masking register for CTL0 and CTL1
+    Mask = 0b00110,
+    /// [R] Status register
+    Stat = 0b00111,
+    /// [W] Legacy output register for daisy chain
+    Lout = 0b01000,
+    /// [R/W] Configuration option register 0
+    Cor0 = 0b01001,
+    /// [W] Multiple frame write register
+    Mfwr = 0b01011,
+    /// [W] Initial CBC value register
+    Cbc = 0b01010,
+    /// [R/W] Device ID register
+    Idcode = 0b01100,
+    /// [R/W] User access register
+    Axss = 0b01101,
+    /// [R/W] Configuration option register 1
+    Cor1 = 0b01110,
+    /// [R/W] Warm boot start address register
+    Wbstar = 0b10000,
+    /// [R/W] Watchdog timer register
+    Timer = 0b10001,
+    /// [R] Boot history status register
+    Bootsts = 0b10110,
+    /// [R/W] Control register 1
+    Ctl1 = 0b11000,
+    /// [R/W] BPI/SPI configuration options register
+    Bspi = 0b11111,
+}
+
+/// TODO. Command config register codes. US Arch Config UG570, p. 164.
+#[repr(u32)]
+pub enum CmdRegCode {
+    /// Null command, no action.
+    Null = 0b00000,
+    /// Begins the start-up sequence: start-up sequence begins after a successful CRC check and a
+    /// DESYNC command are performed.
+    Start = 0b00101,
+    /// Resets the DALIGN signal: Used at the end of configuration to desynchronize the
+    /// device. After desynchronization, all values on the configuration data pins are ignored.
+    Desync = 0b01101,
+}
+
+pub struct Type1Packet {
+    /// Bits [28:27]
+    opcode: Opcode,
+    /// Bits [26:13]
+    reg: FpgaConfigReg,
+    /// Bits [10:0]
+    n_words: u32,
+}
+
+impl Type1Packet {
+    pub fn new(opcode: Opcode, reg: FpgaConfigReg, n_words: u32) -> Self {
+        Self {
+            opcode,
+            reg,
+            n_words,
+        }
+    }
+}
+
+impl Into<u32> for Type1Packet {
+    fn into(self) -> u32 {
+        (PacketType::Type1 as u32) << 29
+            | (self.opcode as u32) << 27
+            | (self.reg as u32) << 13
+            | (self.n_words & TYPE1_N_WORDS_MASK)
+    }
+}
+
+pub struct Type2Packet {
+    /// Bits [28:27]
+    opcode: Opcode,
+    /// Bits [26:0]
+    n_words: u32,
+}
+
+impl Type2Packet {
+    pub fn new(opcode: Opcode, n_words: u32) -> Self {
+        Self { opcode, n_words }
+    }
+}
+
+impl Into<u32> for Type2Packet {
+    fn into(self) -> u32 {
+        (PacketType::Type2 as u32) << 29
+            | (self.opcode as u32) << 27
+            | (self.n_words & TYPE2_N_WORDS_MASK)
+    }
+}
+
 /// Memory-mapped interface to an HBICAP core. Instantiating this trait suffices as a definition of
 /// `HbicapOps` which is implemented automatically in that case.
 pub trait GetHbicapIf<C: BasedCtrlOps, D: BasedDmaOps> {
@@ -122,10 +252,62 @@ where
     }
 
     /// Writes the entire bitstream in one iteration.
-    fn write_bitstream(&self, buf: DmaBuffer) -> Result<()> {
+    fn write_bitstream(&self, buf: &DmaBuffer) -> Result<()> {
         let n_words = ((buf.0.len() + (AXI_WORD_BYTES - 1)) / AXI_WORD_BYTES) as u32;
         self.set_hbicap_reg(HbicapReg::Size, n_words)?;
-        Ok(self.get_dma_if().based_dma_write(&buf, 0)?)
+        Ok(self.get_dma_if().based_dma_write(buf, 0)?)
+    }
+
+    /// Fills in `buf` in one iteration.
+    fn read_bitstream(&self, buf: &mut DmaBuffer) -> Result<()> {
+        let n_words = (buf.0.capacity() / AXI_WORD_BYTES) as u32;
+        self.set_hbicap_reg(HbicapReg::Size, n_words)?;
+        self.set_hbicap_reg(
+            HbicapReg::Control,
+            self.get_hbicap_reg(HbicapReg::Control)? | ControlRegBit::Read as u32,
+        )?;
+        Ok(self.get_dma_if().based_dma_read(buf, 0)?)
+    }
+
+    fn status_readback(&self) -> Result<u32> {
+        let noop: u32 = Type1Packet::new(Opcode::Noop, FpgaConfigReg::Crc, 0).into(); // = 0x2000_0000
+        let opening_cmds: Vec<u32> = vec![
+            DUMMY_CMD,
+            BUS_WIDTH_SYNC_CMD,
+            BUS_WIDTH_DETECT_CMD,
+            DUMMY_CMD,
+            SYNC_CMD,
+            noop,
+            Type1Packet::new(Opcode::Write, FpgaConfigReg::Stat, 1).into(),
+            noop,
+            noop,
+        ];
+        let closing_cmds: Vec<u32> = vec![
+            Type1Packet::new(Opcode::Write, FpgaConfigReg::Cmd, 1).into(),
+            CmdRegCode::Desync as u32,
+            noop,
+            noop,
+        ];
+
+        let mut write_buf = DmaBuffer::new(opening_cmds.len() * size_of::<u32>());
+        for w in opening_cmds {
+            write_buf.0.extend_from_slice(&w.to_le_bytes());
+        }
+        self.write_bitstream(&write_buf)?;
+
+        let mut read_buf = DmaBuffer::new(size_of::<u32>());
+        self.read_bitstream(&mut read_buf)?;
+
+        // Reuse the allocated DMA buffer.
+        write_buf.0.clear();
+        for w in closing_cmds {
+            write_buf.0.extend_from_slice(&w.to_le_bytes());
+        }
+        self.write_bitstream(&write_buf)?;
+
+        let mut stat_bytes: [u8; 4] = [0; 4];
+        stat_bytes.copy_from_slice(&read_buf.0[0..3]);
+        Ok(u32::from_le_bytes(stat_bytes))
     }
 
     /// Polls for the ready status at 10 ms intervals for at 10 seconds, returning the elapsed number of polls.
