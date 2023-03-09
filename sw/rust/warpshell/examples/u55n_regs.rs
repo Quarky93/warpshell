@@ -62,4 +62,16 @@ fn main() {
             shell.hbicap.get_hbicap_reg(reg).expect("no reading")
         );
     }
+
+    println!(" ### FPGA config logic registers:");
+    shell.hbicap.abort().expect("cannot perform HBICAP abort");
+    // shell.hbicap.reset().expect("cannot reset HBICAP");
+    shell
+        .hbicap
+        .poll_ready_every_10ms()
+        .expect("HBICAP not ready");
+    println!(
+        "Stat = 0x{:08x}",
+        shell.hbicap.status_readback().expect("no reading")
+    );
 }

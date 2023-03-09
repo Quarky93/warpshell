@@ -4,20 +4,20 @@
 
 use crate::{BasedCtrlOps, BasedDmaOps, DmaBuffer, Error as BasedError};
 use enum_iterator::Sequence;
+use log::debug;
 use std::{mem::size_of, time::Duration};
 use thiserror::Error;
 
 const MAX_BURST_SIZE: u32 = 256;
-const AXI_WORD_BYTES: usize = 4;
 
 /// ICAP commands
-const DUMMY_CMD: u32 = 0xffff_ffff;
-const BUS_WIDTH_SYNC_CMD: u32 = 0x0000_00bb;
-const BUS_WIDTH_DETECT_CMD: u32 = 0x1122_0044;
-const SYNC_CMD: u32 = 0xaa99_5566;
+pub const DUMMY_CMD: u32 = 0xffff_ffff;
+pub const BUS_WIDTH_SYNC_CMD: u32 = 0x0000_00bb;
+pub const BUS_WIDTH_DETECT_CMD: u32 = 0x1122_0044;
+pub const SYNC_CMD: u32 = 0xaa99_5566;
 
-const TYPE1_N_WORDS_MASK: u32 = 0x0000_07ff;
-const TYPE2_N_WORDS_MASK: u32 = 0x07ff_ffff;
+pub const TYPE1_N_WORDS_MASK: u32 = 0x0000_07ff;
+pub const TYPE2_N_WORDS_MASK: u32 = 0x07ff_ffff;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -239,7 +239,7 @@ where
 
     /// Checks if the core is in ready state.
     fn is_ready(&self) -> Result<bool> {
-        let mask = StatusRegBit::Idle as u32 | StatusRegBit::Eos as u32;
+        let mask = StatusRegBit::Idle as u32; // | StatusRegBit::Eos as u32;
         Ok(self.get_hbicap_reg(HbicapReg::Status)? & mask == mask)
     }
 
@@ -251,59 +251,49 @@ where
         self.set_hbicap_reg(HbicapReg::Control, v)
     }
 
-    /// Writes the entire bitstream in one iteration.
+    /// Writes the entire bitstream in one iteration. Doesn't block until completion.
     fn write_bitstream(&self, buf: &DmaBuffer) -> Result<()> {
-        let n_words = ((buf.0.len() + (AXI_WORD_BYTES - 1)) / AXI_WORD_BYTES) as u32;
+        let n_words = ((buf.0.len() + (size_of::<u32>() - 1)) / size_of::<u32>()) as u32;
+        debug!("write_bitstream n_words = {n_words}");
         self.set_hbicap_reg(HbicapReg::Size, n_words)?;
         Ok(self.get_dma_if().based_dma_write(buf, 0)?)
     }
 
-    /// Fills in `buf` in one iteration.
-    fn read_bitstream(&self, buf: &mut DmaBuffer) -> Result<()> {
-        let n_words = (buf.0.capacity() / AXI_WORD_BYTES) as u32;
+    /// Fills in `buf` in one iteration. Doesn't block until completion.
+    fn read_bitstream(&self, buf: &mut DmaBuffer, n_words: u32) -> Result<()> {
+        // let n_words = (buf.0.capacity() / size_of::<u32>()) as u32;
+        debug!("read_bitstream n_words = {n_words}");
         self.set_hbicap_reg(HbicapReg::Size, n_words)?;
-        self.set_hbicap_reg(
-            HbicapReg::Control,
-            self.get_hbicap_reg(HbicapReg::Control)? | ControlRegBit::Read as u32,
-        )?;
+        self.set_hbicap_reg(HbicapReg::Control, ControlRegBit::Read as u32)?;
+
+        // TODO: wait for done? No words are being read.
+
         Ok(self.get_dma_if().based_dma_read(buf, 0)?)
     }
 
     fn status_readback(&self) -> Result<u32> {
         let noop: u32 = Type1Packet::new(Opcode::Noop, FpgaConfigReg::Crc, 0).into(); // = 0x2000_0000
-        let opening_cmds: Vec<u32> = vec![
+        let opening: Vec<u32> = vec![
             DUMMY_CMD,
             BUS_WIDTH_SYNC_CMD,
             BUS_WIDTH_DETECT_CMD,
             DUMMY_CMD,
             SYNC_CMD,
             noop,
-            Type1Packet::new(Opcode::Write, FpgaConfigReg::Stat, 1).into(),
+            Type1Packet::new(Opcode::Read, FpgaConfigReg::Stat, 1).into(),
             noop,
             noop,
         ];
-        let closing_cmds: Vec<u32> = vec![
+        let closing: Vec<u32> = vec![
             Type1Packet::new(Opcode::Write, FpgaConfigReg::Cmd, 1).into(),
             CmdRegCode::Desync as u32,
             noop,
             noop,
         ];
 
-        let mut write_buf = DmaBuffer::new(opening_cmds.len() * size_of::<u32>());
-        for w in opening_cmds {
-            write_buf.0.extend_from_slice(&w.to_le_bytes());
-        }
-        self.write_bitstream(&write_buf)?;
-
         let mut read_buf = DmaBuffer::new(size_of::<u32>());
-        self.read_bitstream(&mut read_buf)?;
-
-        // Reuse the allocated DMA buffer.
-        write_buf.0.clear();
-        for w in closing_cmds {
-            write_buf.0.extend_from_slice(&w.to_le_bytes());
-        }
-        self.write_bitstream(&write_buf)?;
+        self.read_programming(&opening, &closing, &mut read_buf, size_of::<u32>() as u32)?;
+        debug!("read_buf = {:?}", read_buf.0);
 
         let mut stat_bytes: [u8; 4] = [0; 4];
         stat_bytes.copy_from_slice(&read_buf.0[0..3]);
@@ -312,7 +302,7 @@ where
 
     /// Polls for the ready status at 10 ms intervals for at 10 seconds, returning the elapsed number of polls.
     fn poll_ready_every_10ms(&self) -> Result<usize> {
-        let mask = StatusRegBit::Idle as u32 | StatusRegBit::Eos as u32;
+        let mask = StatusRegBit::Idle as u32; // | StatusRegBit::Eos as u32;
         Ok(self.get_ctrl_if().poll_reg_mask_sleep(
             HbicapReg::Status as u64,
             mask,
@@ -322,22 +312,58 @@ where
         )?)
     }
 
-    /// Read programming sequence.
-    fn read_programming(&self, bytes: &[u8]) -> Result<()> {
-        // Program the Size register with the number of words you want to write.
-        let size = (bytes.len() / size_of::<u32>()) as u32;
-        self.set_hbicap_reg(HbicapReg::Size, size)?;
+    /// Polls for the clearance of the read flag in the control register at 10 ms intervals for at
+    /// 10 seconds, returning the elapsed number of polls.
+    fn poll_read_clear_every_10ms(&self) -> Result<usize> {
+        let mask = ControlRegBit::Read as u32;
+        Ok(self.get_ctrl_if().poll_reg_mask_sleep(
+            HbicapReg::Control as u64,
+            mask,
+            0,
+            1_000,
+            Duration::from_millis(10),
+        )?)
+    }
 
+    /// Polls for the end of abort procedure at 10 ms intervals for at 10 seconds, returning the
+    /// elapsed number of polls.
+    fn poll_abort_finished_every_10ms(&self) -> Result<usize> {
+        let mask = ControlRegBit::Abort as u32; // | StatusRegBit::Eos as u32;
+        Ok(self.get_ctrl_if().poll_reg_mask_sleep(
+            HbicapReg::Control as u64,
+            mask,
+            0,
+            1_000,
+            Duration::from_millis(10),
+        )?)
+    }
+
+    /// Read programming sequence.
+    fn read_programming(
+        &self,
+        opening: &[u32],
+        closing: &[u32],
+        output: &mut DmaBuffer,
+        output_n_words: u32,
+    ) -> Result<()> {
+        // Program the Size register with the number of words you want to write.
+        //
         // Send the first set of words you want to write to the ICAPEn using the memory mapped AXI4
         // interface using burst transactions.
+        let mut dma_buf = DmaBuffer::new(opening.len() * size_of::<u32>());
+        for w in opening {
+            dma_buf.0.extend_from_slice(&w.to_le_bytes());
+        }
+        self.write_bitstream(&dma_buf)?;
 
         // Wait for the Done signal from the Status register, which indicates that the requested
         // number of words have been written on the ICAPEn interface.
+        self.poll_ready_every_10ms()?;
 
         // Program the Size register again with the number of words to be read from the ICAPEn.
         // Program the Control register with a value of 0x00000002, which initiates a read on the
         // ICAPEn.
-
+        //
         // Use the read interfaces in one of the following ways.
         //
         // - Read using memory mapped AXI4 read burst transactions: Initiate memory mapped AXI4 read
@@ -346,28 +372,36 @@ where
         //
         // - Read using the AXI4-Stream interface: In this mode, the HBICAP core initiates the
         // stream transactions. Wait until TLAST, which indicates the end of the transfer.
+        self.read_bitstream(output, output_n_words)?;
 
         // Hardware clears the Control register bits after the successful completion of the data
         // transfer from the ICAPEn to the read FIFO.
-
+        //
         // Software should not initiate another read or configuration to the ICAPEn until the read
         // bit in the Control register is cleared.
+        self.poll_read_clear_every_10ms()?;
 
         // Program the Size register with a second set of writes, which contains DE-SYNC and other
         // commands to terminate the Read operation on the ICAPEn.
-
+        //
         // Send the second set of words to be written to the ICAPEn using the memory mapped AXI4
         // interface using burst transactions.
+        let mut dma_buf = DmaBuffer::new(closing.len() * size_of::<u32>());
+        for w in closing {
+            dma_buf.0.extend_from_slice(&w.to_le_bytes());
+        }
+        self.write_bitstream(&dma_buf)?;
 
         // The Done signal from the Status register indicates that the requested number of words
         // have been written on the ICAPEn interface.
+        self.poll_ready_every_10ms()?;
 
-        todo!()
+        Ok(())
     }
 
     /// Write programming sequence.
-    fn write_programming(&self, bytes: &[u8]) -> Result<()> {
-        let mut len = (bytes.len() / size_of::<u32>()) as u32;
+    fn write_programming(&self, words: &[u32]) -> Result<()> {
+        let mut len = (words.len() / size_of::<u32>()) as u32;
 
         while len > 0 {
             // Program the number of words to be transferred to the Size register.
@@ -390,20 +424,27 @@ where
     fn abort(&self) -> Result<()> {
         // Initiate a write or read of the ICAPEn using the steps in Programming Sequence, and while
         // waiting for the completion of the operation, perform the following steps.
-
+        //
         // Write a value of 0x00000010 to the Control register to initiate an abort.
+        self.set_hbicap_reg(HbicapReg::Control, ControlRegBit::Abort as u32)?;
 
         // The Done bit in the Status register indicates whether the abort operation is completed.
+        self.poll_ready_every_10ms()?;
 
         // Read the Abort Status register that contains the four bytes read from the ICAPEn, which
         // indicates the status of the abort operation.
+        let abort_status = self.get_hbicap_reg(HbicapReg::AbortStatus)?;
+        debug!("HBICAP abort status 0x{:08x}", abort_status);
 
         // The hardware clears the Control register bits after the successful completion of the
         // abort-on read, abort-on configuration, or normal abort.
+        let control = self.get_hbicap_reg(HbicapReg::Control)?;
+        debug!("HBICAP control reg 0x{:08x}", control);
 
         // The software should not initiate another read or configuration to the ICAPEn until the
         // abort bit in the Control register is cleared.
+        self.poll_abort_finished_every_10ms()?;
 
-        todo!()
+        Ok(())
     }
 }
