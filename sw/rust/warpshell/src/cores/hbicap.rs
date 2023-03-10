@@ -9,6 +9,7 @@ use std::{mem::size_of, time::Duration};
 use thiserror::Error;
 
 const MAX_BURST_SIZE: u32 = 256;
+const ICAP_WORD_BYTES: usize = size_of::<u32>();
 
 /// ICAP commands
 pub const DUMMY_CMD: u32 = 0xffff_ffff;
@@ -101,8 +102,9 @@ pub enum Opcode {
 
 /// Xilinx 7/US/US+ FPGA configuration control logic registers. Bits `[26:13]` of a type 1 packet
 /// header word.
+#[derive(Copy, Clone, Debug, Sequence, PartialEq)]
 #[repr(u32)]
-pub enum FpgaConfigReg {
+pub enum ConfigLogicReg {
     /// [R/W] CRC register
     Crc = 0b00000,
     /// [R/W] Frame address register
@@ -162,17 +164,26 @@ pub struct Type1Packet {
     /// Bits [28:27]
     opcode: Opcode,
     /// Bits [26:13]
-    reg: FpgaConfigReg,
+    reg: ConfigLogicReg,
     /// Bits [10:0]
     n_words: u32,
 }
 
 impl Type1Packet {
-    pub fn new(opcode: Opcode, reg: FpgaConfigReg, n_words: u32) -> Self {
+    pub fn new(opcode: Opcode, reg: ConfigLogicReg, n_words: u32) -> Self {
         Self {
             opcode,
             reg,
             n_words,
+        }
+    }
+
+    /// Type 1 NOOP word 0x2000_0000.
+    pub const fn noop() -> Self {
+        Self {
+            opcode: Opcode::Noop,
+            reg: ConfigLogicReg::Crc,
+            n_words: 0,
         }
     }
 }
@@ -253,26 +264,25 @@ where
 
     /// Writes the entire bitstream in one iteration. Doesn't block until completion.
     fn write_bitstream(&self, buf: &DmaBuffer) -> Result<()> {
-        let n_words = ((buf.0.len() + (size_of::<u32>() - 1)) / size_of::<u32>()) as u32;
+        let n_words = ((buf.0.len() + (ICAP_WORD_BYTES - 1)) / ICAP_WORD_BYTES) as u32;
         debug!("write_bitstream n_words = {n_words}");
         self.set_hbicap_reg(HbicapReg::Size, n_words)?;
         Ok(self.get_dma_if().based_dma_write(buf, 0)?)
     }
 
-    /// Fills in `buf` in one iteration. Doesn't block until completion.
-    fn read_bitstream(&self, buf: &mut DmaBuffer, n_words: u32) -> Result<()> {
-        // let n_words = (buf.0.capacity() / size_of::<u32>()) as u32;
+    /// Fills in `buf` in one iteration. Doesn't block until completion. `buf` has to be of the
+    /// exact length that needs to be read, e.g. prepopulated with zeros.
+    fn read_bitstream(&self, buf: &mut DmaBuffer) -> Result<()> {
+        let n_words = (buf.0.len() / ICAP_WORD_BYTES) as u32;
         debug!("read_bitstream n_words = {n_words}");
         self.set_hbicap_reg(HbicapReg::Size, n_words)?;
         self.set_hbicap_reg(HbicapReg::Control, ControlRegBit::Read as u32)?;
-
-        // TODO: wait for done? No words are being read.
-
         Ok(self.get_dma_if().based_dma_read(buf, 0)?)
     }
 
-    fn status_readback(&self) -> Result<u32> {
-        let noop: u32 = Type1Packet::new(Opcode::Noop, FpgaConfigReg::Crc, 0).into(); // = 0x2000_0000
+    /// Returns the value of a config logic register.
+    fn config_logic_reg_readback(&self, reg: ConfigLogicReg) -> Result<u32> {
+        let noop: u32 = Type1Packet::noop().into();
         let opening: Vec<u32> = vec![
             DUMMY_CMD,
             BUS_WIDTH_SYNC_CMD,
@@ -280,28 +290,29 @@ where
             DUMMY_CMD,
             SYNC_CMD,
             noop,
-            Type1Packet::new(Opcode::Read, FpgaConfigReg::Stat, 1).into(),
+            Type1Packet::new(Opcode::Read, reg, 1).into(),
             noop,
             noop,
         ];
         let closing: Vec<u32> = vec![
-            Type1Packet::new(Opcode::Write, FpgaConfigReg::Cmd, 1).into(),
+            Type1Packet::new(Opcode::Write, ConfigLogicReg::Cmd, 1).into(),
             CmdRegCode::Desync as u32,
             noop,
             noop,
         ];
 
-        let mut read_buf = DmaBuffer::new(size_of::<u32>());
-        self.read_programming(&opening, &closing, &mut read_buf, size_of::<u32>() as u32)?;
-        debug!("read_buf = {:?}", read_buf.0);
+        let mut read_buf = DmaBuffer::new(ICAP_WORD_BYTES);
+        read_buf.0.extend_from_slice(&[0; 4]);
+        self.read_programming(&opening, &closing, &mut read_buf)?;
+        debug!("status_readback read_buf = {:02x?}", read_buf.0);
 
         let mut stat_bytes: [u8; 4] = [0; 4];
-        stat_bytes.copy_from_slice(&read_buf.0[0..3]);
+        stat_bytes.copy_from_slice(&read_buf.0[0..4]);
         Ok(u32::from_le_bytes(stat_bytes))
     }
 
-    /// Polls for the ready status at 10 ms intervals for at 10 seconds, returning the elapsed number of polls.
-    fn poll_ready_every_10ms(&self) -> Result<usize> {
+    /// Polls for the done status at 10 ms intervals for at 10 seconds, returning the elapsed number of polls.
+    fn poll_done_every_10ms(&self) -> Result<usize> {
         let mask = StatusRegBit::Idle as u32; // | StatusRegBit::Eos as u32;
         Ok(self.get_ctrl_if().poll_reg_mask_sleep(
             HbicapReg::Status as u64,
@@ -328,7 +339,7 @@ where
     /// Polls for the end of abort procedure at 10 ms intervals for at 10 seconds, returning the
     /// elapsed number of polls.
     fn poll_abort_finished_every_10ms(&self) -> Result<usize> {
-        let mask = ControlRegBit::Abort as u32; // | StatusRegBit::Eos as u32;
+        let mask = ControlRegBit::Abort as u32;
         Ok(self.get_ctrl_if().poll_reg_mask_sleep(
             HbicapReg::Control as u64,
             mask,
@@ -344,13 +355,12 @@ where
         opening: &[u32],
         closing: &[u32],
         output: &mut DmaBuffer,
-        output_n_words: u32,
     ) -> Result<()> {
         // Program the Size register with the number of words you want to write.
         //
         // Send the first set of words you want to write to the ICAPEn using the memory mapped AXI4
         // interface using burst transactions.
-        let mut dma_buf = DmaBuffer::new(opening.len() * size_of::<u32>());
+        let mut dma_buf = DmaBuffer::new(opening.len() * ICAP_WORD_BYTES);
         for w in opening {
             dma_buf.0.extend_from_slice(&w.to_le_bytes());
         }
@@ -358,7 +368,7 @@ where
 
         // Wait for the Done signal from the Status register, which indicates that the requested
         // number of words have been written on the ICAPEn interface.
-        self.poll_ready_every_10ms()?;
+        self.poll_done_every_10ms()?;
 
         // Program the Size register again with the number of words to be read from the ICAPEn.
         // Program the Control register with a value of 0x00000002, which initiates a read on the
@@ -372,7 +382,7 @@ where
         //
         // - Read using the AXI4-Stream interface: In this mode, the HBICAP core initiates the
         // stream transactions. Wait until TLAST, which indicates the end of the transfer.
-        self.read_bitstream(output, output_n_words)?;
+        self.read_bitstream(output)?;
 
         // Hardware clears the Control register bits after the successful completion of the data
         // transfer from the ICAPEn to the read FIFO.
@@ -386,7 +396,7 @@ where
         //
         // Send the second set of words to be written to the ICAPEn using the memory mapped AXI4
         // interface using burst transactions.
-        let mut dma_buf = DmaBuffer::new(closing.len() * size_of::<u32>());
+        let mut dma_buf = DmaBuffer::new(closing.len() * ICAP_WORD_BYTES);
         for w in closing {
             dma_buf.0.extend_from_slice(&w.to_le_bytes());
         }
@@ -394,14 +404,14 @@ where
 
         // The Done signal from the Status register indicates that the requested number of words
         // have been written on the ICAPEn interface.
-        self.poll_ready_every_10ms()?;
+        self.poll_done_every_10ms()?;
 
         Ok(())
     }
 
     /// Write programming sequence.
     fn write_programming(&self, words: &[u32]) -> Result<()> {
-        let mut len = (words.len() / size_of::<u32>()) as u32;
+        let mut len = words.len() as u32;
 
         while len > 0 {
             // Program the number of words to be transferred to the Size register.
@@ -429,7 +439,7 @@ where
         self.set_hbicap_reg(HbicapReg::Control, ControlRegBit::Abort as u32)?;
 
         // The Done bit in the Status register indicates whether the abort operation is completed.
-        self.poll_ready_every_10ms()?;
+        self.poll_done_every_10ms()?;
 
         // Read the Abort Status register that contains the four bytes read from the ICAPEn, which
         // indicates the status of the abort operation.

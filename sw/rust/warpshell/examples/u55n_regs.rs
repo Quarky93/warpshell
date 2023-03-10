@@ -7,7 +7,7 @@ use warpshell::{
     cores::{
         axi_firewall::{AxiFirewallOps, AxiFirewallReg},
         cms::{CmsOps, CmsReg},
-        hbicap::{HbicapOps, HbicapReg},
+        hbicap::{ConfigLogicReg, HbicapOps, HbicapReg},
     },
     shells::{Shell, XilinxU55nXdmaStd},
 };
@@ -65,13 +65,18 @@ fn main() {
 
     println!(" ### FPGA config logic registers:");
     shell.hbicap.abort().expect("cannot perform HBICAP abort");
-    // shell.hbicap.reset().expect("cannot reset HBICAP");
     shell
         .hbicap
-        .poll_ready_every_10ms()
+        .poll_done_every_10ms()
         .expect("HBICAP not ready");
-    println!(
-        "Stat = 0x{:08x}",
-        shell.hbicap.status_readback().expect("no reading")
-    );
+    for reg in all::<ConfigLogicReg>() {
+        println!(
+            "{:?} = 0x{:08x}",
+            reg,
+            shell
+                .hbicap
+                .config_logic_reg_readback(reg)
+                .expect("no reading")
+        );
+    }
 }

@@ -168,7 +168,7 @@ impl<'a> Shell for XilinxU55nXdmaStd<'a> {
         buf.0.extend_from_slice(image);
         self.hbicap.write_bitstream(&buf)?;
 
-        self.hbicap.poll_ready_every_10ms()?;
+        self.hbicap.poll_done_every_10ms()?;
         self.dfx_decoupler.disable()?;
 
         Ok(())
