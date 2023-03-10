@@ -264,7 +264,7 @@ where
 
     /// Writes the entire bitstream in one iteration. Doesn't block until completion.
     fn write_bitstream(&self, buf: &DmaBuffer) -> Result<()> {
-        let n_words = ((buf.0.len() + (ICAP_WORD_BYTES - 1)) / ICAP_WORD_BYTES) as u32;
+        let n_words = (buf.0.len() / ICAP_WORD_BYTES) as u32;
         debug!("write_bitstream n_words = {n_words}");
         self.set_hbicap_reg(HbicapReg::Size, n_words)?;
         Ok(self.get_dma_if().based_dma_write(buf, 0)?)
@@ -311,45 +311,48 @@ where
         Ok(u32::from_le_bytes(stat_bytes))
     }
 
-    /// Polls for the done status at 10 ms intervals for at 10 seconds, returning the elapsed number of polls.
-    fn poll_done_every_10ms(&self) -> Result<usize> {
+    /// Polls for the done status at 10 ms intervals for `duration`, returning the elapsed number of polls.
+    fn poll_done_every_10ms(&self, duration: Duration) -> Result<usize> {
         let mask = StatusRegBit::Idle as u32; // | StatusRegBit::Eos as u32;
+        let period = Duration::from_millis(10);
         Ok(self.get_ctrl_if().poll_reg_mask_sleep(
             HbicapReg::Status as u64,
             mask,
             mask,
-            1_000,
-            Duration::from_millis(10),
+            usize::try_from(duration.as_nanos() / period.as_nanos()).unwrap_or_default(),
+            period,
         )?)
     }
 
-    /// Polls for the clearance of the read flag in the control register at 10 ms intervals for at
-    /// 10 seconds, returning the elapsed number of polls.
-    fn poll_read_clear_every_10ms(&self) -> Result<usize> {
+    /// Polls for the clearance of the read flag in the control register at 10 ms intervals for
+    /// `duration`, returning the elapsed number of polls.
+    fn poll_read_clear_every_10ms(&self, duration: Duration) -> Result<usize> {
         let mask = ControlRegBit::Read as u32;
+        let period = Duration::from_millis(10);
         Ok(self.get_ctrl_if().poll_reg_mask_sleep(
             HbicapReg::Control as u64,
             mask,
             0,
-            1_000,
-            Duration::from_millis(10),
+            usize::try_from(duration.as_nanos() / period.as_nanos()).unwrap_or_default(),
+            period,
         )?)
     }
 
-    /// Polls for the end of abort procedure at 10 ms intervals for at 10 seconds, returning the
+    /// Polls for the end of abort procedure at 10 ms intervals for `duration`, returning the
     /// elapsed number of polls.
-    fn poll_abort_finished_every_10ms(&self) -> Result<usize> {
+    fn poll_abort_finished_every_10ms(&self, duration: Duration) -> Result<usize> {
         let mask = ControlRegBit::Abort as u32;
+        let period = Duration::from_millis(10);
         Ok(self.get_ctrl_if().poll_reg_mask_sleep(
             HbicapReg::Control as u64,
             mask,
             0,
-            1_000,
-            Duration::from_millis(10),
+            usize::try_from(duration.as_nanos() / period.as_nanos()).unwrap_or_default(),
+            period,
         )?)
     }
 
-    /// Read programming sequence.
+    /// Control logic read programming sequence.
     fn read_programming(
         &self,
         opening: &[u32],
@@ -368,7 +371,7 @@ where
 
         // Wait for the Done signal from the Status register, which indicates that the requested
         // number of words have been written on the ICAPEn interface.
-        self.poll_done_every_10ms()?;
+        self.poll_done_every_10ms(Duration::from_secs(10))?;
 
         // Program the Size register again with the number of words to be read from the ICAPEn.
         // Program the Control register with a value of 0x00000002, which initiates a read on the
@@ -389,7 +392,7 @@ where
         //
         // Software should not initiate another read or configuration to the ICAPEn until the read
         // bit in the Control register is cleared.
-        self.poll_read_clear_every_10ms()?;
+        self.poll_read_clear_every_10ms(Duration::from_secs(10))?;
 
         // Program the Size register with a second set of writes, which contains DE-SYNC and other
         // commands to terminate the Read operation on the ICAPEn.
@@ -404,12 +407,12 @@ where
 
         // The Done signal from the Status register indicates that the requested number of words
         // have been written on the ICAPEn interface.
-        self.poll_done_every_10ms()?;
+        self.poll_done_every_10ms(Duration::from_secs(10))?;
 
         Ok(())
     }
 
-    /// Write programming sequence.
+    /// Control logic write programming sequence.
     fn write_programming(&self, words: &[u32]) -> Result<()> {
         let mut len = words.len() as u32;
 
@@ -430,7 +433,7 @@ where
         todo!()
     }
 
-    /// Abort sequence.
+    /// Control logic abort sequence.
     fn abort(&self) -> Result<()> {
         // Initiate a write or read of the ICAPEn using the steps in Programming Sequence, and while
         // waiting for the completion of the operation, perform the following steps.
@@ -439,21 +442,25 @@ where
         self.set_hbicap_reg(HbicapReg::Control, ControlRegBit::Abort as u32)?;
 
         // The Done bit in the Status register indicates whether the abort operation is completed.
-        self.poll_done_every_10ms()?;
+        self.poll_done_every_10ms(Duration::from_secs(10))?;
 
         // Read the Abort Status register that contains the four bytes read from the ICAPEn, which
         // indicates the status of the abort operation.
-        let abort_status = self.get_hbicap_reg(HbicapReg::AbortStatus)?;
-        debug!("HBICAP abort status 0x{:08x}", abort_status);
+        debug!(
+            "HBICAP abort status 0x{:08x}",
+            self.get_hbicap_reg(HbicapReg::AbortStatus)?
+        );
 
         // The hardware clears the Control register bits after the successful completion of the
         // abort-on read, abort-on configuration, or normal abort.
-        let control = self.get_hbicap_reg(HbicapReg::Control)?;
-        debug!("HBICAP control reg 0x{:08x}", control);
+        debug!(
+            "HBICAP control reg 0x{:08x}",
+            self.get_hbicap_reg(HbicapReg::Control)?
+        );
 
         // The software should not initiate another read or configuration to the ICAPEn until the
         // abort bit in the Control register is cleared.
-        self.poll_abort_finished_every_10ms()?;
+        self.poll_abort_finished_every_10ms(Duration::from_secs(10))?;
 
         Ok(())
     }

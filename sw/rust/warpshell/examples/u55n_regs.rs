@@ -67,7 +67,7 @@ fn main() {
     shell.hbicap.abort().expect("cannot perform HBICAP abort");
     shell
         .hbicap
-        .poll_done_every_10ms()
+        .poll_done_every_10ms(Duration::from_secs(10))
         .expect("HBICAP not ready");
     for reg in all::<ConfigLogicReg>() {
         println!(

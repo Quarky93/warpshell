@@ -1,3 +1,5 @@
+//! # Xilinx U55N (Varium C1100) standard shell
+
 use super::{Error, Result, Shell};
 use crate::{
     cores::{
@@ -9,6 +11,7 @@ use crate::{
     xdma::{CtrlChannel, DmaChannel, GetCtrlChannel, GetDmaChannel, CTRL_CHANNEL, DMA_CHANNEL0},
     BaseParam, DmaBuffer,
 };
+use std::time::Duration;
 use warpshell_derive::{GetCtrlChannel, GetDmaChannel};
 
 /// Standard shell for Xilinx U55N also known as [Varium C1100 blockchain accelerator
@@ -168,7 +171,7 @@ impl<'a> Shell for XilinxU55nXdmaStd<'a> {
         buf.0.extend_from_slice(image);
         self.hbicap.write_bitstream(&buf)?;
 
-        self.hbicap.poll_done_every_10ms()?;
+        self.hbicap.poll_done_every_10ms(Duration::from_secs(20))?;
         self.dfx_decoupler.disable()?;
 
         Ok(())
