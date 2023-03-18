@@ -1,8 +1,8 @@
 # -- [Clocks] ------------------------------------------------------------------
 # pcie refclock
 create_clock -period 10.000 -name pcie_refclk [get_ports pcie_refclk_clk_p]
-# hbm refclock
-create_clock -period 10.000 -name sysclk_0 [get_ports sys_refclk_0_clk_p]
+# sys refclock
+create_clock -period 10.000 -name sys_refclk_0 [get_ports sys_refclk_0_clk_p]
 # ------------------------------------------------------------------------------
 
 # -- [Clock Pins] --------------------------------------------------------------
