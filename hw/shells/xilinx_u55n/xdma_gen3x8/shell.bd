@@ -1,7 +1,7 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0x7BC4BA6ECE328A34",
+      "boundary_crc": "0x7BC4BA6E085E9396",
       "device": "xcu55n-fsvh2892-2L-e",
       "name": "shell",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
@@ -204,7 +204,7 @@
             "value_src": "user_prop"
           },
           "NUM_WRITE_OUTSTANDING": {
-            "value": "32"
+            "value": "16"
           },
           "NUM_WRITE_THREADS": {
             "value": "1",
@@ -1297,7 +1297,7 @@
             "value": "32"
           },
           "ENABLE_PRESCALER": {
-            "value": "0"
+            "value": "1"
           },
           "ENABLE_PROTOCOL_CHECKS": {
             "value": "1"
@@ -1453,7 +1453,7 @@
             "value": "256"
           },
           "ENABLE_PRESCALER": {
-            "value": "0"
+            "value": "1"
           },
           "HAS_BRESP": {
             "value": "1"
@@ -1492,7 +1492,7 @@
             "value": "1"
           },
           "NUM_WRITE_OUTSTANDING": {
-            "value": "32"
+            "value": "16"
           },
           "NUM_WRITE_THREADS": {
             "value": "1"
@@ -2495,7 +2495,7 @@
               "SEG_mgmt_ram_Mem0": {
                 "address_block": "/mgmt_ram/S_AXI/Mem0",
                 "offset": "0x04060000",
-                "range": "8K"
+                "range": "4K"
               },
               "SEG_qspi_Reg": {
                 "address_block": "/qspi/AXI_LITE/Reg",

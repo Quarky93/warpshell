@@ -1,7 +1,7 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0x9DAB164180AD5288",
+      "boundary_crc": "0x9DAB1641CFA3209F",
       "device": "xcu55n-fsvh2892-2L-e",
       "name": "user",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
@@ -93,7 +93,7 @@
             "value": "1"
           },
           "NUM_WRITE_OUTSTANDING": {
-            "value": "32"
+            "value": "16"
           },
           "NUM_WRITE_THREADS": {
             "value": "1"
@@ -1210,7 +1210,7 @@
                 "value": "32"
               },
               "NUM_WRITE_OUTSTANDING": {
-                "value": "32"
+                "value": "16"
               }
             },
             "bridges": [
@@ -1232,7 +1232,7 @@
                 "value": "1"
               },
               "NUM_WRITE_OUTSTANDING": {
-                "value": "32"
+                "value": "16"
               },
               "NUM_WRITE_THREADS": {
                 "value": "1"
@@ -1252,8 +1252,8 @@
       },
       "debug_bridge": {
         "vlnv": "xilinx.com:ip:debug_bridge:3.0",
-        "xci_name": "user_debug_bridge_0_0",
-        "xci_path": "ip/user_debug_bridge_0_0/user_debug_bridge_0_0.xci",
+        "xci_name": "user_debug_bridge_0",
+        "xci_path": "ip/user_debug_bridge_0/user_debug_bridge_0.xci",
         "inst_hier_path": "debug_bridge",
         "parameters": {
           "C_DESIGN_TYPE": {
@@ -1270,8 +1270,8 @@
       },
       "shell_axi_ila": {
         "vlnv": "xilinx.com:ip:system_ila:1.1",
-        "xci_name": "user_system_ila_0_0",
-        "xci_path": "ip/user_system_ila_0_0/user_system_ila_0_0.xci",
+        "xci_name": "user_shell_axi_ila_0",
+        "xci_path": "ip/user_shell_axi_ila_0/user_shell_axi_ila_0.xci",
         "inst_hier_path": "shell_axi_ila",
         "parameters": {
           "C_NUM_MONITOR_SLOTS": {
