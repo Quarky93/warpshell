@@ -4,8 +4,8 @@ mod xilinx_u55n_xdma_std;
 
 use crate::{
     cores::{
-        cms::Error as CmsError, dfx_decoupler::Error as DfxDecouplerError,
-        hbicap::Error as HbicapError,
+        axi_firewall::Error as AxiFirewallError, cms::Error as CmsError,
+        dfx_decoupler::Error as DfxDecouplerError, hbicap::Error as HbicapError,
     },
     xdma::Error as XdmaError,
     Error as BasedError,
@@ -30,12 +30,13 @@ pub enum Error {
     Hbicap(#[from] HbicapError),
     #[error("DFX decoupler error")]
     DfxDecoupler(#[from] DfxDecouplerError),
+    #[error("AXI firewall error")]
+    AxiFirewall(#[from] AxiFirewallError),
 }
 
 /// A shell is a collection of cores with host interfaces to them, for example,
 /// [`XilinxU55nXdmaStd`]. This trait provides methods that may involve multiple cores.
 pub trait Shell {
     fn init(&self) -> Result<()>;
-    fn read_back_user_image(&self) -> Result<Vec<u8>>;
     fn program_user_image(&self, image: &[u8]) -> Result<()>;
 }

@@ -6,11 +6,12 @@ use crate::{
         axi_firewall::AxiFirewallOps,
         cms::CmsOps,
         dfx_decoupler::DfxDecouplerOps,
-        hbicap::{GetHbicapIf, HbicapOps},
+        hbicap::{Error as HbicapError, GetHbicapIf, HbicapOps},
     },
     xdma::{CtrlChannel, DmaChannel, GetCtrlChannel, GetDmaChannel, CTRL_CHANNEL, DMA_CHANNEL0},
-    BaseParam, DmaBuffer,
+    BaseParam, DmaBuffer, Error as BasedError,
 };
+use log::info;
 use std::time::Duration;
 use warpshell_derive::{GetCtrlChannel, GetDmaChannel};
 
@@ -155,24 +156,30 @@ impl<'a> Shell for XilinxU55nXdmaStd<'a> {
         Ok(self.cms.init()?)
     }
 
-    fn read_back_user_image(&self) -> Result<Vec<u8>> {
-        todo!()
-    }
-
     fn program_user_image(&self, image: &[u8]) -> Result<()> {
-        if !self.hbicap.is_ready()? {
-            return Err(Error::HbicapNotReady);
+        match self.hbicap.poll_done_every_10ms(Duration::from_secs(10)) {
+            Err(HbicapError::BasedError(BasedError::RegMaskNotAsExpected {
+                offset: _,
+                mask: _,
+                expected: _,
+            })) => {
+                info!("HBICAP not Idle; aborting...");
+                self.hbicap.abort()?
+            }
+            Err(e) => return Err(Error::Hbicap(e)),
+            Ok(_) => {}
         }
 
-        self.dfx_decoupler.enable()?;
-        self.hbicap.reset()?;
+        self.ctrl_axi_firewall.block_mi()?;
+        self.dma_axi_firewall.block_mi()?;
 
         let mut buf = DmaBuffer::new(image.len());
         buf.0.extend_from_slice(image);
         self.hbicap.write_bitstream(&buf)?;
+        self.hbicap.poll_done_every_10ms(Duration::from_secs(10))?;
 
-        self.hbicap.poll_done_every_10ms(Duration::from_secs(20))?;
-        self.dfx_decoupler.disable()?;
+        self.dma_axi_firewall.unblock_mi()?;
+        self.ctrl_axi_firewall.unblock_mi()?;
 
         Ok(())
     }

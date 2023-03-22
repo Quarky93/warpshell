@@ -20,8 +20,14 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Error {
     #[error("XDMA error: {0}")]
     XdmaError(#[from] XdmaError),
-    #[error("Register mask not as expected")]
-    RegMaskNotAsExpected,
+    #[error(
+        "Register mask 0x{mask:08x} not equal to expected 0x{expected:08x} at offset 0x{offset:16x}"
+    )]
+    RegMaskNotAsExpected {
+        offset: u64,
+        mask: u32,
+        expected: u32,
+    },
 }
 
 /// Base address of a memory-mapped core
@@ -45,7 +51,11 @@ pub trait BasedCtrlOps {
             .take(n)
             .position(|ready| ready.map(|ready| ready & mask) == Some(expected))
             .map(|_| ())
-            .ok_or(Error::RegMaskNotAsExpected)
+            .ok_or(Error::RegMaskNotAsExpected {
+                offset,
+                mask,
+                expected,
+            })
     }
 
     /// Polls a given `mask` in a given `u32` register at `offset` continuously at least `n` times
@@ -66,7 +76,11 @@ pub trait BasedCtrlOps {
         .take(n)
         .position(|ready| ready.map(|ready| ready & mask) == Some(expected))
         .map(|pos| pos + 1)
-        .ok_or(Error::RegMaskNotAsExpected)
+        .ok_or(Error::RegMaskNotAsExpected {
+            offset,
+            mask,
+            expected,
+        })
     }
 
     /// Polls a given `mask` in a given `u32` register at `offset` continuously at least `n` times
@@ -165,9 +179,9 @@ impl From<Vec<u8>> for ByteString {
     }
 }
 
-impl Into<Vec<u8>> for ByteString {
-    fn into(self) -> Vec<u8> {
-        self.0
+impl From<ByteString> for Vec<u8> {
+    fn from(bs: ByteString) -> Vec<u8> {
+        bs.0
     }
 }
 

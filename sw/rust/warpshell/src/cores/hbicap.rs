@@ -188,12 +188,12 @@ impl Type1Packet {
     }
 }
 
-impl Into<u32> for Type1Packet {
-    fn into(self) -> u32 {
+impl From<Type1Packet> for u32 {
+    fn from(p: Type1Packet) -> u32 {
         (PacketType::Type1 as u32) << 29
-            | (self.opcode as u32) << 27
-            | (self.reg as u32) << 13
-            | (self.n_words & TYPE1_N_WORDS_MASK)
+            | (p.opcode as u32) << 27
+            | (p.reg as u32) << 13
+            | (p.n_words & TYPE1_N_WORDS_MASK)
     }
 }
 
@@ -210,11 +210,11 @@ impl Type2Packet {
     }
 }
 
-impl Into<u32> for Type2Packet {
-    fn into(self) -> u32 {
+impl From<Type2Packet> for u32 {
+    fn from(p: Type2Packet) -> u32 {
         (PacketType::Type2 as u32) << 29
-            | (self.opcode as u32) << 27
-            | (self.n_words & TYPE2_N_WORDS_MASK)
+            | (p.opcode as u32) << 27
+            | (p.n_words & TYPE2_N_WORDS_MASK)
     }
 }
 

@@ -91,7 +91,7 @@ fn main() -> anyhow::Result<()> {
             let start = Instant::now();
             shell.program_user_image(&bitstream)?;
             let elapsed = start.elapsed();
-            println!("Programming finished in {:?}", elapsed);
+            println!("Programming finished in {elapsed:?}");
         }
 
         Some(Command::Get { reading }) => {
