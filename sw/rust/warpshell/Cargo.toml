@@ -35,6 +35,10 @@ test-log = "0.2.11"
 name = "u55n"
 harness = false
 
+[[bench]]
+name = "bram"
+harness = false
+
 [[example]]
 name = "u55n_regs"
 

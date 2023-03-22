@@ -94,6 +94,20 @@ where
     T: GetCtrlChannel + BaseParam,
 {
     #[inline]
+    fn based_ctrl_read(&self, buf: &mut [u8], offset: u64) -> BasedResult<()> {
+        self.get_ctrl_channel()
+            .ctrl_read(buf, T::BASE_ADDR + offset)?;
+        Ok(())
+    }
+
+    #[inline]
+    fn based_ctrl_write(&self, buf: &[u8], offset: u64) -> BasedResult<()> {
+        Ok(self
+            .get_ctrl_channel()
+            .ctrl_write(buf, T::BASE_ADDR + offset)?)
+    }
+
+    #[inline]
     fn based_ctrl_read_u32(&self, offset: u64) -> BasedResult<u32> {
         let mut data = [0u8; 4];
         self.get_ctrl_channel()

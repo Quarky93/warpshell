@@ -38,6 +38,12 @@ pub trait BaseParam {
 
 /// IO operations on a memory-mapped component via a control channel
 pub trait BasedCtrlOps {
+    /// Reads from `offset` to fill `buf` completely.
+    fn based_ctrl_read(&self, buf: &mut [u8], offset: u64) -> Result<()>;
+
+    /// Writes the entire `buf` to `offset`.
+    fn based_ctrl_write(&self, buf: &[u8], offset: u64) -> Result<()>;
+
     /// Reads a `u32` register at `offset`.
     fn based_ctrl_read_u32(&self, offset: u64) -> Result<u32>;
 

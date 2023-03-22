@@ -10,7 +10,6 @@ use warpshell::{
         hbicap::{ConfigLogicReg, HbicapOps, HbicapReg},
     },
     shells::{Shell, XilinxU55nXdmaStd},
-    xdma::{CtrlOps, GetCtrlChannel},
 };
 
 fn main() {
@@ -21,22 +20,6 @@ fn main() {
 
     // Wait 1ms to allow readings to be populated.
     sleep(Duration::from_millis(100));
-
-    println!(" ### BRAM test");
-    {
-        const BRAM_BASE_ADDR: u64 = 0x0080_1000;
-        let ctrl_chan = shell.cms.get_ctrl_channel();
-        let test_str: &[u8] = b"Warpshell ROCKXX";
-        ctrl_chan
-            .ctrl_write(test_str, BRAM_BASE_ADDR)
-            .expect("cannot write to BRAM");
-        let mut read_back_buf: [u8; 16] = [0; 16];
-        ctrl_chan
-            .ctrl_read(&mut read_back_buf, BRAM_BASE_ADDR)
-            .expect("cannot read BRAM");
-        assert_eq!(test_str, read_back_buf);
-        println!("Successfully tested BRAM");
-    }
 
     println!(" ### CMS registers:");
     for reg in all::<CmsReg>() {
