@@ -160,7 +160,7 @@ impl<'a> Shell for XilinxU55nXdmaStd<'a> {
     }
 
     fn program_user_image(&self, image: &[u8]) -> Result<()> {
-        if self.hbicap.is_ready()? {
+        if !self.hbicap.is_ready()? {
             return Err(Error::HbicapNotReady);
         }
 
