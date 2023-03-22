@@ -32,12 +32,17 @@ fn random_payload() -> Vec<u8> {
     buf
 }
 
-fn write(c: &mut Criterion) {
+fn setup<'a>() -> (Bram<'a>, Vec<u8>) {
     let ctrl_channel = CTRL_CHANNEL
         .get_or_init()
         .expect("cannot get control channel");
     let bram = Bram { ctrl_channel };
     let buf = random_payload();
+    (bram, buf)
+}
+
+fn write(c: &mut Criterion) {
+    let (bram, buf) = setup();
     let bench_name = format!("write {} bytes", buf.len());
     let target_time = Duration::from_secs(4);
     let mut group = c.benchmark_group(&format!("{bench_name} with target time {target_time:?}",));
@@ -48,11 +53,7 @@ fn write(c: &mut Criterion) {
 }
 
 fn read(c: &mut Criterion) {
-    let ctrl_channel = CTRL_CHANNEL
-        .get_or_init()
-        .expect("cannot get control channel");
-    let bram = Bram { ctrl_channel };
-    let mut buf = random_payload();
+    let (bram, mut buf) = setup();
     let bench_name = format!("read {} bytes", buf.len());
     let target_time = Duration::from_secs(4);
     let mut group = c.benchmark_group(&format!("{bench_name} with target time {target_time:?}",));
