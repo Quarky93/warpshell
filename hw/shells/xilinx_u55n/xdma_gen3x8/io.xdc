@@ -1,58 +1,21 @@
-# -- [Clock Hints] -------------------------------------------------------------
-# shell clock
-create_clock -period 10.000 -name PCIEREFCLK1 [get_ports pcie_clk_clk_p]
-# hbm clock
-create_clock -period 10.000 -name SYSCLK2 [get_ports shell_clk_clk_p]
-# user clock
-# create_clock -period 10.000 -name SYSCLK3 [get_ports "user_clk_clk_p"]
+# -- [Clocks] ------------------------------------------------------------------
+# pcie refclock
+create_clock -period 10.000 -name pcie_refclk [get_ports pcie_refclk_clk_p]
+# sys refclock
+create_clock -period 10.000 -name sys_refclk_0 [get_ports sys_refclk_0_clk_p]
 # ------------------------------------------------------------------------------
 
 # -- [Clock Pins] --------------------------------------------------------------
-set_property PACKAGE_PIN AR14 [get_ports pcie_clk_clk_n]
-set_property PACKAGE_PIN AR15 [get_ports pcie_clk_clk_p]
+set_property PACKAGE_PIN AR14 [get_ports pcie_refclk_clk_n]
+set_property PACKAGE_PIN AR15 [get_ports pcie_refclk_clk_p]
 
-set_property -dict {IOSTANDARD LVDS PACKAGE_PIN BL10} [get_ports shell_clk_clk_n]
-set_property -dict {IOSTANDARD LVDS PACKAGE_PIN BK10} [get_ports shell_clk_clk_p]
-
-# set_property -dict {IOSTANDARD LVDS PACKAGE_PIN BK44} [get_ports "user_clk_clk_n"]
-# set_property -dict {IOSTANDARD LVDS PACKAGE_PIN BK43} [get_ports "user_clk_clk_p"]
+set_property -dict {IOSTANDARD LVDS PACKAGE_PIN BK44} [get_ports sys_refclk_0_clk_n]
+set_property -dict {IOSTANDARD LVDS PACKAGE_PIN BK43} [get_ports sys_refclk_0_clk_p]
 # ------------------------------------------------------------------------------
 
 # -- [PCIE Pins] ---------------------------------------------------------------
 set_property -dict {IOSTANDARD LVCMOS18 PACKAGE_PIN BF41} [get_ports pcie_rstn]
 
-set_property PACKAGE_PIN BC6  [get_ports { pcie_mgt_txn[15] }]
-set_property PACKAGE_PIN BC7  [get_ports { pcie_mgt_txp[15] }]
-set_property PACKAGE_PIN BC1  [get_ports { pcie_mgt_rxn[15] }]
-set_property PACKAGE_PIN BC2  [get_ports { pcie_mgt_rxp[15] }]
-set_property PACKAGE_PIN BC10 [get_ports { pcie_mgt_txn[14] }]
-set_property PACKAGE_PIN BC11 [get_ports { pcie_mgt_txp[14] }]
-set_property PACKAGE_PIN BB3  [get_ports { pcie_mgt_rxn[14] }]
-set_property PACKAGE_PIN BB4  [get_ports { pcie_mgt_rxp[14] }]
-set_property PACKAGE_PIN BB8  [get_ports { pcie_mgt_txn[13] }]
-set_property PACKAGE_PIN BB9  [get_ports { pcie_mgt_txp[13] }]
-set_property PACKAGE_PIN BA1  [get_ports { pcie_mgt_rxn[13] }]
-set_property PACKAGE_PIN BA2  [get_ports { pcie_mgt_rxp[13] }]
-set_property PACKAGE_PIN BA10 [get_ports { pcie_mgt_txn[12] }]
-set_property PACKAGE_PIN BA11 [get_ports { pcie_mgt_txp[12] }]
-set_property PACKAGE_PIN BA5  [get_ports { pcie_mgt_rxn[12] }]
-set_property PACKAGE_PIN BA6  [get_ports { pcie_mgt_rxp[12] }]
-set_property PACKAGE_PIN AY8  [get_ports { pcie_mgt_txn[11] }]
-set_property PACKAGE_PIN AY9  [get_ports { pcie_mgt_txp[11] }]
-set_property PACKAGE_PIN AY3  [get_ports { pcie_mgt_rxn[11] }]
-set_property PACKAGE_PIN AY4  [get_ports { pcie_mgt_rxp[11] }]
-set_property PACKAGE_PIN AW10 [get_ports { pcie_mgt_txn[10] }]
-set_property PACKAGE_PIN AW11 [get_ports { pcie_mgt_txp[10] }]
-set_property PACKAGE_PIN AW1  [get_ports { pcie_mgt_rxn[10] }]
-set_property PACKAGE_PIN AW2  [get_ports { pcie_mgt_rxp[10] }]
-set_property PACKAGE_PIN AV8  [get_ports { pcie_mgt_txn[9] }]
-set_property PACKAGE_PIN AV9  [get_ports { pcie_mgt_txp[9] }]
-set_property PACKAGE_PIN AW5  [get_ports { pcie_mgt_rxn[9] }]
-set_property PACKAGE_PIN AW6  [get_ports { pcie_mgt_rxp[9] }]
-set_property PACKAGE_PIN AU6  [get_ports { pcie_mgt_txn[8] }]
-set_property PACKAGE_PIN AU7  [get_ports { pcie_mgt_txp[8] }]
-set_property PACKAGE_PIN AV3  [get_ports { pcie_mgt_rxn[8] }]
-set_property PACKAGE_PIN AV4  [get_ports { pcie_mgt_rxp[8] }]
 set_property PACKAGE_PIN AU10 [get_ports { pcie_mgt_txn[7] }]
 set_property PACKAGE_PIN AU11 [get_ports { pcie_mgt_txp[7] }]
 set_property PACKAGE_PIN AU1  [get_ports { pcie_mgt_rxn[7] }]
@@ -85,11 +48,9 @@ set_property PACKAGE_PIN AL10 [get_ports { pcie_mgt_txn[0] }]
 set_property PACKAGE_PIN AL11 [get_ports { pcie_mgt_txp[0] }]
 set_property PACKAGE_PIN AL1  [get_ports { pcie_mgt_rxn[0] }]
 set_property PACKAGE_PIN AL2  [get_ports { pcie_mgt_rxp[0] }]
-
 # ------------------------------------------------------------------------------
 
 # -- [Satellite Controller Pins] -----------------------------------------------
-
 set_property -dict { IOSTANDARD LVCMOS18 PACKAGE_PIN BE46 } [get_ports { satellite_gpio[0] }]
 set_property -dict { IOSTANDARD LVCMOS18 PACKAGE_PIN BF46 } [get_ports { satellite_gpio[3] }]
 set_property -dict { IOSTANDARD LVCMOS18 PACKAGE_PIN BF45 } [get_ports { satellite_gpio[2] }]
