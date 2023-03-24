@@ -1,0 +1,17 @@
+[package]
+name = "warpshell-derive"
+description = "Procmacro helpers for the warpshell library"
+version = "0.1.0"
+authors = ["Vladimir Komendantskiy <komendantsky@gmail.com>"]
+repository = "https://github.com/Quarky93/warpshell"
+license = "Apache-2.0"
+readme = "README.md"
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0"
+quote = "1.0"
+syn = "1.0.45"

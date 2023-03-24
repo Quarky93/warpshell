@@ -1,4 +1,6 @@
 [workspace]
 members = [
-    "devices"
+    "warpshell",
+    "warpshell-cli",
+    "warpshell-derive"
 ]

@@ -1,19 +1,29 @@
 [package]
-name = "warp-devices"
-description = "Library for interfacing with Xilinx XDMA FPGAs"
-version = "0.3.1"
-authors = ["Vladimir Komendantskiy <komendantsky@gmail.com>"]
+name = "warpshell"
+description = "Library for interfacing with Xilinx FPGAs"
+version = "0.1.0"
+authors = [
+    "Vladimir Komendantskiy <komendantsky@gmail.com>",
+    "Tony Wu"
+]
 repository = "https://github.com/Quarky93/warpshell"
 license = "Apache-2.0"
 readme = "README.md"
 edition = "2021"
 
 [dependencies]
-enum-iterator = "1.2"
+amplify = "3.14.1"
+arrayvec = "0.7.2"
+enum-iterator = "1.3"
 log = "0.4"
 num_enum = "0.5"
+once_cell = "1.17"
+thiserror = "1.0.38"
+warpshell-derive = { path = "../warpshell-derive" }
 
 [dev-dependencies]
+ascii = "1.1.0"
+assert_matches = "1.5"
 criterion = "0.4"
 env_logger = "0.9"
 itertools = "0.10"
@@ -22,11 +32,15 @@ rand = { version = "0.8.5", features = ["simd_support"] }
 test-log = "0.2.11"
 
 [[bench]]
-name = "varium_c1100"
+name = "u55n"
+harness = false
+
+[[bench]]
+name = "bram"
 harness = false
 
 [[example]]
-name = "cms_regs"
+name = "u55n_regs"
 
 [[example]]
 name = "card_info"

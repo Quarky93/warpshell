@@ -1,0 +1,19 @@
+[package]
+name = "warpshell-cli"
+version = "0.1.0"
+authors = [
+    "Vladimir Komendantskiy <komendantsky@gmail.com>",
+    "Tony Wu"
+]
+repository = "https://github.com/Quarky93/warpshell"
+license = "Apache-2.0"
+readme = "README.md"
+edition = "2021"
+
+[dependencies]
+amplify = "3.14.1"
+anyhow = "1.0.69"
+clap = { version = "4.1.6", features = [ "derive" ] }
+env_logger = "0.10.0"
+log = "0.4.17"
+warpshell = { path = "../warpshell" }
