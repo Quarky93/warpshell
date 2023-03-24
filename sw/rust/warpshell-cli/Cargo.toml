@@ -16,4 +16,4 @@ anyhow = "1.0.69"
 clap = { version = "4.1.6", features = [ "derive" ] }
 env_logger = "0.10.0"
 log = "0.4.17"
-warpshell = { path = "../warpshell" }
+warpshell = "0.1.0"
