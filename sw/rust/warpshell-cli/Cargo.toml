@@ -1,5 +1,6 @@
 [package]
 name = "warpshell-cli"
+description = "Warpshell CLI"
 version = "0.1.0"
 authors = [
     "Vladimir Komendantskiy <komendantsky@gmail.com>",

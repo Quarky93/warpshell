@@ -938,7 +938,23 @@ dependencies = [
  "rand",
  "test-log",
  "thiserror",
- "warpshell-derive",
+ "warpshell-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "warpshell"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce3637d43cc7e1ce7c5f8b6979b523f0afb08ac145c07de13efb8dc9fbba1ea7"
+dependencies = [
+ "amplify",
+ "arrayvec",
+ "enum-iterator",
+ "log",
+ "num_enum",
+ "once_cell",
+ "thiserror",
+ "warpshell-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -950,12 +966,23 @@ dependencies = [
  "clap 4.1.6",
  "env_logger 0.10.0",
  "log",
- "warpshell",
+ "warpshell 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "warpshell-derive"
 version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "warpshell-derive"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e752d23b6e45f7ed78adc315088a5039665b27653e79ce2db45f7451ee816a68"
 dependencies = [
  "proc-macro2",
  "quote",
