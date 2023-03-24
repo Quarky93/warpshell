@@ -19,12 +19,16 @@ See the [warpshell README](../../README.md) for more information.
 
 ## Setup
 
-Currently it is required to change character device permissions from the ones set (incorrectly) by
-the XDMA kernel driver. The host-to-card devices should be write-only. The card-to-host devices
-should be read-only.
+At the time of writing, XDMA drivers need this
+[patch](https://github.com/Xilinx/dma_ip_drivers/pull/179) to work with Linux kernels 5.16 and
+newer. If you are on a Linux distro not supported by Xilinx and the kernel version is >= 5.16,
+compile the XDMA kernel driver from the [PR
+branch](https://github.com/vkomenda/dma_ip_drivers/tree/dma-compat-fix-linux-5.19).
 
-To run benchmarks without `sudo`, all XDMA character devices should be assigned to a group which
-also contains the user who is running the benchmarks.
+It is also required to change character device permissions from the ones set (incorrectly) by the
+XDMA kernel driver. The host-to-card devices should be write-only. The card-to-host devices should
+be read-only. To run benchmarks without `sudo`, all XDMA character devices should be assigned to a
+group which also contains the user who runs the benchmarks.
 
 There is a handy [script](../scripts/set-xdma-perms.sh) for that.
 
