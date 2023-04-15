@@ -1899,10 +1899,10 @@
             "value": "Processing_accelerators"
           },
           "pl_link_cap_max_link_speed": {
-            "value": "8.0_GT/s"
+            "value": "16.0_GT/s"
           },
           "pl_link_cap_max_link_width": {
-            "value": "X8"
+            "value": "X4"
           }
         },
         "interface_ports": {

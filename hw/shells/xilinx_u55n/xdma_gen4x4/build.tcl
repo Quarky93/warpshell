@@ -29,14 +29,14 @@ launch_runs synth_1 -jobs 16
 wait_on_runs synth_1
 
 open_run synth_1
-write_checkpoint -force ./post_synth_xilinx_u55n_xdma_gen3x8.dcp
+write_checkpoint -force ./post_synth_xilinx_u55n_xdma_gen4x4.dcp
 opt_design -directive Explore
 place_design -directive Auto_1
 phys_opt_design -directive ExploreWithAggressiveHoldFix
 route_design -directive AggressiveExplore
 phys_opt_design -directive ExploreWithAggressiveHoldFix
-write_checkpoint ./post_route_xilinx_u55n_xdma_gen3x8.dcp
-write_bitstream -bin_file -force ./warpshell_xilinx_u55n_xdma_gen3x8.bit
-write_abstract_shell -cell user_partition -force ./abstract_warpshell_xilinx_u55n_xdma_gen3x8.dcp
-write_cfgmem -force -format mcs -interface spix4 -size 128 -loadbit "up 0x01002000 warpshell_xilinx_u55n_xdma_gen3x8.bit" -file "warpshell_xilinx_u55n_xdma_gen3x8.mcs"
+write_checkpoint ./post_route_xilinx_u55n_xdma_gen4x4.dcp
+write_bitstream -bin_file -force ./warpshell_xilinx_u55n_xdma_gen4x4.bit
+write_abstract_shell -cell user_partition -force ./abstract_warpshell_xilinx_u55n_xdma_gen4x4.dcp
+write_cfgmem -force -format mcs -interface spix4 -size 128 -loadbit "up 0x01002000 warpshell_xilinx_u55n_xdma_gen4x4.bit" -file "warpshell_xilinx_u55n_xdma_gen4x4.mcs"
 # -----------------------------------------------------------------------------
