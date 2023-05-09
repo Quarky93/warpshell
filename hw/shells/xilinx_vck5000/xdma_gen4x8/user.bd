@@ -1,0 +1,410 @@
+{
+  "design": {
+    "design_info": {
+      "boundary_crc": "0x612F83D81E5A884E",
+      "device": "xcvc1902-vsvd1760-2MP-e-S",
+      "name": "user",
+      "rev_ctrl_bd_flag": "RevCtrlBdOff",
+      "synth_flow_mode": "None",
+      "tool_version": "2022.2",
+      "validated": "true"
+    },
+    "design_tree": {
+      "noc": "",
+      "dummy_bram_ctrl": "",
+      "dummy_bram_ctrl_bram": "",
+      "rstn": "",
+      "const_1": "",
+      "traffic_gen": ""
+    },
+    "interface_ports": {
+      "shell_to_user_ini": {
+        "mode": "Slave",
+        "vlnv_bus_definition": "xilinx.com:interface:inimm:1.0",
+        "vlnv": "xilinx.com:interface:inimm_rtl:1.0",
+        "parameters": {
+          "ADDR_WIDTH": {
+            "value": "64",
+            "value_src": "default"
+          },
+          "COMPUTED_STRATEGY": {
+            "value": "driver",
+            "value_src": "default_prop"
+          },
+          "INI_STRATEGY": {
+            "value": "auto",
+            "value_src": "default"
+          }
+        },
+        "address_space_ref": "shell_to_user_ini",
+        "base_address": {
+          "minimum": "0x00000000",
+          "maximum": "0xFFFFFFFFFFFFFFFF",
+          "width": "64"
+        },
+        "port_maps": {
+          "INTERNOC": {
+            "physical_name": "shell_to_user_ini_internoc",
+            "direction": "I",
+            "left": "0",
+            "right": "0"
+          }
+        }
+      },
+      "user_to_shell_ini": {
+        "mode": "Master",
+        "vlnv_bus_definition": "xilinx.com:interface:inimm:1.0",
+        "vlnv": "xilinx.com:interface:inimm_rtl:1.0",
+        "parameters": {
+          "ADDR_WIDTH": {
+            "value": "64",
+            "value_src": "default"
+          },
+          "COMPUTED_STRATEGY": {
+            "value": "load",
+            "value_src": "default_prop"
+          },
+          "INI_STRATEGY": {
+            "value": "load"
+          }
+        },
+        "memory_map_ref": "user_to_shell_ini",
+        "port_maps": {
+          "INTERNOC": {
+            "physical_name": "user_to_shell_ini_internoc",
+            "direction": "O",
+            "left": "0",
+            "right": "0"
+          }
+        }
+      }
+    },
+    "ports": {
+      "user_ref_clk_100": {
+        "type": "clk",
+        "direction": "I",
+        "parameters": {
+          "CLK_DOMAIN": {
+            "value": "user_user_ref_clk",
+            "value_src": "default"
+          },
+          "FREQ_HZ": {
+            "value": "100000000"
+          },
+          "FREQ_TOLERANCE_HZ": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.0",
+            "value_src": "default"
+          }
+        }
+      }
+    },
+    "components": {
+      "noc": {
+        "vlnv": "xilinx.com:ip:axi_noc:1.0",
+        "xci_name": "user_noc_0",
+        "xci_path": "ip/user_noc_0/user_noc_0.xci",
+        "inst_hier_path": "noc",
+        "parameters": {
+          "NUM_MI": {
+            "value": "2"
+          },
+          "NUM_NMI": {
+            "value": "1"
+          },
+          "NUM_NSI": {
+            "value": "1"
+          },
+          "NUM_SI": {
+            "value": "1"
+          }
+        },
+        "interface_ports": {
+          "S00_AXI": {
+            "mode": "Slave",
+            "vlnv_bus_definition": "xilinx.com:interface:aximm:1.0",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+            "parameters": {
+              "CATEGORY": {
+                "value": "pl"
+              },
+              "CONNECTIONS": {
+                "value": "M00_INI { read_bw {1720} write_bw {1720}}"
+              }
+            },
+            "bridges": [
+              "M00_INI"
+            ]
+          },
+          "S00_INI": {
+            "mode": "Slave",
+            "vlnv_bus_definition": "xilinx.com:interface:inimm:1.0",
+            "vlnv": "xilinx.com:interface:inimm_rtl:1.0",
+            "parameters": {
+              "CONNECTIONS": {
+                "value": "M01_AXI { read_bw {1720} write_bw {1720} read_avg_burst {4} write_avg_burst {4}} M00_AXI { read_bw {1720} write_bw {1720} read_avg_burst {4} write_avg_burst {4}}"
+              },
+              "INI_STRATEGY": {
+                "value": "driver"
+              }
+            },
+            "bridges": [
+              "M00_AXI",
+              "M01_AXI"
+            ]
+          },
+          "M00_AXI": {
+            "mode": "Master",
+            "vlnv_bus_definition": "xilinx.com:interface:aximm:1.0",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+            "parameters": {
+              "APERTURES": {
+                "value": "{0x201_0000_0000 1G}"
+              },
+              "CATEGORY": {
+                "value": "pl"
+              }
+            },
+            "base_address": {
+              "minimum": "0x020100000000",
+              "maximum": "0x02013FFFFFFF",
+              "width": "64"
+            }
+          },
+          "M01_AXI": {
+            "mode": "Master",
+            "vlnv_bus_definition": "xilinx.com:interface:aximm:1.0",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+            "parameters": {
+              "APERTURES": {
+                "value": "{0x201_8000_0000 1G}"
+              },
+              "CATEGORY": {
+                "value": "pl"
+              }
+            },
+            "base_address": {
+              "minimum": "0x020180000000",
+              "maximum": "0x0201BFFFFFFF",
+              "width": "64"
+            }
+          },
+          "M00_INI": {
+            "mode": "Master",
+            "vlnv_bus_definition": "xilinx.com:interface:inimm:1.0",
+            "vlnv": "xilinx.com:interface:inimm_rtl:1.0",
+            "parameters": {
+              "INI_STRATEGY": {
+                "value": "load"
+              }
+            }
+          }
+        }
+      },
+      "dummy_bram_ctrl": {
+        "vlnv": "xilinx.com:ip:axi_bram_ctrl:4.1",
+        "xci_name": "user_dummy_bram_ctrl_0",
+        "xci_path": "ip/user_dummy_bram_ctrl_0/user_dummy_bram_ctrl_0.xci",
+        "inst_hier_path": "dummy_bram_ctrl"
+      },
+      "dummy_bram_ctrl_bram": {
+        "vlnv": "xilinx.com:ip:emb_mem_gen:1.0",
+        "xci_name": "user_dummy_bram_ctrl_bram_0",
+        "xci_path": "ip/user_dummy_bram_ctrl_bram_0/user_dummy_bram_ctrl_bram_0.xci",
+        "inst_hier_path": "dummy_bram_ctrl_bram",
+        "parameters": {
+          "MEMORY_PRIMITIVE": {
+            "value": "URAM"
+          },
+          "MEMORY_TYPE": {
+            "value": "True_Dual_Port_RAM"
+          }
+        }
+      },
+      "rstn": {
+        "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
+        "xci_name": "user_rstn_0",
+        "xci_path": "ip/user_rstn_0/user_rstn_0.xci",
+        "inst_hier_path": "rstn"
+      },
+      "const_1": {
+        "vlnv": "xilinx.com:ip:xlconstant:1.1",
+        "xci_name": "user_const_1_0",
+        "xci_path": "ip/user_const_1_0/user_const_1_0.xci",
+        "inst_hier_path": "const_1"
+      },
+      "traffic_gen": {
+        "vlnv": "xilinx.com:ip:axi_traffic_gen:3.0",
+        "xci_name": "user_traffic_gen_0",
+        "xci_path": "ip/user_traffic_gen_0/user_traffic_gen_0.xci",
+        "inst_hier_path": "traffic_gen",
+        "parameters": {
+          "C_ATG_MODE_L2": {
+            "value": "Basic"
+          },
+          "C_EXTENDED_ADDRESS_WIDTH": {
+            "value": "64"
+          },
+          "C_M_AXI_ARUSER_WIDTH": {
+            "value": "0"
+          },
+          "C_M_AXI_AWUSER_WIDTH": {
+            "value": "0"
+          },
+          "C_M_AXI_DATA_WIDTH": {
+            "value": "128"
+          },
+          "C_M_AXI_THREAD_ID_WIDTH": {
+            "value": "0"
+          },
+          "C_S_AXI_DATA_WIDTH": {
+            "value": "32"
+          }
+        },
+        "interface_ports": {
+          "M_AXI": {
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+            "mode": "Master",
+            "address_space_ref": "Data",
+            "base_address": {
+              "minimum": "0x00000000",
+              "maximum": "0xFFFFFFFFFFFFFFFF",
+              "width": "64"
+            }
+          }
+        },
+        "addressing": {
+          "address_spaces": {
+            "Data": {
+              "range": "16E",
+              "width": "64"
+            }
+          }
+        }
+      }
+    },
+    "interface_nets": {
+      "dummy_bram_ctrl_BRAM_PORTA": {
+        "interface_ports": [
+          "dummy_bram_ctrl_bram/BRAM_PORTA",
+          "dummy_bram_ctrl/BRAM_PORTA"
+        ]
+      },
+      "dummy_bram_ctrl_BRAM_PORTB": {
+        "interface_ports": [
+          "dummy_bram_ctrl_bram/BRAM_PORTB",
+          "dummy_bram_ctrl/BRAM_PORTB"
+        ]
+      },
+      "noc_M00_AXI": {
+        "interface_ports": [
+          "dummy_bram_ctrl/S_AXI",
+          "noc/M00_AXI"
+        ]
+      },
+      "noc_M01_AXI": {
+        "interface_ports": [
+          "traffic_gen/S_AXI",
+          "noc/M01_AXI"
+        ]
+      },
+      "shell_to_user_ini": {
+        "interface_ports": [
+          "shell_to_user_ini",
+          "noc/S00_INI"
+        ]
+      },
+      "traffic_gen_M_AXI": {
+        "interface_ports": [
+          "traffic_gen/M_AXI",
+          "noc/S00_AXI"
+        ]
+      },
+      "user_to_shell_ini": {
+        "interface_ports": [
+          "user_to_shell_ini",
+          "noc/M00_INI"
+        ]
+      }
+    },
+    "nets": {
+      "const_1": {
+        "ports": [
+          "const_1/dout",
+          "rstn/ext_reset_in"
+        ]
+      },
+      "core_clk_wiz_core_clk": {
+        "ports": [
+          "user_ref_clk_100",
+          "dummy_bram_ctrl/s_axi_aclk",
+          "noc/aclk0",
+          "traffic_gen/s_axi_aclk",
+          "rstn/slowest_sync_clk"
+        ]
+      },
+      "core_rstn_0": {
+        "ports": [
+          "rstn/peripheral_aresetn",
+          "dummy_bram_ctrl/s_axi_aresetn",
+          "traffic_gen/s_axi_aresetn"
+        ]
+      }
+    },
+    "addressing": {
+      "/": {
+        "address_spaces": {
+          "shell_to_user_ini": {
+            "range": "16E",
+            "width": "64",
+            "segments": {
+              "SEG_dummy_bram_ctrl_Mem0": {
+                "address_block": "/dummy_bram_ctrl/S_AXI/Mem0",
+                "offset": "0x0000020100000000",
+                "range": "64K"
+              },
+              "SEG_traffic_gen_Reg0": {
+                "address_block": "/traffic_gen/S_AXI/Reg0",
+                "offset": "0x0000020180000000",
+                "range": "64K",
+                "offset_high_param": "C_HIGHADDR"
+              }
+            }
+          }
+        },
+        "memory_maps": {
+          "user_to_shell_ini": {
+            "address_blocks": {
+              "Reg": {
+                "base_address": "0",
+                "range": "64K",
+                "width": "16",
+                "usage": "register"
+              }
+            }
+          }
+        }
+      },
+      "/traffic_gen": {
+        "address_spaces": {
+          "Data": {
+            "segments": {
+              "SEG_user_to_shell_ini_Reg": {
+                "address_block": "/user_to_shell_ini/Reg",
+                "offset": "0x0000010000000000",
+                "range": "16G"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
