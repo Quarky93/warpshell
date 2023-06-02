@@ -71,17 +71,7 @@ module top (
     input pcie_ref_clk_clk_p
 );
 
-wire [0:0]shell_to_user_ini_internoc;
-wire user_ref_clk_100;
-wire [0:0]user_to_shell_ini_internoc;
-
-user user_partition (
-    .shell_to_user_ini_internoc(shell_to_user_ini_internoc),
-    .user_ref_clk_100(user_ref_clk_100),
-    .user_to_shell_ini_internoc(user_to_shell_ini_internoc)
-);
-
-shell shell_partition (
+shell shell_i (
     .ddr4_ch_0_act_n(ddr4_ch_0_act_n),
     .ddr4_ch_0_adr(ddr4_ch_0_adr),
     .ddr4_ch_0_ba(ddr4_ch_0_ba),
@@ -151,10 +141,7 @@ shell shell_partition (
     .pcie_mgt_gtx_n(pcie_mgt_gtx_n),
     .pcie_mgt_gtx_p(pcie_mgt_gtx_p),
     .pcie_ref_clk_clk_n(pcie_ref_clk_clk_n),
-    .pcie_ref_clk_clk_p(pcie_ref_clk_clk_p),
-    .shell_to_user_ini_internoc(shell_to_user_ini_internoc),
-    .user_ref_clk_100(user_ref_clk_100),
-    .user_to_shell_ini_internoc(user_to_shell_ini_internoc)
+    .pcie_ref_clk_clk_p(pcie_ref_clk_clk_p)
 );
 
 endmodule

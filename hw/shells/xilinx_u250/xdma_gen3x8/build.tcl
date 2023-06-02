@@ -1,6 +1,6 @@
 set script_path [file dirname [file normalize [info script]]]
 
-create_project -part xcu250-figd2104-2-e synth synth
+create_project -part xcu250-figd2104-2L-e synth synth
 set_property source_mgmt_mode All [current_project]
 
 # -- [READ FILES] -------------------------------------------------------------
@@ -38,5 +38,5 @@ phys_opt_design -directive ExploreWithAggressiveHoldFix
 write_checkpoint ./post_route_xilinx_u250_xdma_gen3x8.dcp
 write_bitstream -bin_file -force ./warpshell_xilinx_u250_xdma_gen3x8.bit
 write_abstract_shell -cell user_partition -force ./abstract_warpshell_xilinx_u250_xdma_gen3x8.dcp
-write_cfgmem -force -format mcs -interface spix4 -size 128 -loadbit "up 0x01002000 warpshell_xilinx_u250_xdma_gen3x8.bit" -file "warpshell_xilinx_u250_xdma_gen3x8.mcs"
+write_cfgmem -force -format mcs -interface spix4 -size 256 -loadbit "up 0x01002000 warpshell_xilinx_u250_xdma_gen3x8.bit" -file "warpshell_xilinx_u250_xdma_gen3x8.mcs"
 # -----------------------------------------------------------------------------
