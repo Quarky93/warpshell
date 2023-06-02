@@ -1,12 +1,12 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0x7BC4BA6E561CA014",
+      "boundary_crc": "0x7BC4BA6E0DE2C31A",
       "device": "xcu55n-fsvh2892-2L-e",
       "name": "shell",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "None",
-      "tool_version": "2022.2",
+      "tool_version": "2023.1",
       "validated": "true"
     },
     "design_tree": {
@@ -237,7 +237,7 @@
             "value_src": "ip_prop"
           },
           "SUPPORTS_NARROW_BURST": {
-            "value": "1",
+            "value": "0",
             "value_src": "default_prop"
           },
           "WUSER_BITS_PER_BYTE": {
@@ -539,7 +539,7 @@
             "value_src": "ip_prop"
           },
           "SUPPORTS_NARROW_BURST": {
-            "value": "1",
+            "value": "0",
             "value_src": "default_prop"
           },
           "WUSER_BITS_PER_BYTE": {
@@ -1898,6 +1898,9 @@
           "pf0_base_class_menu": {
             "value": "Processing_accelerators"
           },
+          "pf0_subsystem_id": {
+            "value": "A001"
+          },
           "pl_link_cap_max_link_speed": {
             "value": "8.0_GT/s"
           },
@@ -2292,14 +2295,14 @@
           },
           "m00_couplers_to_axi_interconnect_dma": {
             "interface_ports": [
-              "M00_AXI",
-              "m00_couplers/M_AXI"
+              "m00_couplers/M_AXI",
+              "M00_AXI"
             ]
           },
           "m01_couplers_to_axi_interconnect_dma": {
             "interface_ports": [
-              "M01_AXI",
-              "m01_couplers/M_AXI"
+              "m01_couplers/M_AXI",
+              "M01_AXI"
             ]
           },
           "s00_couplers_to_xbar": {

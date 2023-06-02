@@ -44,7 +44,7 @@ phys_opt_design -directive ExploreWithAggressiveHoldFix
 write_checkpoint ./post_route_sqrl_cle215_xdma_gen2x4.dcp
 update_design -cell user_partition -black_box
 lock_design -level routing
-write_checkpoint -force ./abstract_warpshell_sqrl_cle215_xdma_gen3x8.dcp
+write_checkpoint -force ./abstract_warpshell_sqrl_cle215_xdma_gen2x4.dcp
 write_bitstream -bin_file -force ./warpshell_sqrl_cle215_gen2x4.bit
 write_cfgmem -force -format mcs -interface spix4 -size 16 -loadbit "up 0x00000000 warpshell_sqrl_cle215_gen2x4.bit" -file "warpshell_sqrl_cle215_xdma_gen2x4.mcs"
 # -----------------------------------------------------------------------------

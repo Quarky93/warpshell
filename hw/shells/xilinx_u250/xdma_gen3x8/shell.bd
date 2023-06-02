@@ -1,12 +1,12 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0x2C264B02CCACC96",
-      "device": "xcu250-figd2104-2-e",
+      "boundary_crc": "0x2C264B07000CB52",
+      "device": "xcu250-figd2104-2L-e",
       "name": "shell",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "None",
-      "tool_version": "2022.2",
+      "tool_version": "2023.1",
       "validated": "true"
     },
     "design_tree": {
@@ -205,7 +205,7 @@
           },
           "HAS_CACHE": {
             "value": "0",
-            "value_src": "default"
+            "value_src": "ip_prop"
           },
           "HAS_LOCK": {
             "value": "0"
@@ -216,7 +216,7 @@
           },
           "HAS_QOS": {
             "value": "0",
-            "value_src": "default"
+            "value_src": "ip_prop"
           },
           "HAS_REGION": {
             "value": "0",
@@ -276,7 +276,7 @@
             "value_src": "ip_prop"
           },
           "SUPPORTS_NARROW_BURST": {
-            "value": "0",
+            "value": "1",
             "value_src": "default_prop"
           },
           "WUSER_BITS_PER_BYTE": {
@@ -496,7 +496,7 @@
             "value_src": "ip_prop"
           },
           "SUPPORTS_NARROW_BURST": {
-            "value": "0",
+            "value": "1",
             "value_src": "default_prop"
           },
           "WUSER_BITS_PER_BYTE": {
@@ -1336,14 +1336,14 @@
           },
           "m00_couplers_to_axi_interconnect_dma": {
             "interface_ports": [
-              "M00_AXI",
-              "m00_couplers/M_AXI"
+              "m00_couplers/M_AXI",
+              "M00_AXI"
             ]
           },
           "m01_couplers_to_axi_interconnect_dma": {
             "interface_ports": [
-              "M01_AXI",
-              "m01_couplers/M_AXI"
+              "m01_couplers/M_AXI",
+              "M01_AXI"
             ]
           },
           "s00_couplers_to_xbar": {

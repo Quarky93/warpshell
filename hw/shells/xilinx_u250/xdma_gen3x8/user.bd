@@ -2,11 +2,11 @@
   "design": {
     "design_info": {
       "boundary_crc": "0x9F0EE1D921DEB20C",
-      "device": "xcu250-figd2104-2-e",
+      "device": "xcu250-figd2104-2L-e",
       "name": "user",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "None",
-      "tool_version": "2022.2",
+      "tool_version": "2023.1",
       "validated": "true"
     },
     "design_tree": {
@@ -771,8 +771,8 @@
       },
       "smartconnect_dma": {
         "vlnv": "xilinx.com:ip:smartconnect:1.0",
-        "xci_name": "user_smartconnect_0_0",
-        "xci_path": "ip/user_smartconnect_0_0/user_smartconnect_0_0.xci",
+        "xci_name": "user_smartconnect_dma_0",
+        "xci_path": "ip/user_smartconnect_dma_0/user_smartconnect_dma_0.xci",
         "inst_hier_path": "smartconnect_dma",
         "parameters": {
           "NUM_SI": {
@@ -922,7 +922,7 @@
               "SEG_dummy_dma_target_Mem0": {
                 "address_block": "/dummy_dma_target/S_AXI/Mem0",
                 "offset": "0x0000000000000000",
-                "range": "256T"
+                "range": "8K"
               }
             }
           }

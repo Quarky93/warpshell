@@ -1,6 +1,6 @@
 set script_path [file dirname [file normalize [info script]]]
 
-create_project -part xcu250-figd2104-2L-e synth synth
+create_project -part xcvc1902-vsvd1760-2MP-e-S synth synth
 set_property source_mgmt_mode All [current_project]
 
 # -- [READ FILES] -------------------------------------------------------------
@@ -29,14 +29,16 @@ launch_runs synth_1 -jobs 16
 wait_on_runs synth_1
 
 open_run synth_1
-write_checkpoint -force ./post_synth_xilinx_u250_xdma_gen3x8.dcp
+write_checkpoint -force ./post_synth_xilinx_vck5000_xdma_gen4x8.dcp
 opt_design -directive Explore
 place_design -directive Auto_1
 phys_opt_design -directive ExploreWithAggressiveHoldFix
 route_design -directive AggressiveExplore
 phys_opt_design -directive ExploreWithAggressiveHoldFix
-write_checkpoint ./post_route_xilinx_u250_xdma_gen3x8.dcp
-write_bitstream -bin_file -force ./warpshell_xilinx_u250_xdma_gen3x8.bit
-write_abstract_shell -cell user_partition -force ./abstract_warpshell_xilinx_u250_xdma_gen3x8.dcp
-write_cfgmem -force -format mcs -interface spix4 -size 256 -loadbit "up 0x01002000 warpshell_xilinx_u250_xdma_gen3x8.bit" -file "warpshell_xilinx_u250_xdma_gen3x8.mcs"
+write_checkpoint ./post_route_xilinx_vck5000_xdma_gen4x8.dcp
+write_device_image -force ./warpshell_xilinx_vck5000_xdma_gen4x8.pdi
+update_design -cell user_partition -black_box
+lock_design -level routing
+write_checkpoint -force ./abstract_warpshell_xilinx_vck5000_xdma_gen4x8.dcp
+# write_cfgmem -force -format mcs -interface spix4 -size 128 -loadbit "up 0x01002000 warpshell_xilinx_vck5000_xdma_gen4x8.bit" -file "warpshell_xilinx_vck5000_xdma_gen4x8.mcs"
 # -----------------------------------------------------------------------------

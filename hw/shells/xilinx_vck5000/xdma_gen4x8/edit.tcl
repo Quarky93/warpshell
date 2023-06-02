@@ -1,6 +1,6 @@
 set script_path [file dirname [file normalize [info script]]]
 
-create_project -in_memory -part xcu250-figd2104-2L-e
+create_project -in_memory -part xcvc1902-vsvd1760-2MP-e-S
 set_property source_mgmt_mode All [current_project]
 
 proc commit {} {
