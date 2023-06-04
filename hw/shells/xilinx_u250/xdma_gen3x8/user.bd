@@ -16,7 +16,10 @@
       "dummy_ctrl_target_bram": "",
       "dummy_dma_target": "",
       "dummy_dma_target_bram": "",
-      "smartconnect_dma": ""
+      "smartconnect_dma": "",
+      "shell_ila": "",
+      "core_clk": "",
+      "corte_reset": ""
     },
     "interface_ports": {
       "bscan": {
@@ -681,6 +684,9 @@
         "xci_path": "ip/user_smartconnect_ctrl_0/user_smartconnect_ctrl_0.xci",
         "inst_hier_path": "smartconnect_ctrl",
         "parameters": {
+          "NUM_CLKS": {
+            "value": "2"
+          },
           "NUM_SI": {
             "value": "1"
           }
@@ -775,6 +781,9 @@
         "xci_path": "ip/user_smartconnect_dma_0/user_smartconnect_dma_0.xci",
         "inst_hier_path": "smartconnect_dma",
         "parameters": {
+          "NUM_CLKS": {
+            "value": "2"
+          },
           "NUM_SI": {
             "value": "1"
           }
@@ -828,6 +837,64 @@
             }
           }
         }
+      },
+      "shell_ila": {
+        "vlnv": "xilinx.com:ip:system_ila:1.1",
+        "xci_name": "user_shell_ila_0",
+        "xci_path": "ip/user_shell_ila_0/user_shell_ila_0.xci",
+        "inst_hier_path": "shell_ila",
+        "parameters": {
+          "C_NUM_MONITOR_SLOTS": {
+            "value": "2"
+          }
+        },
+        "interface_ports": {
+          "SLOT_0_AXI": {
+            "mode": "Monitor",
+            "vlnv_bus_definition": "xilinx.com:interface:aximm:1.0",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+          },
+          "SLOT_1_AXI": {
+            "mode": "Monitor",
+            "vlnv_bus_definition": "xilinx.com:interface:aximm:1.0",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+          }
+        }
+      },
+      "core_clk": {
+        "vlnv": "xilinx.com:ip:clk_wiz:6.0",
+        "xci_name": "user_clk_wiz_0_0",
+        "xci_path": "ip/user_clk_wiz_0_0/user_clk_wiz_0_0.xci",
+        "inst_hier_path": "core_clk",
+        "parameters": {
+          "CLKOUT1_JITTER": {
+            "value": "85.152"
+          },
+          "CLKOUT1_PHASE_ERROR": {
+            "value": "78.266"
+          },
+          "CLKOUT1_REQUESTED_OUT_FREQ": {
+            "value": "250"
+          },
+          "MMCM_CLKFBOUT_MULT_F": {
+            "value": "4.750"
+          },
+          "MMCM_CLKOUT0_DIVIDE_F": {
+            "value": "4.750"
+          },
+          "RESET_PORT": {
+            "value": "resetn"
+          },
+          "RESET_TYPE": {
+            "value": "ACTIVE_LOW"
+          }
+        }
+      },
+      "corte_reset": {
+        "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
+        "xci_name": "user_proc_sys_reset_0_0",
+        "xci_path": "ip/user_proc_sys_reset_0_0/user_proc_sys_reset_0_0.xci",
+        "inst_hier_path": "corte_reset"
       }
     },
     "interface_nets": {
@@ -858,13 +925,15 @@
       "shell_axi_dma_1": {
         "interface_ports": [
           "shell_axi_dma",
-          "smartconnect_dma/S00_AXI"
+          "smartconnect_dma/S00_AXI",
+          "shell_ila/SLOT_0_AXI"
         ]
       },
       "shell_axil_ctrl_1": {
         "interface_ports": [
           "shell_axil_ctrl",
-          "smartconnect_ctrl/S00_AXI"
+          "smartconnect_ctrl/S00_AXI",
+          "shell_ila/SLOT_1_AXI"
         ]
       },
       "smartconnect_ctrl_M00_AXI": {
@@ -881,23 +950,47 @@
       }
     },
     "nets": {
+      "core_clk_clk_out1": {
+        "ports": [
+          "core_clk/clk_out1",
+          "corte_reset/slowest_sync_clk",
+          "smartconnect_dma/aclk1",
+          "smartconnect_ctrl/aclk1",
+          "dummy_dma_target/s_axi_aclk",
+          "dummy_ctrl_target/s_axi_aclk"
+        ]
+      },
+      "core_clk_locked": {
+        "ports": [
+          "core_clk/locked",
+          "corte_reset/dcm_locked"
+        ]
+      },
+      "corte_reset_peripheral_aresetn": {
+        "ports": [
+          "corte_reset/peripheral_aresetn",
+          "dummy_ctrl_target/s_axi_aresetn",
+          "dummy_dma_target/s_axi_aresetn"
+        ]
+      },
       "shell_axi_clk_1": {
         "ports": [
           "shell_axi_clk",
           "debug_bridge/clk",
-          "dummy_ctrl_target/s_axi_aclk",
           "smartconnect_ctrl/aclk",
-          "dummy_dma_target/s_axi_aclk",
-          "smartconnect_dma/aclk"
+          "smartconnect_dma/aclk",
+          "shell_ila/clk",
+          "core_clk/clk_in1"
         ]
       },
       "shell_rstn_1": {
         "ports": [
           "shell_rstn",
-          "dummy_ctrl_target/s_axi_aresetn",
           "smartconnect_ctrl/aresetn",
-          "dummy_dma_target/s_axi_aresetn",
-          "smartconnect_dma/aresetn"
+          "smartconnect_dma/aresetn",
+          "shell_ila/resetn",
+          "core_clk/resetn",
+          "corte_reset/ext_reset_in"
         ]
       }
     },
