@@ -1,5 +1,6 @@
+#![feature(portable_simd)]
+use core::simd::Simd;
 use criterion::{criterion_group, criterion_main, Criterion};
-use packed_simd::Simd;
 use std::time::Duration;
 use warpshell::{
     cores::cms::{CmsOps, CmsReg},
@@ -15,8 +16,8 @@ fn random_payload() -> DmaBuffer {
     let mut chunk: [u8; CHUNK_LEN] = [0; CHUNK_LEN];
     for _ in 0..PAYLOAD_LEN / CHUNK_LEN {
         // Fill a chunk of bytes with random data.
-        let simd_chunk: Simd<[u8; CHUNK_LEN]> = rand::random();
-        simd_chunk.write_to_slice_unaligned(&mut chunk);
+        let simd_chunk: Simd<u8, CHUNK_LEN> = rand::random();
+        simd_chunk.copy_to_slice(&mut chunk);
         // Copy the chunk into the payload.
         buf.get_mut().extend_from_slice(&chunk)
     }
